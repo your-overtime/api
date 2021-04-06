@@ -1,21 +1,20 @@
 package api
 
 import (
+	"encoding/base64"
 	"errors"
 	"net/http"
 	"strings"
 
-	"git.goasum.de/jasper/go-trace-api/pkg"
-
+	"git.goasum.de/jasper/overtime/pkg"
 	"github.com/gin-gonic/gin"
 )
 
-// Server struct
-type Server struct {
-	traceService pkg.TraceService
-	router       *gin.Engine
-	host         string
-	accessTokens map[string]bool
+// API struct
+type API struct {
+	os     pkg.OvertimeService
+	es     pkg.EmployeeService
+	router *gin.Engine
 }
 
 func auth(accessTokens map[string]bool) gin.HandlerFunc {
@@ -52,21 +51,45 @@ func tokenSliceToMap(accessTokens []string) map[string]bool {
 	return tokenMap
 }
 
-func (s Server) createEndPoints() {
-	api := s.router.Group("/api")
+func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
+	token := c.Request.FormValue("token")
+	if len(token) > 0 {
+		return a.es.FromToken(token)
+	}
+	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
+	if len(authHeaderSlice) == 3 {
+		switch strings.ToLower(authHeaderSlice[1]) {
+		case "basic":
+			payload := []byte{}
+			_, err := base64.StdEncoding.Decode(payload, []byte(authHeaderSlice[2]))
+			if err != nil {
+				return nil, pkg.ErrUserNotFound
+			}
+			basicAuth := strings.Split(string(payload), ":")
+			if len(basicAuth) != 2 {
+				return nil, pkg.ErrUserNotFound
+			}
+			return a.es.Login(basicAuth[0], basicAuth[1])
+		default:
+			return a.es.FromToken(authHeaderSlice[2])
+		}
+
+	}
+
+	return nil, pkg.ErrUserNotFound
+}
+
+func (a *API) createEndPoints() {
+	api := a.router.Group("/api")
 
 	v1 := api.Group("/v1")
-	v1.GET("/traces", func(c *gin.Context) {
-		reqOpts, ok := pkg.CovertQueryParamsToOptions(c.Request, pkg.GetTracesOptions{}).(pkg.GetTracesOptions)
-		if !ok {
-			c.JSON(http.StatusBadRequest, "Bad request")
+	v1.GET("/current", func(c *gin.Context) {
+
+		overview, err := a.os.CalcCurrentOverview()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
 		} else {
-			traces, err := s.traceService.GetTraces(reqOpts)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
-			} else {
-				c.JSON(http.StatusOK, traces)
-			}
+			c.JSON(http.StatusOK, traces)
 		}
 	})
 
