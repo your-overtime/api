@@ -4,6 +4,10 @@ import (
 	"os"
 	"strings"
 
+	"git.goasum.de/jasper/overtime/api"
+	"git.goasum.de/jasper/overtime/internal/data"
+	"git.goasum.de/jasper/overtime/internal/employee"
+	"git.goasum.de/jasper/overtime/internal/overtime"
 	"github.com/gin-gonic/gin"
 
 	log "github.com/sirupsen/logrus"
@@ -20,14 +24,18 @@ func main() {
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	// db, err := data.Init(
-	// 	os.Getenv("DB_USER"),
-	// 	os.Getenv("DB_PASSWORD"),
-	// 	os.Getenv("DB_HOST"),
-	// 	os.Getenv("DB_NAME"),
-	// )
-	// if err != nil {
-	// 	panic(err)
-	// }
+	db, err := data.Init(
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_NAME"),
+	)
+	if err != nil {
+		panic(err)
+	}
 
+	es := employee.Init(db)
+	ovs := overtime.Init(db)
+	api := api.Init(ovs, es)
+	api.Start(os.Getenv("HOST"))
 }

@@ -61,7 +61,7 @@ type InputActivity struct {
 	Description string     `json:"description"`
 }
 
-type HollyDay struct {
+type Hollyday struct {
 	Start       time.Time `json:"start"`
 	End         time.Time `json:"end"`
 	Description string    `json:"description"`

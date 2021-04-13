@@ -35,17 +35,7 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 	conn.AutoMigrate(&pkg.Activity{})
 	conn.AutoMigrate(&pkg.Employee{})
 	conn.AutoMigrate(&pkg.Token{})
-	conn.AutoMigrate(&pkg.HollyDay{})
+	conn.AutoMigrate(&pkg.Hollyday{})
 
 	return &db, err
-}
-
-func (d *Db) SaveEmployee(user *pkg.Employee) error {
-
-	tx := d.Conn.Save(&user)
-	if tx.Error != nil {
-		return tx.Error
-	}
-
-	return nil
 }
