@@ -25,6 +25,8 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 		name,
 	)
 
+	fmt.Println(dsn)
+
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err

@@ -9,11 +9,13 @@ import (
 	"git.goasum.de/jasper/overtime/internal/employee"
 	"git.goasum.de/jasper/overtime/internal/overtime"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+	godotenv.Load()
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: true,
 		FullTimestamp: true,

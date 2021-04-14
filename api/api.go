@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/base64"
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"git.goasum.de/jasper/overtime/pkg"
@@ -19,11 +21,13 @@ type API struct {
 
 func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 	token := c.Request.FormValue("token")
+	fmt.Println(token)
 	if len(token) > 0 {
 		return a.es.FromToken(token)
 	}
 	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
-	if len(authHeaderSlice) == 3 {
+	fmt.Println(authHeaderSlice)
+	if len(authHeaderSlice) == 2 {
 		switch strings.ToLower(authHeaderSlice[1]) {
 		case "basic":
 			payload := []byte{}
@@ -37,7 +41,7 @@ func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 			}
 			return a.es.Login(basicAuth[0], basicAuth[1])
 		default:
-			return a.es.FromToken(authHeaderSlice[2])
+			return a.es.FromToken(authHeaderSlice[1])
 		}
 
 	}
@@ -61,17 +65,14 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, overview)
 		}
 	})
-	v1.POST("/activity", func(c *gin.Context) {
+	v1.POST("/activity/:desc", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		var ac pkg.Activity
-		err = c.Bind(a)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, err)
-		}
-		err = a.os.StartActivity(ac, *e)
+		fmt.Println(e)
+		desc := c.Param("desc")
+		ac, err := a.os.StartActivity(desc, *e)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
@@ -95,8 +96,8 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		id := c.Param("id")
-		h, err := a.os.GetActivity(id, *e)
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		h, err := a.os.GetActivity(uint(id), *e)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
@@ -108,8 +109,8 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		id := c.Param("id")
-		err = a.os.DelActivity(id, *e)
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		err = a.os.DelActivity(uint(id), *e)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
@@ -138,8 +139,8 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		id := c.Param("id")
-		h, err := a.os.GetHollyday(id, *e)
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		h, err := a.os.GetHollyday(uint(id), *e)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
@@ -151,8 +152,8 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		id := c.Param("id")
-		err = a.os.DelHollyday(id, *e)
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		err = a.os.DelHollyday(uint(id), *e)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
@@ -173,5 +174,5 @@ func Init(os pkg.OvertimeService, es pkg.EmployeeService) *API {
 // Start API server
 func (a API) Start(host string) {
 	a.createEndPoints()
-	a.router.Run(host)
+	panic(a.router.Run(host))
 }

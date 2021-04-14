@@ -40,6 +40,7 @@ type Token struct {
 	CreationTime time.Time `json:"creation_time"`
 	Name         string    `json:"name"`
 	UserID       int       `json:"user_id"`
+	Token        string    `json:"token"`
 }
 
 type Employee struct {
@@ -52,7 +53,7 @@ type Activity struct {
 	Start       *time.Time `json:"start"`
 	End         *time.Time `json:"end"`
 	Description string     `json:"description"`
-	UserID      int        `json:"user_id"`
+	UserID      uint       `json:"user_id"`
 }
 
 type InputActivity struct {
@@ -65,7 +66,7 @@ type Hollyday struct {
 	Start       time.Time `json:"start"`
 	End         time.Time `json:"end"`
 	Description string    `json:"description"`
-	UserID      int       `json:"user_id"`
+	UserID      uint      `json:"user_id"`
 }
 
 type Overview struct {
@@ -73,5 +74,6 @@ type Overview struct {
 	WeekNumber               int       `json:"week_number"`
 	OvertimeInMinutes        int       `json:"overtime_in_minutes"`
 	WeekWorkingTimeInMinutes int       `json:"week_working_time_in_minutes"`
-	ActiveActivity           Activity  `json:"active_activity"`
+	ActiveActivity           *Activity `json:"active_activity"`
+	Employee                 *Employee `json:"employee"`
 }
