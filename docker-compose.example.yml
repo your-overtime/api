@@ -1,0 +1,14 @@
+version: "3.3"
+services: 
+  traces-api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - API_HOST=0.0.0.0:8080
+      - DB_USER=tracer
+      - DB_PASSWORD=secret
+      - DB_HOST=db:3306
+      - DB_NAME=traces
+      - DEBUG=false
+    restart: unless-stopped
