@@ -7,11 +7,11 @@ import (
 )
 
 type InputEmployee struct {
-	Name            string        `json:"name"`
-	Surname         string        `json:"surname"`
-	Login           string        `json:"login"`
-	Password        string        `json:"password"`
-	WeekWorkingTime time.Duration `json:"week_working_time"`
+	Name                     string `json:"name"`
+	Surname                  string `json:"surname"`
+	Login                    string `json:"login"`
+	Password                 string `json:"password"`
+	WeekWorkingTimeInMinutes uint   `json:"week_working_time"`
 }
 
 func (u *InputEmployee) toEmployee() Employee {
@@ -22,7 +22,7 @@ func (u *InputEmployee) toEmployee() Employee {
 			Login:    u.Login,
 			Password: u.Password,
 		},
-		WeekWorkingTime: u.WeekWorkingTime,
+		WeekWorkingTimeInMinutes: u.WeekWorkingTimeInMinutes,
 	}
 }
 
@@ -44,8 +44,8 @@ type Token struct {
 }
 
 type Employee struct {
-	*User           `gorm:"embedded"`
-	WeekWorkingTime time.Duration `json:"week_working_time"`
+	*User                    `gorm:"embedded"`
+	WeekWorkingTimeInMinutes uint `json:"week_working_time"`
 }
 
 type Activity struct {
@@ -63,6 +63,7 @@ type InputActivity struct {
 }
 
 type Hollyday struct {
+	gorm.Model
 	Start       time.Time `json:"start"`
 	End         time.Time `json:"end"`
 	Description string    `json:"description"`
@@ -70,10 +71,10 @@ type Hollyday struct {
 }
 
 type Overview struct {
-	Date                     time.Time `json:"date"`
-	WeekNumber               int       `json:"week_number"`
-	OvertimeInMinutes        int       `json:"overtime_in_minutes"`
-	WeekWorkingTimeInMinutes int       `json:"week_working_time_in_minutes"`
-	ActiveActivity           *Activity `json:"active_activity"`
-	Employee                 *Employee `json:"employee"`
+	Date               time.Time `json:"date"`
+	WeekNumber         int       `json:"week_number"`
+	OvertimeInMinutes  int64     `json:"overtime_in_minutes"`
+	ActiveTimeThisWeek int64     `json:"active_time_this_week"`
+	ActiveActivity     *Activity `json:"active_activity"`
+	Employee           *Employee `json:"employee"`
 }
