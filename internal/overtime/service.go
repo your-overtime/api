@@ -26,8 +26,13 @@ func (s *service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 	}
 	var activityTimeInMinutes int64
 	for _, a := range activities {
-		a := a
-		diff := a.End.Sub(*a.Start)
+		var diff time.Duration
+		if a.End == nil {
+			diff = end.Sub(*a.Start)
+		} else {
+			diff = a.End.Sub(*a.Start)
+		}
+
 		hs, mf := math.Modf(diff.Hours())
 
 		activityTimeInMinutes += int64(hs*60 + mf*60)
