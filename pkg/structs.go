@@ -7,11 +7,11 @@ import (
 )
 
 type InputEmployee struct {
-	Name                     string `json:"name"`
-	Surname                  string `json:"surname"`
-	Login                    string `json:"login"`
-	Password                 string `json:"password"`
-	WeekWorkingTimeInMinutes uint   `json:"week_working_time"`
+	Name                     string
+	Surname                  string
+	Login                    string
+	Password                 string
+	WeekWorkingTimeInMinutes uint
 }
 
 func (u *InputEmployee) toEmployee() Employee {
@@ -28,53 +28,59 @@ func (u *InputEmployee) toEmployee() Employee {
 
 type User struct {
 	gorm.Model
-	Name     string  `json:"name"`
-	Surname  string  `json:"surname"`
-	Login    string  `json:"login"`
-	Password string  `json:"-"`
-	Tokens   []Token `json:"tokens"`
+	Name     string
+	Surname  string
+	Login    string
+	Password string
+	Tokens   []Token
 }
 
 type Token struct {
 	gorm.Model
-	CreationTime time.Time `json:"creation_time"`
-	Name         string    `json:"name"`
-	UserID       int       `json:"user_id"`
-	Token        string    `json:"token"`
+	CreationTime time.Time
+	Name         string
+	UserID       int
+	Token        string
 }
 
 type Employee struct {
 	*User                    `gorm:"embedded"`
-	WeekWorkingTimeInMinutes uint `json:"week_working_time"`
+	WeekWorkingTimeInMinutes uint
 }
 
 type Activity struct {
 	gorm.Model
-	Start       *time.Time `json:"start"`
-	End         *time.Time `json:"end"`
-	Description string     `json:"description"`
-	UserID      uint       `json:"user_id"`
+	Start       *time.Time
+	End         *time.Time
+	Description string
+	UserID      uint
 }
 
 type InputActivity struct {
-	Start       *time.Time `json:"start"`
-	End         *time.Time `json:"end,omitempty"`
-	Description string     `json:"description"`
+	Start       time.Time
+	End         time.Time
+	Description string
 }
 
 type Hollyday struct {
 	gorm.Model
-	Start       time.Time `json:"start"`
-	End         time.Time `json:"end"`
-	Description string    `json:"description"`
-	UserID      uint      `json:"user_id"`
+	Start       time.Time
+	End         time.Time
+	Description string
+	UserID      uint
+}
+
+type InputHollyday struct {
+	Start       time.Time
+	End         time.Time
+	Description string
 }
 
 type Overview struct {
-	Date               time.Time `json:"date"`
-	WeekNumber         int       `json:"week_number"`
-	OvertimeInMinutes  int64     `json:"overtime_in_minutes"`
-	ActiveTimeThisWeek int64     `json:"active_time_this_week"`
-	ActiveActivity     *Activity `json:"active_activity"`
-	Employee           *Employee `json:"employee"`
+	Date               time.Time
+	WeekNumber         int
+	OvertimeInMinutes  int64
+	ActiveTimeThisWeek int64
+	ActiveActivity     *Activity
+	Employee           *Employee
 }

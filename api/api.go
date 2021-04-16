@@ -103,6 +103,29 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, ac)
 		}
 	})
+	v1.POST("/activity", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		var ia pkg.InputActivity
+		err = c.Bind(&a)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		act := pkg.Activity{
+			UserID:      e.ID,
+			Start:       &ia.Start,
+			End:         &ia.End,
+			Description: ia.Description,
+		}
+		ac, err := a.os.AddActivity(act, *e)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, ac)
+		}
+	})
 	v1.GET("/activity/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
@@ -134,10 +157,16 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		var ho pkg.Hollyday
+		var ih pkg.InputHollyday
 		err = c.Bind(a)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
+		}
+		ho := pkg.Hollyday{
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			Description: ih.Description,
 		}
 		h, err := a.os.AddHollyday(ho, *e)
 		if err != nil {

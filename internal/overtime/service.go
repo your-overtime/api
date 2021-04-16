@@ -180,6 +180,12 @@ func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 	err := s.db.SaveActivity(&a)
 	return &a, err
 }
+
+func (s *service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	err := s.db.SaveActivity(&a)
+	return &a, err
+}
+
 func (s *service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, error) {
 	a, err := s.db.GetRunningActivityByEmployeeID(employee.ID)
 	if err != nil {

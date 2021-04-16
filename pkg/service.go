@@ -6,6 +6,7 @@ type OvertimeService interface {
 	CalcCurrentOverview(e Employee) (*Overview, error)
 	CalcOverviewForThisYear(e Employee) (*Overview, error)
 	StartActivity(desc string, employee Employee) (*Activity, error)
+	AddActivity(activity Activity, employee Employee) (*Activity, error)
 	StopRunningActivity(employee Employee) (*Activity, error)
 	GetActivity(id uint, employee Employee) (*Activity, error)
 	DelActivity(id uint, employee Employee) error
