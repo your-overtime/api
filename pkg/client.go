@@ -68,7 +68,7 @@ func (c *client) CalcCurrentOverview(e Employee) (*Overview, error) {
 		return nil, err
 	}
 	var o Overview
-	err = respToJson(resp, o)
+	err = respToJson(resp, &o)
 	return &o, err
 }
 
@@ -78,7 +78,7 @@ func (c *client) CalcOverviewForThisYear(e Employee) (*Overview, error) {
 		return nil, err
 	}
 	var o Overview
-	err = respToJson(resp, o)
+	err = respToJson(resp, &o)
 	return &o, err
 }
 
@@ -88,7 +88,7 @@ func (c *client) StartActivity(desc string, employee Employee) (*Activity, error
 		return nil, err
 	}
 	var a Activity
-	err = respToJson(resp, a)
+	err = respToJson(resp, &a)
 	return &a, err
 }
 
@@ -98,7 +98,7 @@ func (c *client) AddActivity(activity Activity, employee Employee) (*Activity, e
 		return nil, err
 	}
 	var a Activity
-	err = respToJson(resp, a)
+	err = respToJson(resp, &a)
 	return &a, err
 }
 
@@ -108,7 +108,7 @@ func (c *client) StopRunningActivity(employee Employee) (*Activity, error) {
 		return nil, err
 	}
 	var a Activity
-	err = respToJson(resp, a)
+	err = respToJson(resp, &a)
 	return &a, err
 }
 
@@ -118,7 +118,7 @@ func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
 		return nil, err
 	}
 	var a Activity
-	err = respToJson(resp, a)
+	err = respToJson(resp, &a)
 	return &a, err
 }
 
@@ -133,7 +133,7 @@ func (c *client) AddHollyday(hollyday Hollyday, employee Employee) (*Hollyday, e
 		return nil, err
 	}
 	var h Hollyday
-	err = respToJson(resp, h)
+	err = respToJson(resp, &h)
 	return &h, err
 }
 
@@ -143,7 +143,7 @@ func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
 		return nil, err
 	}
 	var h Hollyday
-	err = respToJson(resp, h)
+	err = respToJson(resp, &h)
 	return &h, err
 }
 
