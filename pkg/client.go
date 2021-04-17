@@ -44,7 +44,6 @@ func (c *client) doRequest(method string, resource string, data interface{}) (*h
 	if err != nil {
 		return resp, err
 	}
-	defer resp.Body.Close()
 
 	return resp, err
 }
