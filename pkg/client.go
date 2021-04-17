@@ -49,7 +49,7 @@ func (c *client) doRequest(method string, resource string, data interface{}) (*h
 	return resp, err
 }
 
-func InitOvertimeClient(host string) OvertimeService {
+func InitOvertimeClient(host string, authHeader string) OvertimeService {
 	if !strings.HasSuffix(host, "/") {
 		host += "/"
 	}
@@ -57,7 +57,8 @@ func InitOvertimeClient(host string) OvertimeService {
 		host = "http://" + host
 	}
 	return &client{
-		host: host,
+		host:       host,
+		authHeader: authHeader,
 	}
 }
 
