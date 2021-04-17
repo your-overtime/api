@@ -154,8 +154,7 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 	}
 
 	ot := int64(e.WeekWorkingTimeInMinutes)
-
-	if 5-wdNumber == 0 {
+	if 5-wdNumber != 0 {
 		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
 	}
 
