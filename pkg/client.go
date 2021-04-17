@@ -31,7 +31,7 @@ func (c *client) doRequest(method string, resource string, data interface{}) (*h
 	if strings.HasPrefix(resource, "/") {
 		string_utils.TrimPrefix(resource, "/")
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s%s", c.host, resource), bytes.NewBuffer(dataBytes.Bytes()))
+	req, err := http.NewRequest(method, fmt.Sprintf("%sapi/v1/%s", c.host, resource), bytes.NewBuffer(dataBytes.Bytes()))
 
 	if err != nil {
 		return nil, err
