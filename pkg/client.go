@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"git.goasum.de/jasper/go-utils/pkg/string_utils"
 )
@@ -143,6 +144,19 @@ func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
 	return &a, nil
 }
 
+func (c *client) GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error) {
+	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start%s&end=%s", start, end), nil)
+	if err != nil {
+		return nil, err
+	}
+	var a []Activity
+	err = respToJson(resp, &a)
+	if err != nil {
+		return nil, err
+	}
+	return a, nil
+}
+
 func (c *client) DelActivity(id uint, employee Employee) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("activity/%d", id), nil)
 	return err
@@ -162,7 +176,7 @@ func (c *client) AddHollyday(hollyday Hollyday, employee Employee) (*Hollyday, e
 }
 
 func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
-	resp, err := c.doRequest("POST", fmt.Sprintf("hollyday/%d", id), nil)
+	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday/%d", id), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -172,6 +186,19 @@ func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
 		return nil, err
 	}
 	return &h, nil
+}
+
+func (c *client) GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error) {
+	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday?start=%s&end=%s", start, end), nil)
+	if err != nil {
+		return nil, err
+	}
+	var h []Hollyday
+	err = respToJson(resp, &h)
+	if err != nil {
+		return nil, err
+	}
+	return h, nil
 }
 
 func (c *client) DelHollyday(id uint, employee Employee) error {

@@ -42,7 +42,7 @@ func (s *service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 }
 
 func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, employee pkg.Employee) (int64, error) {
-	hollydays, err := s.db.GetHollydayBetweenStartAndEnd(start, end, employee.ID)
+	hollydays, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -227,6 +227,14 @@ func (s *service) GetActivity(id uint, employee pkg.Employee) (*pkg.Activity, er
 	return a, nil
 }
 
+func (s *service) GetActivities(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Activity, error) {
+	a, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, employee.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return a, nil
+}
 func (s *service) DelActivity(id uint, employee pkg.Employee) error {
 	a, err := s.GetActivity(id, employee)
 	if err != nil {
@@ -243,6 +251,7 @@ func (s *service) AddHollyday(h pkg.Hollyday, employee pkg.Employee) (*pkg.Holly
 	}
 	return &h, nil
 }
+
 func (s *service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, error) {
 	h, err := s.db.GetHollyday(id)
 	if err != nil {
@@ -251,6 +260,15 @@ func (s *service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, er
 
 	if h.UserID != employee.ID {
 		return nil, pkg.ErrPermissionDenied
+	}
+
+	return h, nil
+}
+
+func (s *service) GetHollydays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Hollyday, error) {
+	h, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
+	if err != nil {
+		return nil, err
 	}
 
 	return h, nil

@@ -20,7 +20,7 @@ func (d *Db) GetHollyday(id uint) (*pkg.Hollyday, error) {
 	return nil, tx.Error
 }
 
-func (d *Db) GetHollydayBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Hollyday, error) {
+func (d *Db) GetHollydaysBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Hollyday, error) {
 	hollydays := []pkg.Hollyday{}
 	tx := d.Conn.Where("user_id = ?", employeeID).Where("start between ? and ?", start, end).Or("end < ?", end).Find(&hollydays)
 	if tx.Error != nil {

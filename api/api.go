@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"git.goasum.de/jasper/overtime/pkg"
 	"github.com/gin-gonic/gin"
@@ -139,6 +140,26 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, h)
 		}
 	})
+	v1.GET("/activity", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		h, err := a.os.GetActivities(start, end, *e)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, h)
+		}
+	})
 	v1.DELETE("/activity/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
@@ -182,6 +203,26 @@ func (a *API) createEndPoints() {
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		h, err := a.os.GetHollyday(uint(id), *e)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, h)
+		}
+	})
+	v1.GET("/hollyday", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		h, err := a.os.GetHollydays(start, end, *e)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {

@@ -1,6 +1,9 @@
 package pkg
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 type OvertimeService interface {
 	CalcCurrentOverview(e Employee) (*Overview, error)
@@ -9,9 +12,11 @@ type OvertimeService interface {
 	AddActivity(activity Activity, employee Employee) (*Activity, error)
 	StopRunningActivity(employee Employee) (*Activity, error)
 	GetActivity(id uint, employee Employee) (*Activity, error)
+	GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error)
 	DelActivity(id uint, employee Employee) error
 	AddHollyday(h Hollyday, employee Employee) (*Hollyday, error)
 	GetHollyday(id uint, employee Employee) (*Hollyday, error)
+	GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error)
 	DelHollyday(id uint, employee Employee) error
 }
 
