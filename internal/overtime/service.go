@@ -181,10 +181,8 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 
 func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
 	ca, err := s.db.GetRunningActivityByEmployeeID(employee.ID)
-	if err != nil {
-		return nil, err
-	}
-	if ca != nil {
+	if err != nil || ca.Start == nil {
+		log.Debug(err)
 		return nil, pkg.ErrActivityIsRunning
 	}
 	now := time.Now()

@@ -85,7 +85,9 @@ func (a *API) createEndPoints() {
 		fmt.Println(e)
 		desc := c.Param("desc")
 		ac, err := a.os.StartActivity(desc, *e)
-		if err != nil {
+		if err == pkg.ErrActivityIsRunning {
+			c.JSON(http.StatusConflict, err.Error())
+		} else if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, ac)
