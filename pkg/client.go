@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -144,8 +145,12 @@ func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
 	return &a, nil
 }
 
+func timeFormatForQuery(t time.Time) string {
+	return url.QueryEscape(t.Format(time.RFC3339))
+}
+
 func (c *client) GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start=%s&end=%s", start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)), nil)
+	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +194,7 @@ func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
 }
 
 func (c *client) GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday?start=%s&end=%s", start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)), nil)
+	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
 	if err != nil {
 		return nil, err
 	}
