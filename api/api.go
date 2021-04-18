@@ -121,15 +121,15 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 		}
 		var ia pkg.InputActivity
-		err = c.Bind(&a)
+		err = c.Bind(&ia)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		act := pkg.Activity{
 			UserID:      e.ID,
-			Start:       &ia.Start,
-			End:         &ia.End,
+			Start:       ia.Start,
+			End:         ia.End,
 			Description: ia.Description,
 		}
 		ac, err := a.os.AddActivity(act, *e)
@@ -161,12 +161,12 @@ func (a *API) createEndPoints() {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
-		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
+		start, err := time.Parse(time.RFC3339, c.Query("start"))
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
-		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
+		end, err := time.Parse(time.RFC3339, c.Query("end"))
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
@@ -201,7 +201,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 		}
 		var ih pkg.InputHollyday
-		err = c.Bind(a)
+		err = c.Bind(ih)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)

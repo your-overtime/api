@@ -57,8 +57,8 @@ type Activity struct {
 }
 
 type InputActivity struct {
-	Start       time.Time
-	End         time.Time
+	Start       *time.Time
+	End         *time.Time
 	Description string
 }
 
