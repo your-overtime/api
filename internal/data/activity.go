@@ -17,7 +17,7 @@ func (d *Db) GetRunningActivityByEmployeeID(eID uint) (*pkg.Activity, error) {
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return nil, tx.Error
+	return &a, nil
 }
 
 func (d *Db) GetActivity(id uint) (*pkg.Activity, error) {

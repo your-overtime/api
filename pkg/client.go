@@ -72,7 +72,10 @@ func (c *client) CalcCurrentOverview(e Employee) (*Overview, error) {
 	}
 	var o Overview
 	err = respToJson(resp, &o)
-	return &o, err
+	if err != nil {
+		return nil, err
+	}
+	return &o, nil
 }
 
 func (c *client) CalcOverviewForThisYear(e Employee) (*Overview, error) {
@@ -82,7 +85,10 @@ func (c *client) CalcOverviewForThisYear(e Employee) (*Overview, error) {
 	}
 	var o Overview
 	err = respToJson(resp, &o)
-	return &o, err
+	if err != nil {
+		return nil, err
+	}
+	return &o, nil
 }
 
 func (c *client) StartActivity(desc string, employee Employee) (*Activity, error) {
@@ -92,7 +98,10 @@ func (c *client) StartActivity(desc string, employee Employee) (*Activity, error
 	}
 	var a Activity
 	err = respToJson(resp, &a)
-	return &a, err
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (c *client) AddActivity(activity Activity, employee Employee) (*Activity, error) {
@@ -102,7 +111,10 @@ func (c *client) AddActivity(activity Activity, employee Employee) (*Activity, e
 	}
 	var a Activity
 	err = respToJson(resp, &a)
-	return &a, err
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (c *client) StopRunningActivity(employee Employee) (*Activity, error) {
@@ -112,7 +124,10 @@ func (c *client) StopRunningActivity(employee Employee) (*Activity, error) {
 	}
 	var a Activity
 	err = respToJson(resp, &a)
-	return &a, err
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
@@ -122,7 +137,10 @@ func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
 	}
 	var a Activity
 	err = respToJson(resp, &a)
-	return &a, err
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (c *client) DelActivity(id uint, employee Employee) error {
@@ -137,7 +155,10 @@ func (c *client) AddHollyday(hollyday Hollyday, employee Employee) (*Hollyday, e
 	}
 	var h Hollyday
 	err = respToJson(resp, &h)
-	return &h, err
+	if err != nil {
+		return nil, err
+	}
+	return &h, nil
 }
 
 func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
@@ -147,7 +168,10 @@ func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
 	}
 	var h Hollyday
 	err = respToJson(resp, &h)
-	return &h, err
+	if err != nil {
+		return nil, err
+	}
+	return &h, nil
 }
 
 func (c *client) DelHollyday(id uint, employee Employee) error {
