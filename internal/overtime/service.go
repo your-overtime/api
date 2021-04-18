@@ -5,8 +5,6 @@ import (
 	"math"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"git.goasum.de/jasper/overtime/internal/data"
 	"git.goasum.de/jasper/overtime/pkg"
 )
@@ -67,7 +65,6 @@ func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 		}
 
 		freeTimeInMinutes += mins
-		fmt.Println("Holly ", a.ID, " ", hs*60+mf*60, " ", mins, " ", int64(employee.WeekWorkingTimeInMinutes)/5)
 	}
 	return freeTimeInMinutes, nil
 }
@@ -162,8 +159,6 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 	if wdNumber < 5 {
 		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
 	}
-
-	log.Debug("Location : ", now.Location(), " Time : ", now) // local time
 	o := &pkg.Overview{
 		Date:               now,
 		WeekNumber:         wn,
@@ -180,9 +175,8 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 }
 
 func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
-	ca, err := s.db.GetRunningActivityByEmployeeID(employee.ID)
-	if err != nil || ca.Start == nil {
-		log.Debug(err)
+	ca, _ := s.db.GetRunningActivityByEmployeeID(employee.ID)
+	if ca != nil {
 		return nil, pkg.ErrActivityIsRunning
 	}
 	now := time.Now()
@@ -191,13 +185,19 @@ func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 		Start:       &now,
 		Description: desc,
 	}
-	err = s.db.SaveActivity(&a)
-	return &a, err
+	err := s.db.SaveActivity(&a)
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (s *service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
 	err := s.db.SaveActivity(&a)
-	return &a, err
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (s *service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, error) {

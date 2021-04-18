@@ -21,12 +21,10 @@ type API struct {
 
 func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 	token := c.Request.FormValue("token")
-	fmt.Println(token)
 	if len(token) > 0 {
 		return a.es.FromToken(token)
 	}
 	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
-	fmt.Println(authHeaderSlice)
 	if len(authHeaderSlice) == 2 {
 		switch strings.ToLower(authHeaderSlice[1]) {
 		case "basic":
