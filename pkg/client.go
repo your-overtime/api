@@ -145,7 +145,7 @@ func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
 }
 
 func (c *client) GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start%s&end=%s", start, end), nil)
+	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start%s&end=%s", start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
 }
 
 func (c *client) GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday?start=%s&end=%s", start, end), nil)
+	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday?start=%s&end=%s", start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)), nil)
 	if err != nil {
 		return nil, err
 	}
