@@ -105,7 +105,10 @@ func (s *service) CalcOverviewForThisYear(e pkg.Employee) (*pkg.Overview, error)
 		return nil, err
 	}
 
-	ot := at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes/uint((7-wdNumber)))
+	ot := at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes)
+	if wdNumber < 5 {
+		ot = at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
+	}
 
 	o := &pkg.Overview{
 		Date:               time.Now(),
@@ -156,7 +159,7 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 	}
 
 	ot := at + ft - int64(e.WeekWorkingTimeInMinutes)
-	if 5-wdNumber != 0 {
+	if wdNumber < 5 {
 		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
 	}
 
