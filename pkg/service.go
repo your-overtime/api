@@ -19,6 +19,7 @@ var (
 	ErrUserNotFound       = errors.New("User not found")
 	ErrInvalidCredentials = errors.New("Login or password are wrong")
 	ErrPermissionDenied   = errors.New("Permission denied")
+	ErrActivityIsRunning  = errors.New("A acclivity is currently running")
 )
 
 type EmployeeService interface {

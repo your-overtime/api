@@ -180,13 +180,20 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 }
 
 func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
+	ca, err := s.db.GetRunningActivityByEmployeeID(employee.ID)
+	if err != nil {
+		return nil, err
+	}
+	if ca != nil {
+		return nil, pkg.ErrActivityIsRunning
+	}
 	now := time.Now()
 	a := pkg.Activity{
 		UserID:      employee.ID,
 		Start:       &now,
 		Description: desc,
 	}
-	err := s.db.SaveActivity(&a)
+	err = s.db.SaveActivity(&a)
 	return &a, err
 }
 
