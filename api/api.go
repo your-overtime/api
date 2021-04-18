@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"git.goasum.de/jasper/overtime/pkg"
 	"github.com/gin-gonic/gin"
 )
@@ -55,10 +57,12 @@ func (a *API) createEndPoints() {
 	v1.GET("overview/current", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		overview, err := a.os.CalcCurrentOverview(*e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, overview)
@@ -67,10 +71,12 @@ func (a *API) createEndPoints() {
 	v1.GET("overview", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		overview, err := a.os.CalcOverviewForThisYear(*e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, overview)
@@ -79,6 +85,7 @@ func (a *API) createEndPoints() {
 	v1.POST("/activity/:desc", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		fmt.Println(e)
@@ -87,6 +94,7 @@ func (a *API) createEndPoints() {
 		if err == pkg.ErrActivityIsRunning {
 			c.JSON(http.StatusConflict, err.Error())
 		} else if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, ac)
@@ -95,10 +103,12 @@ func (a *API) createEndPoints() {
 	v1.DELETE("/activity", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		ac, err := a.os.StopRunningActivity(*e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, ac)
@@ -107,11 +117,13 @@ func (a *API) createEndPoints() {
 	v1.POST("/activity", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		var ia pkg.InputActivity
 		err = c.Bind(&a)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		act := pkg.Activity{
@@ -122,6 +134,7 @@ func (a *API) createEndPoints() {
 		}
 		ac, err := a.os.AddActivity(act, *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, ac)
@@ -130,11 +143,13 @@ func (a *API) createEndPoints() {
 	v1.GET("/activity/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		h, err := a.os.GetActivity(uint(id), *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, h)
@@ -143,18 +158,22 @@ func (a *API) createEndPoints() {
 	v1.GET("/activity", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		h, err := a.os.GetActivities(start, end, *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, h)
@@ -163,11 +182,13 @@ func (a *API) createEndPoints() {
 	v1.DELETE("/activity/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		err = a.os.DelActivity(uint(id), *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, "")
@@ -176,11 +197,13 @@ func (a *API) createEndPoints() {
 	v1.POST("/hollyday", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		var ih pkg.InputHollyday
 		err = c.Bind(a)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		ho := pkg.Hollyday{
@@ -191,6 +214,7 @@ func (a *API) createEndPoints() {
 		}
 		h, err := a.os.AddHollyday(ho, *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, h)
@@ -199,11 +223,13 @@ func (a *API) createEndPoints() {
 	v1.GET("/hollyday/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		h, err := a.os.GetHollyday(uint(id), *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, h)
@@ -212,18 +238,22 @@ func (a *API) createEndPoints() {
 	v1.GET("/hollyday", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
 		if err != nil {
+			log.Debug(start, err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
 		if err != nil {
+			log.Debug(end, err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		h, err := a.os.GetHollydays(start, end, *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, h)
@@ -232,11 +262,13 @@ func (a *API) createEndPoints() {
 	v1.DELETE("/hollyday/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		err = a.os.DelHollyday(uint(id), *e)
 		if err != nil {
+			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, "")
