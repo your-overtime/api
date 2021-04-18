@@ -5,6 +5,8 @@ import (
 	"math"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"git.goasum.de/jasper/overtime/internal/data"
 	"git.goasum.de/jasper/overtime/pkg"
 )
@@ -153,13 +155,14 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 		return nil, err
 	}
 
-	ot := int64(e.WeekWorkingTimeInMinutes)
+	ot := at + ft - int64(e.WeekWorkingTimeInMinutes)
 	if 5-wdNumber != 0 {
 		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
 	}
 
+	log.Debug("Location : ", now.Location(), " Time : ", now) // local time
 	o := &pkg.Overview{
-		Date:               time.Now(),
+		Date:               now,
 		WeekNumber:         wn,
 		Employee:           &e,
 		ActiveTimeThisWeek: at,
