@@ -145,7 +145,7 @@ func (c *client) GetActivity(id uint, employee Employee) (*Activity, error) {
 }
 
 func (c *client) GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start%s&end=%s", start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)), nil)
+	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start=%s&end=%s", start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)), nil)
 	if err != nil {
 		return nil, err
 	}
