@@ -3,6 +3,7 @@ package pkg
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -43,6 +44,9 @@ func (c *client) doRequest(method string, resource string, data interface{}) (*h
 	resp, err := client.Do(req)
 	if err != nil {
 		return resp, err
+	}
+	if resp.StatusCode >= 400 {
+		return resp, errors.New(resp.Status)
 	}
 
 	return resp, err

@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strings"
+	"time"
 
 	"git.goasum.de/jasper/overtime/api"
 	"git.goasum.de/jasper/overtime/internal/data"
@@ -26,6 +27,14 @@ func main() {
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
+	if len(os.Getenv("TZ")) > 0 {
+		loc, err := time.LoadLocation(os.Getenv("TZ"))
+		if err != nil {
+			panic(err)
+		}
+		time.Local = loc
+	}
+
 	db, err := data.Init(
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
