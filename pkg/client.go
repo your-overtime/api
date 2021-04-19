@@ -67,20 +67,7 @@ func InitOvertimeClient(host string, authHeader string) OvertimeService {
 	}
 }
 
-func (c *client) CalcCurrentOverview(e Employee) (*Overview, error) {
-	resp, err := c.doRequest("GET", "overview/current", nil)
-	if err != nil {
-		return nil, err
-	}
-	var o Overview
-	err = respToJson(resp, &o)
-	if err != nil {
-		return nil, err
-	}
-	return &o, nil
-}
-
-func (c *client) CalcOverviewForThisYear(e Employee) (*Overview, error) {
+func (c *client) CalcOverview(e Employee) (*Overview, error) {
 	resp, err := c.doRequest("GET", "overview", nil)
 	if err != nil {
 		return nil, err
