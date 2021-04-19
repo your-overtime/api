@@ -22,7 +22,7 @@ func (d *Db) GetHollyday(id uint) (*pkg.Hollyday, error) {
 
 func (d *Db) GetHollydaysBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Hollyday, error) {
 	hollydays := []pkg.Hollyday{}
-	tx := d.Conn.Where("user_id = ?", employeeID).Where("start between ? and ?", start, end).Or("end < ?", end).Find(&hollydays)
+	tx := d.Conn.Where("user_id = ?", employeeID).Where("start between ? and ?", start, end).Or("end between ? and ?", start, end).Find(&hollydays)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

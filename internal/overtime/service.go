@@ -1,6 +1,7 @@
 package overtime
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -32,9 +33,7 @@ func (s *service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 			diff = a.End.Sub(*a.Start)
 		}
 
-		hs, mf := math.Modf(diff.Hours())
-
-		activityTimeInMinutes += int64(hs*60 + mf*60)
+		activityTimeInMinutes += int64(diff.Minutes())
 	}
 	return activityTimeInMinutes, nil
 }
@@ -63,35 +62,19 @@ func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 	if err != nil {
 		return 0, err
 	}
-	var freeTimeInMinutes int64
+	freeTimeInMinutes := int64(0)
 	for _, a := range hollydays {
-		var (
-			hs   float64
-			mf   float64
-			mins int64
-			diff time.Duration
-		)
+		fmt.Println(a.Description, " ", a.Start, " ", a.End)
 		s := a.Start
+		c := 1
 		for {
-			yyyy, mm, dd := s.Date()
-			s := s.AddDate(yyyy, int(mm), dd+1)
+			if weekDayToInt(s.Weekday()) < 5 {
+				freeTimeInMinutes += int64(employee.WeekWorkingTimeInMinutes) / 5
+			}
+			s = s.AddDate(0, 0, 1)
+			c++
 			if s.Unix() > a.End.Unix() {
 				break
-			}
-			if weekDayToInt(s.Weekday()) < 5 {
-				if a.Start.Unix() >= start.Unix() {
-					diff = a.End.Sub(a.Start)
-				} else {
-					diff = a.End.Sub(start)
-				}
-
-				ds, _ := math.Modf(diff.Hours() / 24)
-				hs, mf = math.Modf(diff.Hours())
-				mins = int64(hs*60 + mf*60)
-
-				mins = int64(mins-int64(employee.WeekWorkingTimeInMinutes)/5) * int64(ds)
-
-				freeTimeInMinutes += mins
 			}
 		}
 	}
@@ -109,10 +92,15 @@ func (s *service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *p
 		return 0, 0, err
 	}
 
-	ot := at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes)
+	diff := now.Sub(start)
+	ds, _ := math.Modf(diff.Hours() / 24)
+
+	ot := at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds) - int64(e.WeekWorkingTimeInMinutes)
 	if wdNumber < 5 {
-		ot = at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
+		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds) - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
 	}
+
+	fmt.Printf("%d %d %d %f %s %s\n", at, ft, ot, ds, start, now)
 
 	return at, ot, nil
 }
