@@ -6,8 +6,7 @@ import (
 )
 
 type OvertimeService interface {
-	CalcCurrentOverview(e Employee) (*Overview, error)
-	CalcOverviewForThisYear(e Employee) (*Overview, error)
+	CalcOverview(e Employee) (*Overview, error)
 	StartActivity(desc string, employee Employee) (*Activity, error)
 	AddActivity(activity Activity, employee Employee) (*Activity, error)
 	StopRunningActivity(employee Employee) (*Activity, error)

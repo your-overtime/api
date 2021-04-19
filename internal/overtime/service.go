@@ -1,7 +1,6 @@
 package overtime
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -36,7 +35,6 @@ func (s *service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 		hs, mf := math.Modf(diff.Hours())
 
 		activityTimeInMinutes += int64(hs*60 + mf*60)
-		fmt.Println(a.ID, " ", a.Start, " ", a.End, " ", mf*60)
 	}
 	return activityTimeInMinutes, nil
 }
@@ -52,54 +50,34 @@ func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 			hs   float64
 			mf   float64
 			mins int64
+			diff time.Duration
 		)
 		if a.Start.Unix() >= start.Unix() {
-			diff := a.End.Sub(a.Start)
-			hs, mf = math.Modf(diff.Hours())
-			mins = int64(hs*60 + mf*60)
+			diff = a.End.Sub(a.Start)
 		} else {
-			diff := a.End.Sub(start)
-			hs, mf = math.Modf(diff.Hours())
-			mins = int64(hs*60 + mf*60)
-			mins = int64(mins - int64(employee.WeekWorkingTimeInMinutes)/5)
+			diff = a.End.Sub(start)
 		}
+
+		ds, _ := math.Modf(diff.Hours() / 24)
+		hs, mf = math.Modf(diff.Hours())
+		mins = int64(hs*60 + mf*60)
+
+		mins = int64(mins-int64(employee.WeekWorkingTimeInMinutes)/5) * int64(ds)
 
 		freeTimeInMinutes += mins
 	}
 	return freeTimeInMinutes, nil
 }
 
-func (s *service) CalcOverviewForThisYear(e pkg.Employee) (*pkg.Overview, error) {
-	now := time.Now()
-	yyyy, _, _ := now.Date()
-	wd := now.Weekday()
-	_, wn := now.ISOWeek()
-	var wdNumber int
-	switch wd {
-	case time.Tuesday:
-		wdNumber = 1
-	case time.Wednesday:
-		wdNumber = 2
-	case time.Thursday:
-		wdNumber = 3
-	case time.Friday:
-		wdNumber = 4
-	case time.Saturday:
-		wdNumber = 5
-	case time.Sunday:
-		wdNumber = 6
-	default:
-		wdNumber = 0
-	}
-	wStart := time.Date(yyyy, 01, 01, 0, 0, 0, 0, now.Location())
-	at, err := s.SumActivityBetweenStartAndEndInMinutes(wStart, now, e.ID)
+func (s *service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *pkg.Employee, wn int, wdNumber int) (int64, int64, error) {
+	at, err := s.SumActivityBetweenStartAndEndInMinutes(start, now, e.ID)
 	if err != nil {
-		return nil, err
+		return 0, 0, err
 	}
 
-	ft, err := s.SumHollydaysBetweenStartAndEndInMinutes(wStart, now, e)
+	ft, err := s.SumHollydaysBetweenStartAndEndInMinutes(start, now, *e)
 	if err != nil {
-		return nil, err
+		return 0, 0, err
 	}
 
 	ot := at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes)
@@ -107,22 +85,10 @@ func (s *service) CalcOverviewForThisYear(e pkg.Employee) (*pkg.Overview, error)
 		ot = at + ft - int64(e.WeekWorkingTimeInMinutes*uint(wn-1)) - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
 	}
 
-	o := &pkg.Overview{
-		Date:               time.Now(),
-		WeekNumber:         wn,
-		Employee:           &e,
-		ActiveTimeThisWeek: at,
-		OvertimeInMinutes:  ot,
-	}
-	cra, err := s.db.GetRunningActivityByEmployeeID(e.ID)
-	if err == nil {
-		o.ActiveActivity = cra
-	}
-
-	return o, nil
+	return at, ot, nil
 }
 
-func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
+func (s *service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	now := time.Now()
 	yyyy, mm, dd := now.Date()
 	// TODO: sum working hours (maybe for the running year) and subtract e.WeekWorkingTime per week and hollydays
@@ -145,26 +111,34 @@ func (s *service) CalcCurrentOverview(e pkg.Employee) (*pkg.Overview, error) {
 	default:
 		wdNumber = 0
 	}
+	// This week
 	wStart := time.Date(yyyy, mm, dd-wdNumber, 0, 0, 0, 0, now.Location())
-	at, err := s.SumActivityBetweenStartAndEndInMinutes(wStart, now, e.ID)
+	at, ot, err := s.calcOvertimeAndActivetime(wStart, now, &e, wn, wdNumber)
 	if err != nil {
 		return nil, err
 	}
-	ft, err := s.SumHollydaysBetweenStartAndEndInMinutes(wStart, now, e)
+	// This month
+	mStart := time.Date(yyyy, mm, 01, 0, 0, 0, 0, now.Location())
+	mat, mot, err := s.calcOvertimeAndActivetime(mStart, now, &e, wn, wdNumber)
 	if err != nil {
 		return nil, err
 	}
-
-	ot := at + ft - int64(e.WeekWorkingTimeInMinutes)
-	if wdNumber < 5 {
-		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
+	// This year
+	yStart := time.Date(yyyy, 01, 01, 0, 0, 0, 0, now.Location())
+	yat, yot, err := s.calcOvertimeAndActivetime(yStart, now, &e, wn, wdNumber)
+	if err != nil {
+		return nil, err
 	}
 	o := &pkg.Overview{
-		Date:               now,
-		WeekNumber:         wn,
-		Employee:           &e,
-		ActiveTimeThisWeek: at,
-		OvertimeInMinutes:  ot,
+		Date:                         now,
+		WeekNumber:                   wn,
+		Employee:                     &e,
+		ActiveTimeThisWeekInMinutes:  at,
+		ActiveTimeThisMonthInMinutes: mat,
+		ActiveTimeThisYearInMinutes:  yat,
+		OvertimeThisWeekInMinutes:    ot,
+		OvertimeThisMonthInMinutes:   mot,
+		OvertimeThisYearInMinutes:    yot,
 	}
 	cra, err := s.db.GetRunningActivityByEmployeeID(e.ID)
 	if err == nil {
