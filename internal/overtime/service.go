@@ -95,12 +95,10 @@ func (s *service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *p
 	diff := now.Sub(start)
 	ds, _ := math.Modf(diff.Hours() / 24)
 
-	ot := at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds) - int64(e.WeekWorkingTimeInMinutes)
+	ot := at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds)
 	if wdNumber < 5 {
-		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds) - int64(e.WeekWorkingTimeInMinutes/uint((5-wdNumber)))
+		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds) - int64(e.WeekWorkingTimeInMinutes/uint((5)))
 	}
-
-	fmt.Printf("%d %d %d %f %s %s\n", at, ft, ot, ds, start, now)
 
 	return at, ot, nil
 }
