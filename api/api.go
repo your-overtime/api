@@ -54,27 +54,13 @@ func (a *API) createEndPoints() {
 	api := a.router.Group("/api")
 
 	v1 := api.Group("/v1")
-	v1.GET("overview/current", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-		}
-		overview, err := a.os.CalcCurrentOverview(*e)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
-		} else {
-			c.JSON(http.StatusOK, overview)
-		}
-	})
 	v1.GET("overview", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 		}
-		overview, err := a.os.CalcOverviewForThisYear(*e)
+		overview, err := a.os.CalcOverview(*e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
