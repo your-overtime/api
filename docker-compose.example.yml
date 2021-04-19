@@ -3,7 +3,7 @@ services:
   traces-api:
     build: 
       context: .
-      dockerfile: Dockerfile
+      dockerfile: DockerfileWithBuild
     environment:
       - API_HOST=0.0.0.0:8080
       - DB_USER=tracer

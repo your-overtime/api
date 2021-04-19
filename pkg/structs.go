@@ -79,6 +79,8 @@ type InputHollyday struct {
 type Overview struct {
 	Date                         time.Time
 	WeekNumber                   int
+	OvertimeThisDayInMinutes     int64
+	ActiveTimeThisDayInMinutes   int64
 	OvertimeThisWeekInMinutes    int64
 	ActiveTimeThisWeekInMinutes  int64
 	OvertimeThisMonthInMinutes   int64

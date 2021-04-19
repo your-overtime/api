@@ -39,6 +39,25 @@ func (s *service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 	return activityTimeInMinutes, nil
 }
 
+func weekDayToInt(wd time.Weekday) int {
+	switch wd {
+	case time.Tuesday:
+		return 1
+	case time.Wednesday:
+		return 2
+	case time.Thursday:
+		return 3
+	case time.Friday:
+		return 4
+	case time.Saturday:
+		return 5
+	case time.Sunday:
+		return 6
+	default:
+		return 0
+	}
+}
+
 func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, employee pkg.Employee) (int64, error) {
 	hollydays, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
 	if err != nil {
@@ -52,19 +71,29 @@ func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 			mins int64
 			diff time.Duration
 		)
-		if a.Start.Unix() >= start.Unix() {
-			diff = a.End.Sub(a.Start)
-		} else {
-			diff = a.End.Sub(start)
+		s := a.Start
+		for {
+			yyyy, mm, dd := s.Date()
+			s := s.AddDate(yyyy, int(mm), dd+1)
+			if s.Unix() > a.End.Unix() {
+				break
+			}
+			if weekDayToInt(s.Weekday()) < 5 {
+				if a.Start.Unix() >= start.Unix() {
+					diff = a.End.Sub(a.Start)
+				} else {
+					diff = a.End.Sub(start)
+				}
+
+				ds, _ := math.Modf(diff.Hours() / 24)
+				hs, mf = math.Modf(diff.Hours())
+				mins = int64(hs*60 + mf*60)
+
+				mins = int64(mins-int64(employee.WeekWorkingTimeInMinutes)/5) * int64(ds)
+
+				freeTimeInMinutes += mins
+			}
 		}
-
-		ds, _ := math.Modf(diff.Hours() / 24)
-		hs, mf = math.Modf(diff.Hours())
-		mins = int64(hs*60 + mf*60)
-
-		mins = int64(mins-int64(employee.WeekWorkingTimeInMinutes)/5) * int64(ds)
-
-		freeTimeInMinutes += mins
 	}
 	return freeTimeInMinutes, nil
 }
@@ -94,26 +123,16 @@ func (s *service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	// TODO: sum working hours (maybe for the running year) and subtract e.WeekWorkingTime per week and hollydays
 	wd := now.Weekday()
 	_, wn := now.ISOWeek()
-	var wdNumber int
-	switch wd {
-	case time.Tuesday:
-		wdNumber = 1
-	case time.Wednesday:
-		wdNumber = 2
-	case time.Thursday:
-		wdNumber = 3
-	case time.Friday:
-		wdNumber = 4
-	case time.Saturday:
-		wdNumber = 5
-	case time.Sunday:
-		wdNumber = 6
-	default:
-		wdNumber = 0
+	wdNumber := weekDayToInt(wd)
+	// This day
+	dStart := time.Date(yyyy, mm, dd, 0, 0, 0, 0, now.Location())
+	at, ot, err := s.calcOvertimeAndActivetime(dStart, now, &e, wn, wdNumber)
+	if err != nil {
+		return nil, err
 	}
 	// This week
 	wStart := time.Date(yyyy, mm, dd-wdNumber, 0, 0, 0, 0, now.Location())
-	at, ot, err := s.calcOvertimeAndActivetime(wStart, now, &e, wn, wdNumber)
+	wat, wot, err := s.calcOvertimeAndActivetime(wStart, now, &e, wn, wdNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -133,10 +152,12 @@ func (s *service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 		Date:                         now,
 		WeekNumber:                   wn,
 		Employee:                     &e,
-		ActiveTimeThisWeekInMinutes:  at,
+		ActiveTimeThisDayInMinutes:   at,
+		ActiveTimeThisWeekInMinutes:  wat,
 		ActiveTimeThisMonthInMinutes: mat,
 		ActiveTimeThisYearInMinutes:  yat,
-		OvertimeThisWeekInMinutes:    ot,
+		OvertimeThisDayInMinutes:     ot,
+		OvertimeThisWeekInMinutes:    wot,
 		OvertimeThisMonthInMinutes:   mot,
 		OvertimeThisYearInMinutes:    yot,
 	}
