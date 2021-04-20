@@ -1,4 +1,4 @@
-package overtime
+package service
 
 import (
 	"fmt"
@@ -9,17 +9,17 @@ import (
 	"git.goasum.de/jasper/overtime/pkg"
 )
 
-type service struct {
+type Service struct {
 	db *data.Db
 }
 
-func Init(db *data.Db) pkg.OvertimeService {
-	return &service{
+func Init(db *data.Db) *Service {
+	return &Service{
 		db: db,
 	}
 }
 
-func (s *service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end time.Time, employeeID uint) (int64, error) {
+func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end time.Time, employeeID uint) (int64, error) {
 	activities, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, employeeID)
 	if err != nil {
 		return 0, err
@@ -57,7 +57,7 @@ func weekDayToInt(wd time.Weekday) int {
 	}
 }
 
-func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, employee pkg.Employee) (int64, error) {
+func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, employee pkg.Employee) (int64, error) {
 	hollydays, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
 	if err != nil {
 		return 0, err
@@ -81,7 +81,7 @@ func (s *service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 	return freeTimeInMinutes, nil
 }
 
-func (s *service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *pkg.Employee, wn int, wdNumber int) (int64, int64, error) {
+func (s *Service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *pkg.Employee, wn int, wdNumber int) (int64, int64, error) {
 	at, err := s.SumActivityBetweenStartAndEndInMinutes(start, now, e.ID)
 	if err != nil {
 		return 0, 0, err
@@ -103,7 +103,7 @@ func (s *service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *p
 	return at, ot, nil
 }
 
-func (s *service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
+func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	now := time.Now()
 	yyyy, mm, dd := now.Date()
 	// TODO: sum working hours (maybe for the running year) and subtract e.WeekWorkingTime per week and hollydays
@@ -155,7 +155,7 @@ func (s *service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	return o, nil
 }
 
-func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
+func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
 	ca, _ := s.db.GetRunningActivityByEmployeeID(employee.ID)
 	if ca != nil {
 		return nil, pkg.ErrActivityIsRunning
@@ -173,7 +173,7 @@ func (s *service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 	return &a, nil
 }
 
-func (s *service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+func (s *Service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
 	err := s.db.SaveActivity(&a)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (s *service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activ
 	return &a, nil
 }
 
-func (s *service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, error) {
+func (s *Service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, error) {
 	a, err := s.db.GetRunningActivityByEmployeeID(employee.ID)
 	if err != nil {
 		return nil, err
@@ -195,7 +195,7 @@ func (s *service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, err
 	return a, nil
 }
 
-func (s *service) GetActivity(id uint, employee pkg.Employee) (*pkg.Activity, error) {
+func (s *Service) GetActivity(id uint, employee pkg.Employee) (*pkg.Activity, error) {
 	a, err := s.db.GetActivity(id)
 	if err != nil {
 		return nil, err
@@ -208,7 +208,7 @@ func (s *service) GetActivity(id uint, employee pkg.Employee) (*pkg.Activity, er
 	return a, nil
 }
 
-func (s *service) GetActivities(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Activity, error) {
+func (s *Service) GetActivities(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Activity, error) {
 	a, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, employee.ID)
 	if err != nil {
 		return nil, err
@@ -216,7 +216,7 @@ func (s *service) GetActivities(start time.Time, end time.Time, employee pkg.Emp
 
 	return a, nil
 }
-func (s *service) DelActivity(id uint, employee pkg.Employee) error {
+func (s *Service) DelActivity(id uint, employee pkg.Employee) error {
 	a, err := s.GetActivity(id, employee)
 	if err != nil {
 		return err
@@ -225,7 +225,7 @@ func (s *service) DelActivity(id uint, employee pkg.Employee) error {
 	return tx.Error
 }
 
-func (s *service) AddHollyday(h pkg.Hollyday, employee pkg.Employee) (*pkg.Hollyday, error) {
+func (s *Service) AddHollyday(h pkg.Hollyday, employee pkg.Employee) (*pkg.Hollyday, error) {
 	err := s.db.SaveHollyday(&h)
 	if err != nil {
 		return nil, err
@@ -233,7 +233,7 @@ func (s *service) AddHollyday(h pkg.Hollyday, employee pkg.Employee) (*pkg.Holly
 	return &h, nil
 }
 
-func (s *service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, error) {
+func (s *Service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, error) {
 	h, err := s.db.GetHollyday(id)
 	if err != nil {
 		return nil, err
@@ -246,7 +246,7 @@ func (s *service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, er
 	return h, nil
 }
 
-func (s *service) GetHollydays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Hollyday, error) {
+func (s *Service) GetHollydays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Hollyday, error) {
 	h, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
 	if err != nil {
 		return nil, err
@@ -255,7 +255,7 @@ func (s *service) GetHollydays(start time.Time, end time.Time, employee pkg.Empl
 	return h, nil
 }
 
-func (s *service) DelHollyday(id uint, employee pkg.Employee) error {
+func (s *Service) DelHollyday(id uint, employee pkg.Employee) error {
 	h, err := s.GetHollyday(id, employee)
 	if err != nil {
 		return err

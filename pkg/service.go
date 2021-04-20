@@ -17,6 +17,12 @@ type OvertimeService interface {
 	GetHollyday(id uint, employee Employee) (*Hollyday, error)
 	GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error)
 	DelHollyday(id uint, employee Employee) error
+
+	SaveEmployee(employee Employee) (*Employee, error)
+	DeleteEmployee(login string) error
+	SaveToken(token Token, employee Employee) (*Token, error)
+	DeleteToken(tokenID uint, employee Employee) error
+	GetTokens(employee Employee) ([]Token, error)
 }
 
 var (
@@ -25,12 +31,3 @@ var (
 	ErrPermissionDenied   = errors.New("Permission denied")
 	ErrActivityIsRunning  = errors.New("A activity is currently running")
 )
-
-type EmployeeService interface {
-	FromToken(token string) (*Employee, error)
-	Login(login string, password string) (*Employee, error)
-	SaveEmployee(employee Employee) (*Employee, error)
-	DeleteEmployee(login string) error
-	SaveToken(token Token, employee Employee) (*Token, error)
-	DeleteToken(tokenID uint, employee Employee) error
-}

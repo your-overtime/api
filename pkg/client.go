@@ -197,3 +197,51 @@ func (c *client) DelHollyday(id uint, employee Employee) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("hollyday/%d", id), nil)
 	return err
 }
+
+func (c *client) SaveEmployee(employee Employee) (*Employee, error) {
+	resp, err := c.doRequest("POST", "employee", employee)
+	if err != nil {
+		return nil, err
+	}
+	var e Employee
+	err = respToJson(resp, &e)
+	if err != nil {
+		return nil, err
+	}
+	return &e, nil
+}
+
+func (c *client) DeleteEmployee(login string) error {
+	_, err := c.doRequest("DELETE", fmt.Sprintf("employee/%s", login), nil)
+	return err
+}
+func (c *client) SaveToken(token Token, employee Employee) (*Token, error) {
+	resp, err := c.doRequest("POST", "token", token)
+	if err != nil {
+		return nil, err
+	}
+	var t Token
+	err = respToJson(resp, &t)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
+}
+
+func (c *client) DeleteToken(tokenID uint, employee Employee) error {
+	_, err := c.doRequest("DELETE", fmt.Sprintf("token/%d", tokenID), nil)
+	return err
+}
+
+func (c *client) GetTokens(employee Employee) ([]Token, error) {
+	resp, err := c.doRequest("GET", "token", nil)
+	if err != nil {
+		return nil, err
+	}
+	var ts []Token
+	err = respToJson(resp, &ts)
+	if err != nil {
+		return nil, err
+	}
+	return ts, nil
+}

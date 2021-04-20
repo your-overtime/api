@@ -11,14 +11,14 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"git.goasum.de/jasper/overtime/internal/service"
 	"git.goasum.de/jasper/overtime/pkg"
 	"github.com/gin-gonic/gin"
 )
 
 // API struct
 type API struct {
-	os         pkg.OvertimeService
-	es         pkg.EmployeeService
+	os         *service.Service
 	router     *gin.Engine
 	host       string
 	adminToken string
@@ -37,7 +37,7 @@ func (a *API) adminAuth() gin.HandlerFunc {
 func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 	token := c.Request.FormValue("token")
 	if len(token) > 0 {
-		return a.es.FromToken(token)
+		return a.os.FromToken(token)
 	}
 	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
 	if len(authHeaderSlice) == 2 {
@@ -52,9 +52,9 @@ func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 			if len(basicAuth) != 2 {
 				return nil, pkg.ErrUserNotFound
 			}
-			return a.es.Login(basicAuth[0], basicAuth[1])
+			return a.os.Login(basicAuth[0], basicAuth[1])
 		default:
-			return a.es.FromToken(authHeaderSlice[1])
+			return a.os.FromToken(authHeaderSlice[1])
 		}
 
 	}
@@ -283,7 +283,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		}
-		t, err := a.es.SaveToken(it, *e)
+		t, err := a.os.SaveToken(it, *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -298,7 +298,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-		err = a.es.DeleteToken(uint(id), *e)
+		err = a.os.DeleteToken(uint(id), *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -315,7 +315,7 @@ func (a *API) createEndPoints() {
 				log.Debug(err)
 				c.JSON(http.StatusBadRequest, err)
 			}
-			e, err := a.es.SaveEmployee(ie.ToEmployee())
+			e, err := a.os.SaveEmployee(ie.ToEmployee())
 			if err != nil {
 				log.Debug(err)
 				c.JSON(http.StatusInternalServerError, err)
@@ -327,11 +327,10 @@ func (a *API) createEndPoints() {
 }
 
 // Init API server
-func Init(os pkg.OvertimeService, es pkg.EmployeeService, adminToken string) *API {
+func Init(os *service.Service, adminToken string) *API {
 	return &API{
 		router:     gin.Default(),
 		os:         os,
-		es:         es,
 		adminToken: adminToken,
 	}
 }

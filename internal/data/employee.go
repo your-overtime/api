@@ -34,6 +34,16 @@ func (d *Db) GetEmployee(id int) (*pkg.Employee, error) {
 	return &e, nil
 }
 
+func (d *Db) GetTokens(e pkg.Employee) ([]pkg.Token, error) {
+	var ts []pkg.Token
+	tx := d.Conn.Where("user_id = ?", e.ID).Find(&ts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return ts, nil
+}
+
 func (d *Db) GetEmployeeByToken(token string) (*pkg.Employee, error) {
 	t := pkg.Token{}
 	tx := d.Conn.Where("token = ?", token).First(&t)

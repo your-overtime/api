@@ -1,24 +1,13 @@
-package employee
+package service
 
 import (
 	"fmt"
 
-	"git.goasum.de/jasper/overtime/internal/data"
 	"git.goasum.de/jasper/overtime/pkg"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type service struct {
-	db *data.Db
-}
-
-func Init(db *data.Db) pkg.EmployeeService {
-	return &service{
-		db: db,
-	}
-}
-
-func (s *service) FromToken(token string) (*pkg.Employee, error) {
+func (s *Service) FromToken(token string) (*pkg.Employee, error) {
 	fmt.Println(token)
 	return s.db.GetEmployeeByToken(token)
 }
@@ -34,7 +23,7 @@ func comparePasswords(hashedPw string, plainPw string) bool {
 	return true
 }
 
-func (s *service) Login(login string, password string) (*pkg.Employee, error) {
+func (s *Service) Login(login string, password string) (*pkg.Employee, error) {
 	e, err := s.db.GetEmployeeByLogin(login)
 	if err != nil {
 		return nil, err
@@ -47,7 +36,7 @@ func (s *service) Login(login string, password string) (*pkg.Employee, error) {
 	return nil, pkg.ErrInvalidCredentials
 }
 
-func (s *service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
+func (s *Service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
 	err := s.db.SaveEmployee(&employee)
 	if err != nil {
 		return nil, err
@@ -55,12 +44,20 @@ func (s *service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
 	return &employee, nil
 }
 
-func (s *service) DeleteEmployee(employeeID string) error {
+func (s *Service) DeleteEmployee(employeeID string) error {
 	tx := s.db.Conn.Model(pkg.Employee{}).Delete(employeeID)
 	return tx.Error
 }
 
-func (s *service) SaveToken(token pkg.Token, employee pkg.Employee) (*pkg.Token, error) {
+func (s *Service) GetTokens(employee pkg.Employee) ([]pkg.Token, error) {
+	ts, err := s.db.GetTokens(employee)
+	if err != nil {
+		return nil, err
+	}
+	return ts, nil
+}
+
+func (s *Service) SaveToken(token pkg.Token, employee pkg.Employee) (*pkg.Token, error) {
 	token.UserID = employee.ID
 	tx := s.db.Conn.Save(&token)
 	if tx.Error != nil {
@@ -69,7 +66,7 @@ func (s *service) SaveToken(token pkg.Token, employee pkg.Employee) (*pkg.Token,
 	return &token, nil
 }
 
-func (s *service) DeleteToken(tokenID uint, employee pkg.Employee) error {
+func (s *Service) DeleteToken(tokenID uint, employee pkg.Employee) error {
 	var t pkg.Token
 	tx := s.db.Conn.First(&t, tokenID)
 	if tx.Error != nil {

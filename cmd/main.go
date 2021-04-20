@@ -7,8 +7,7 @@ import (
 
 	"git.goasum.de/jasper/overtime/api"
 	"git.goasum.de/jasper/overtime/internal/data"
-	"git.goasum.de/jasper/overtime/internal/employee"
-	"git.goasum.de/jasper/overtime/internal/overtime"
+	"git.goasum.de/jasper/overtime/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
@@ -45,8 +44,7 @@ func main() {
 		panic(err)
 	}
 
-	es := employee.Init(db)
-	ovs := overtime.Init(db)
-	api := api.Init(ovs, es, os.Getenv("ADMIN_TOKEN"))
+	ovs := service.Init(db)
+	api := api.Init(ovs, os.Getenv("ADMIN_TOKEN"))
 	api.Start(os.Getenv("HOST"))
 }
