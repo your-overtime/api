@@ -14,7 +14,7 @@ type InputEmployee struct {
 	WeekWorkingTimeInMinutes uint
 }
 
-func (u *InputEmployee) toEmployee() Employee {
+func (u *InputEmployee) ToEmployee() Employee {
 	return Employee{
 		User: &User{
 			Name:     u.Name,
@@ -39,7 +39,7 @@ type Token struct {
 	gorm.Model
 	CreationTime time.Time
 	Name         string
-	UserID       int
+	UserID       uint
 	Token        string
 }
 

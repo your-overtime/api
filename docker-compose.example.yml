@@ -5,10 +5,12 @@ services:
       context: .
       dockerfile: DockerfileWithBuild
     environment:
-      - API_HOST=0.0.0.0:8080
+      - HOST=0.0.0.0:8080
       - DB_USER=tracer
       - DB_PASSWORD=secret
       - DB_HOST=db:3306
       - DB_NAME=traces
       - DEBUG=false
+      - ADMIN_TOKEN=secret
+      - TZ=Europe/Berlin
     restart: unless-stopped

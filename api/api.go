@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -16,10 +17,21 @@ import (
 
 // API struct
 type API struct {
-	os     pkg.OvertimeService
-	es     pkg.EmployeeService
-	router *gin.Engine
-	host   string
+	os         pkg.OvertimeService
+	es         pkg.EmployeeService
+	router     *gin.Engine
+	host       string
+	adminToken string
+}
+
+func (a *API) adminAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.FormValue("token")
+
+		if token != a.adminToken {
+			c.AbortWithError(http.StatusUnauthorized, errors.New("Invalid token"))
+		}
+	}
 }
 
 func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
@@ -260,14 +272,67 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, "")
 		}
 	})
+	v1.POST("/token", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+		}
+		var it pkg.Token
+		err = c.Bind(&it)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+		}
+		t, err := a.es.SaveToken(it, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusCreated, t)
+		}
+	})
+	v1.DELETE("/token/:id", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+		}
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		err = a.es.DeleteToken(uint(id), *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, "token deleted")
+		}
+	})
+	authorizedV1 := v1.Group("/", a.adminAuth())
+	{
+		authorizedV1.POST("/employee", func(c *gin.Context) {
+			var ie pkg.InputEmployee
+			err := c.Bind(&ie)
+			if err != nil {
+				log.Debug(err)
+				c.JSON(http.StatusBadRequest, err)
+			}
+			e, err := a.es.SaveEmployee(ie.ToEmployee())
+			if err != nil {
+				log.Debug(err)
+				c.JSON(http.StatusInternalServerError, err)
+			} else {
+				c.JSON(http.StatusCreated, e)
+			}
+		})
+	}
 }
 
 // Init API server
-func Init(os pkg.OvertimeService, es pkg.EmployeeService) *API {
+func Init(os pkg.OvertimeService, es pkg.EmployeeService, adminToken string) *API {
 	return &API{
-		router: gin.Default(),
-		os:     os,
-		es:     es,
+		router:     gin.Default(),
+		os:         os,
+		es:         es,
+		adminToken: adminToken,
 	}
 }
 

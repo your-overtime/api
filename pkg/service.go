@@ -29,5 +29,8 @@ var (
 type EmployeeService interface {
 	FromToken(token string) (*Employee, error)
 	Login(login string, password string) (*Employee, error)
-	AddEmployee(employee Employee) (*Employee, error)
+	SaveEmployee(employee Employee) (*Employee, error)
+	DeleteEmployee(login string) error
+	SaveToken(token Token, employee Employee) (*Token, error)
+	DeleteToken(tokenID uint, employee Employee) error
 }

@@ -47,10 +47,37 @@ func (s *service) Login(login string, password string) (*pkg.Employee, error) {
 	return nil, pkg.ErrInvalidCredentials
 }
 
-func (s *service) AddEmployee(employee pkg.Employee) (*pkg.Employee, error) {
+func (s *service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
 	err := s.db.SaveEmployee(&employee)
 	if err != nil {
 		return nil, err
 	}
 	return &employee, nil
+}
+
+func (s *service) DeleteEmployee(employeeID string) error {
+	tx := s.db.Conn.Model(pkg.Employee{}).Delete(employeeID)
+	return tx.Error
+}
+
+func (s *service) SaveToken(token pkg.Token, employee pkg.Employee) (*pkg.Token, error) {
+	token.UserID = employee.ID
+	tx := s.db.Conn.Save(&token)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return &token, nil
+}
+
+func (s *service) DeleteToken(tokenID uint, employee pkg.Employee) error {
+	var t pkg.Token
+	tx := s.db.Conn.First(&t, tokenID)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if t.UserID == employee.ID {
+		tx := s.db.Conn.Delete(&employee)
+		return tx.Error
+	}
+	return pkg.ErrPermissionDenied
 }
