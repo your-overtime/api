@@ -198,8 +198,8 @@ func (c *client) DelHollyday(id uint, employee Employee) error {
 	return err
 }
 
-func (c *client) SaveEmployee(employee Employee) (*Employee, error) {
-	resp, err := c.doRequest("POST", "employee", employee)
+func (c *client) SaveEmployee(employee Employee, adminToken string) (*Employee, error) {
+	resp, err := c.doRequest("POST", "employee?adminToken="+adminToken, employee)
 	if err != nil {
 		return nil, err
 	}
@@ -211,8 +211,8 @@ func (c *client) SaveEmployee(employee Employee) (*Employee, error) {
 	return &e, nil
 }
 
-func (c *client) DeleteEmployee(login string) error {
-	_, err := c.doRequest("DELETE", fmt.Sprintf("employee/%s", login), nil)
+func (c *client) DeleteEmployee(login string, adminToken string) error {
+	_, err := c.doRequest("DELETE", fmt.Sprintf("employee/%s?adminToken=%s", login, adminToken), nil)
 	return err
 }
 func (c *client) SaveToken(token Token, employee Employee) (*Token, error) {

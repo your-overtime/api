@@ -18,8 +18,8 @@ type OvertimeService interface {
 	GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error)
 	DelHollyday(id uint, employee Employee) error
 
-	SaveEmployee(employee Employee) (*Employee, error)
-	DeleteEmployee(login string) error
+	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
+	DeleteEmployee(login string, adminToken string) error
 	SaveToken(token Token, employee Employee) (*Token, error)
 	DeleteToken(tokenID uint, employee Employee) error
 	GetTokens(employee Employee) ([]Token, error)
