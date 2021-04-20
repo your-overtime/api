@@ -5,6 +5,7 @@ import (
 
 	"git.goasum.de/jasper/overtime/pkg"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func (s *Service) FromToken(token string) (*pkg.Employee, error) {
@@ -59,7 +60,12 @@ func (s *Service) GetTokens(employee pkg.Employee) ([]pkg.Token, error) {
 
 func (s *Service) SaveToken(token pkg.Token, employee pkg.Employee) (*pkg.Token, error) {
 	token.UserID = employee.ID
-	tx := s.db.Conn.Save(&token)
+	var tx *gorm.DB
+	if token.ID == 0 {
+		tx = s.db.Conn.Create(&token)
+	} else {
+		tx = s.db.Conn.Save(&token)
+	}
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

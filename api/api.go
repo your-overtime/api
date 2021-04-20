@@ -26,8 +26,8 @@ type API struct {
 
 func (a *API) adminAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.Request.FormValue("token")
-
+		token := c.Request.FormValue("adminToken")
+		log.Debug(token, " ", a.adminToken, " ", token == a.adminToken)
 		if token != a.adminToken {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("Invalid token"))
 		}
@@ -289,6 +289,21 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusCreated, t)
+		}
+	})
+	v1.GET("/token", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+		}
+
+		ts, err := a.os.GetTokens(*e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusCreated, ts)
 		}
 	})
 	v1.DELETE("/token/:id", func(c *gin.Context) {

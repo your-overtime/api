@@ -5,6 +5,7 @@ import (
 
 	"git.goasum.de/jasper/overtime/pkg"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func (d *Db) SaveEmployee(user *pkg.Employee) error {
@@ -15,8 +16,13 @@ func (d *Db) SaveEmployee(user *pkg.Employee) error {
 		}
 		user.Password = string(hash)
 	}
+	var tx *gorm.DB
+	if user.ID == 0 {
+		tx = d.Conn.Create(&user)
+	} else {
+		tx = d.Conn.Save(&user)
+	}
 
-	tx := d.Conn.Save(&user)
 	if tx.Error != nil {
 		return tx.Error
 	}
