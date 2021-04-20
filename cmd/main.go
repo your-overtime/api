@@ -47,6 +47,6 @@ func main() {
 
 	es := employee.Init(db)
 	ovs := overtime.Init(db)
-	api := api.Init(ovs, es)
+	api := api.Init(ovs, es, os.Getenv("ADMIN_TOKEN"))
 	api.Start(os.Getenv("HOST"))
 }
