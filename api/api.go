@@ -46,10 +46,12 @@ func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 			payload := []byte{}
 			_, err := base64.StdEncoding.Decode([]byte(authHeaderSlice[1]), payload)
 			if err != nil {
+				log.Debug(err)
 				return nil, pkg.ErrUserNotFound
 			}
 			basicAuth := strings.Split(string(payload), ":")
 			if len(basicAuth) != 2 {
+				log.Debug(pkg.ErrUserNotFound, " ", basicAuth)
 				return nil, pkg.ErrUserNotFound
 			}
 			return a.os.Login(basicAuth[0], basicAuth[1])

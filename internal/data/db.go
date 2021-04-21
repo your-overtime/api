@@ -3,6 +3,8 @@ package data
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
 	"git.goasum.de/jasper/overtime/pkg"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -29,6 +31,7 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
+		log.Debug(err)
 		return nil, err
 	}
 	db.Conn = conn

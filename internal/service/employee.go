@@ -3,6 +3,8 @@ package service
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
 	"git.goasum.de/jasper/overtime/pkg"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -18,6 +20,7 @@ func comparePasswords(hashedPw string, plainPw string) bool {
 	byteHash := []byte(hashedPw)
 	err := bcrypt.CompareHashAndPassword(byteHash, bytePlain)
 	if err != nil {
+		log.Debug(err)
 		return false
 	}
 
@@ -27,6 +30,7 @@ func comparePasswords(hashedPw string, plainPw string) bool {
 func (s *Service) Login(login string, password string) (*pkg.Employee, error) {
 	e, err := s.db.GetEmployeeByLogin(login)
 	if err != nil {
+		log.Debug(err)
 		return nil, err
 	}
 
@@ -40,6 +44,7 @@ func (s *Service) Login(login string, password string) (*pkg.Employee, error) {
 func (s *Service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
 	err := s.db.SaveEmployee(&employee)
 	if err != nil {
+		log.Debug(err)
 		return nil, err
 	}
 	return &employee, nil
@@ -53,6 +58,7 @@ func (s *Service) DeleteEmployee(employeeID string) error {
 func (s *Service) GetTokens(employee pkg.Employee) ([]pkg.Token, error) {
 	ts, err := s.db.GetTokens(employee)
 	if err != nil {
+		log.Debug(err)
 		return nil, err
 	}
 	return ts, nil
@@ -67,6 +73,7 @@ func (s *Service) SaveToken(token pkg.Token, employee pkg.Employee) (*pkg.Token,
 		tx = s.db.Conn.Save(&token)
 	}
 	if tx.Error != nil {
+		log.Debug(tx.Error)
 		return nil, tx.Error
 	}
 	return &token, nil
@@ -76,10 +83,12 @@ func (s *Service) DeleteToken(tokenID uint, employee pkg.Employee) error {
 	var t pkg.Token
 	tx := s.db.Conn.First(&t, tokenID)
 	if tx.Error != nil {
+		log.Debug(tx.Error)
 		return tx.Error
 	}
 	if t.UserID == employee.ID {
 		tx := s.db.Conn.Delete(&employee)
+		log.Debug(tx.Error)
 		return tx.Error
 	}
 	return pkg.ErrPermissionDenied
