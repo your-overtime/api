@@ -71,6 +71,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		overview, err := a.os.CalcOverview(*e)
 		if err != nil {
@@ -85,6 +86,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		fmt.Println(e)
 		desc := c.Param("desc")
@@ -103,6 +105,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		ac, err := a.os.StopRunningActivity(*e)
 		if err != nil {
@@ -117,12 +120,14 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		var ia pkg.InputActivity
 		err = c.Bind(&ia)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		act := pkg.Activity{
 			UserID:      e.ID,
@@ -143,6 +148,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		h, err := a.os.GetActivity(uint(id), *e)
@@ -158,16 +164,19 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		start, err := time.Parse(time.RFC3339, c.Query("start"))
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		end, err := time.Parse(time.RFC3339, c.Query("end"))
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		h, err := a.os.GetActivities(start, end, *e)
 		if err != nil {
@@ -182,6 +191,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		err = a.os.DelActivity(uint(id), *e)
@@ -197,12 +207,14 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		var ih pkg.InputHollyday
 		err = c.Bind(ih)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		ho := pkg.Hollyday{
 			UserID:      e.ID,
@@ -223,6 +235,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		h, err := a.os.GetHollyday(uint(id), *e)
@@ -238,16 +251,19 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
 		if err != nil {
 			log.Debug(start, err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
 		if err != nil {
 			log.Debug(end, err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		h, err := a.os.GetHollydays(start, end, *e)
 		if err != nil {
@@ -262,6 +278,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		err = a.os.DelHollyday(uint(id), *e)
@@ -277,11 +294,13 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		var it pkg.Token
 		err = c.Bind(&it)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		t, err := a.os.SaveToken(it, *e)
 		if err != nil {
@@ -296,6 +315,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 
 		ts, err := a.os.GetTokens(*e)
@@ -311,6 +331,7 @@ func (a *API) createEndPoints() {
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
+			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 		err = a.os.DeleteToken(uint(id), *e)
@@ -329,6 +350,7 @@ func (a *API) createEndPoints() {
 			if err != nil {
 				log.Debug(err)
 				c.JSON(http.StatusBadRequest, err)
+				return
 			}
 			e, err := a.os.SaveEmployee(ie.ToEmployee())
 			if err != nil {
