@@ -20,7 +20,7 @@ type OvertimeService interface {
 
 	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
 	DeleteEmployee(login string, adminToken string) error
-	SaveToken(token Token, employee Employee) (*Token, error)
+	CreateToken(token InputToken, employee Employee) (*Token, error)
 	DeleteToken(tokenID uint, employee Employee) error
 	GetTokens(employee Employee) ([]Token, error)
 }

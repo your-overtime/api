@@ -35,12 +35,16 @@ type User struct {
 	Tokens   []Token
 }
 
+type InputToken struct {
+	Name  string
+	Token string
+}
+
 type Token struct {
 	gorm.Model
-	CreationTime time.Time
-	Name         string
-	UserID       uint
-	Token        string
+	Name   string
+	UserID uint
+	Token  string
 }
 
 type Employee struct {

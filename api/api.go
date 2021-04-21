@@ -43,15 +43,14 @@ func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 	if len(authHeaderSlice) == 2 {
 		switch strings.ToLower(authHeaderSlice[0]) {
 		case "basic":
-			payload := []byte{}
-			_, err := base64.StdEncoding.Decode([]byte(authHeaderSlice[1]), payload)
+			payload, err := base64.StdEncoding.DecodeString(authHeaderSlice[1])
 			if err != nil {
 				log.Debug(err)
 				return nil, pkg.ErrUserNotFound
 			}
 			basicAuth := strings.Split(string(payload), ":")
 			if len(basicAuth) != 2 {
-				log.Debug(pkg.ErrUserNotFound, " ", basicAuth)
+				log.Debug(pkg.ErrUserNotFound, " ", basicAuth, " ", authHeaderSlice)
 				return nil, pkg.ErrUserNotFound
 			}
 			return a.os.Login(basicAuth[0], basicAuth[1])
@@ -298,13 +297,13 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		var it pkg.Token
+		var it pkg.InputToken
 		err = c.Bind(&it)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		t, err := a.os.SaveToken(it, *e)
+		t, err := a.os.CreateToken(it, *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
