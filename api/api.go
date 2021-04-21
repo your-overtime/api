@@ -211,7 +211,7 @@ func (a *API) createEndPoints() {
 			return
 		}
 		var ih pkg.InputHollyday
-		err = c.Bind(ih)
+		err = c.Bind(&ih)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)

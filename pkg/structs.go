@@ -36,8 +36,7 @@ type User struct {
 }
 
 type InputToken struct {
-	Name  string
-	Token string
+	Name string
 }
 
 type Token struct {

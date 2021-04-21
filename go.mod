@@ -3,7 +3,7 @@ module git.goasum.de/jasper/overtime
 go 1.15
 
 require (
-	git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2 // indirect
+	git.goasum.de/jasper/go-utils v0.0.0-20210421200206-fa38da763607 // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/sirupsen/logrus v1.8.0

@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-
-	"git.goasum.de/jasper/go-utils/pkg/string_utils"
 )
 
 type client struct {
@@ -32,7 +30,7 @@ func (c *client) doRequest(method string, resource string, data interface{}) (*h
 	}
 
 	if strings.HasPrefix(resource, "/") {
-		string_utils.TrimPrefix(resource, "/")
+		strings.TrimPrefix(resource, "/")
 	}
 	req, err := http.NewRequest(method, fmt.Sprintf("%sapi/v1/%s", c.host, resource), bytes.NewBuffer(dataBytes.Bytes()))
 
