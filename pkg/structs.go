@@ -30,7 +30,7 @@ type User struct {
 	gorm.Model
 	Name     string
 	Surname  string
-	Login    string
+	Login    string `gorm:"unique"`
 	Password string
 	Tokens   []Token
 }
