@@ -64,7 +64,7 @@ func (d *Db) GetEmployeeByToken(token string) (*pkg.Employee, error) {
 		return nil, tx.Error
 	}
 	e := pkg.Employee{}
-	tx = d.Conn.First(&e, t.ID)
+	tx = d.Conn.First(&e, t.UserID)
 	if tx.Error != nil {
 		log.Debug(tx.Error)
 		return nil, tx.Error
