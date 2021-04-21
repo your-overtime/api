@@ -65,11 +65,15 @@ func (d *Db) GetEmployeeByToken(token string) (*pkg.Employee, error) {
 }
 
 func (d *Db) GetEmployeeByLogin(login string) (*pkg.Employee, error) {
-	e := pkg.Employee{}
-	tx := d.Conn.Where("login = ?", login).First(&e)
+	e := &pkg.Employee{}
+	tx := d.Conn.Where("login = ?", login).First(e)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 
-	return &e, nil
+	if e == nil {
+		return nil, pkg.ErrUserNotFound
+	}
+
+	return e, nil
 }

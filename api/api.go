@@ -41,10 +41,10 @@ func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 	}
 	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
 	if len(authHeaderSlice) == 2 {
-		switch strings.ToLower(authHeaderSlice[1]) {
+		switch strings.ToLower(authHeaderSlice[0]) {
 		case "basic":
 			payload := []byte{}
-			_, err := base64.StdEncoding.Decode(payload, []byte(authHeaderSlice[2]))
+			_, err := base64.StdEncoding.Decode([]byte(authHeaderSlice[1]), payload)
 			if err != nil {
 				return nil, pkg.ErrUserNotFound
 			}
