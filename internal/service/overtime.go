@@ -41,19 +41,19 @@ func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 func weekDayToInt(wd time.Weekday) int {
 	switch wd {
 	case time.Tuesday:
-		return 1
-	case time.Wednesday:
 		return 2
-	case time.Thursday:
+	case time.Wednesday:
 		return 3
-	case time.Friday:
+	case time.Thursday:
 		return 4
-	case time.Saturday:
+	case time.Friday:
 		return 5
-	case time.Sunday:
+	case time.Saturday:
 		return 6
+	case time.Sunday:
+		return 7
 	default:
-		return 0
+		return 1
 	}
 }
 
@@ -68,7 +68,7 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 		s := a.Start
 		c := 1
 		for {
-			if weekDayToInt(s.Weekday()) < 5 {
+			if weekDayToInt(s.Weekday()) < 6 {
 				freeTimeInMinutes += int64(employee.WeekWorkingTimeInMinutes) / 5
 			}
 			s = s.AddDate(0, 0, 1)
