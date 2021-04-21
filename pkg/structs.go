@@ -91,5 +91,4 @@ type Overview struct {
 	OvertimeThisYearInMinutes    int64
 	ActiveTimeThisYearInMinutes  int64
 	ActiveActivity               *Activity
-	Employee                     *Employee
 }

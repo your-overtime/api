@@ -137,7 +137,6 @@ func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	o := &pkg.Overview{
 		Date:                         now,
 		WeekNumber:                   wn,
-		Employee:                     &e,
 		ActiveTimeThisDayInMinutes:   at,
 		ActiveTimeThisWeekInMinutes:  wat,
 		ActiveTimeThisMonthInMinutes: mat,
