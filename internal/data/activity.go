@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"time"
 
 	"git.goasum.de/jasper/overtime/pkg"
@@ -32,7 +33,7 @@ func (d *Db) GetActivity(id uint) (*pkg.Activity, error) {
 func (d *Db) GetActivitiesBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Activity, error) {
 	activities := []pkg.Activity{}
 	tx := d.Conn.Where("user_id = ?", employeeID).Where("start between ? and ?", start, end).Find(&activities)
-	if tx.Error != nil {
+	if tx.Error != nil && tx.Error != sql.ErrNoRows {
 		return nil, tx.Error
 	}
 

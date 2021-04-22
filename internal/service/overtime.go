@@ -66,14 +66,17 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 	for _, a := range hollydays {
 		fmt.Println(a.Description, " ", a.Start, " ", a.End)
 		s := a.Start
+		if a.Start.Unix() < start.Unix() {
+			s = start
+		}
 		c := 1
 		for {
 			if weekDayToInt(s.Weekday()) < 6 {
-				freeTimeInMinutes += int64(employee.WeekWorkingTimeInMinutes) / 5
+				freeTimeInMinutes += int64(employee.WeekWorkingTimeInMinutes / 5)
 			}
 			s = s.AddDate(0, 0, 1)
 			c++
-			if s.Unix() > a.End.Unix() {
+			if s.Unix() >= a.End.Unix() {
 				break
 			}
 		}
@@ -96,8 +99,8 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *p
 	ds, _ := math.Modf(diff.Hours() / 24)
 
 	ot := at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds)
-	if wdNumber < 5 {
-		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/7)*int64(ds) - int64(e.WeekWorkingTimeInMinutes/uint((5)))
+	if wdNumber < 6 {
+		ot = at + ft - int64(e.WeekWorkingTimeInMinutes/7)*(int64(ds)-int64(wdNumber)) - int64(e.WeekWorkingTimeInMinutes/uint((5)))*int64(wdNumber)
 	}
 
 	return at, ot, nil
