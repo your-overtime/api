@@ -13,12 +13,12 @@ func (d *Db) SaveHollyday(a *pkg.Hollyday) error {
 }
 
 func (d *Db) GetHollyday(id uint) (*pkg.Hollyday, error) {
-	a := pkg.Hollyday{}
+	h := pkg.Hollyday{}
 	tx := d.Conn.First(&a, id)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return nil, tx.Error
+	return &h, nil
 }
 
 func (d *Db) GetHollydaysBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Hollyday, error) {
