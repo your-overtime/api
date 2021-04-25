@@ -14,7 +14,7 @@ func (d *Db) SaveHollyday(a *pkg.Hollyday) error {
 
 func (d *Db) GetHollyday(id uint) (*pkg.Hollyday, error) {
 	h := pkg.Hollyday{}
-	tx := d.Conn.First(&a, id)
+	tx := d.Conn.First(&h, id)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
