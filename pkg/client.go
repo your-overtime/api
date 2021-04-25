@@ -104,6 +104,19 @@ func (c *client) AddActivity(activity Activity, employee Employee) (*Activity, e
 	return &a, nil
 }
 
+func (c *client) UpdateActivity(activity Activity, employee Employee) (*Activity, error) {
+	resp, err := c.doRequest("PUT", fmt.Sprintf("activity/%d", activity.ID), activity)
+	if err != nil {
+		return nil, err
+	}
+	var a Activity
+	err = respToJson(resp, &a)
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
+}
+
 func (c *client) StopRunningActivity(employee Employee) (*Activity, error) {
 	resp, err := c.doRequest("DELETE", "activity", nil)
 	if err != nil {
@@ -154,6 +167,19 @@ func (c *client) DelActivity(id uint, employee Employee) error {
 
 func (c *client) AddHollyday(hollyday Hollyday, employee Employee) (*Hollyday, error) {
 	resp, err := c.doRequest("POST", "hollyday", hollyday)
+	if err != nil {
+		return nil, err
+	}
+	var h Hollyday
+	err = respToJson(resp, &h)
+	if err != nil {
+		return nil, err
+	}
+	return &h, nil
+}
+
+func (c *client) UpdateHollyday(hollyday Hollyday, employee Employee) (*Hollyday, error) {
+	resp, err := c.doRequest("PUT", fmt.Sprintf("hollyday/%d", hollyday.ID), hollyday)
 	if err != nil {
 		return nil, err
 	}

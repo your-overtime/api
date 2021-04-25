@@ -9,6 +9,7 @@ type OvertimeService interface {
 	CalcOverview(e Employee) (*Overview, error)
 	StartActivity(desc string, employee Employee) (*Activity, error)
 	AddActivity(activity Activity, employee Employee) (*Activity, error)
+	UpdateActivity(activity Activity, employee Employee) (*Activity, error)
 	StopRunningActivity(employee Employee) (*Activity, error)
 	GetActivity(id uint, employee Employee) (*Activity, error)
 	GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error)

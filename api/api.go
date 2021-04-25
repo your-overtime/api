@@ -10,6 +10,7 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 
 	"git.goasum.de/jasper/overtime/internal/service"
 	"git.goasum.de/jasper/overtime/pkg"
@@ -144,6 +145,36 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, ac)
 		}
 	})
+	v1.PUT("/activity/:id", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		var ia pkg.InputActivity
+		err = c.Bind(&ia)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		act := pkg.Activity{
+			Model:       gorm.Model{ID: uint(id)},
+			UserID:      e.ID,
+			Start:       ia.Start,
+			End:         ia.End,
+			Description: ia.Description,
+		}
+		ac, err := a.os.AddActivity(act, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, ac)
+		}
+	})
 	v1.GET("/activity/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
@@ -218,6 +249,36 @@ func (a *API) createEndPoints() {
 			return
 		}
 		ho := pkg.Hollyday{
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			Description: ih.Description,
+		}
+		h, err := a.os.AddHollyday(ho, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, h)
+		}
+	})
+	v1.PUT("/hollyday/:id", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		var ih pkg.InputHollyday
+		err = c.Bind(&ih)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		ho := pkg.Hollyday{
+			Model:       gorm.Model{ID: uint(id)},
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
