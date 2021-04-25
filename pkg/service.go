@@ -15,6 +15,7 @@ type OvertimeService interface {
 	GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error)
 	DelActivity(id uint, employee Employee) error
 	AddHollyday(h Hollyday, employee Employee) (*Hollyday, error)
+	UpdateHollyday(h Hollyday, employee Employee) (*Hollyday, error)
 	GetHollyday(id uint, employee Employee) (*Hollyday, error)
 	GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error)
 	DelHollyday(id uint, employee Employee) error
