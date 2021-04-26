@@ -1,10 +1,12 @@
 package service
 
 import (
+	"strings"
 	"time"
 
 	"git.goasum.de/jasper/overtime/internal/data"
 	"git.goasum.de/jasper/overtime/pkg"
+	log "github.com/sirupsen/logrus"
 )
 
 type Service struct {
@@ -79,32 +81,62 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 	return freeTimeInMinutes, nil
 }
 
-func (s *Service) calcOvertimeAndActivetime(start time.Time, now time.Time, e *pkg.Employee) (int64, int64, error) {
-	at, err := s.SumActivityBetweenStartAndEndInMinutes(start, now, e.ID)
-	if err != nil {
-		return 0, 0, err
-	}
+func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *pkg.Employee) (int64, int64, error) {
+	workingDays := strings.Split(e.WorkingDays, ",")
 
-	ft, err := s.SumHollydaysBetweenStartAndEndInMinutes(start, now, *e)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	workTimeInMinutes := int64(0)
+	var (
+		overtimeInMinutes   int64
+		activeTimeInMinutes int64
+	)
 	st := start
 	for {
-		if weekDayToInt(st.Weekday()) < 6 {
-			workTimeInMinutes += int64(e.WeekWorkingTimeInMinutes / 5)
+		be := time.Date(st.Year(), st.Month(), st.Day(), 0, 0, 0, 0, st.Location())
+		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 0, st.Location())
+		wd, err := s.db.GetWorkDay(be, e.ID)
+		if err != nil {
+			log.Debug(err)
 		}
-		st = st.AddDate(0, 0, 1)
-		if st.Unix() > now.Unix() {
+		if wd != nil {
+			activeTimeInMinutes = wd.ActiveTime
+			overtimeInMinutes = wd.Overtime
+			continue
+		}
+
+		var dayWorkTimeInMinutes int64
+		if st.Weekday() < 6 && len(e.WorkingDays) == 0 {
+			dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
+		} else if strings.Contains(e.WorkingDays, st.Weekday().String()) {
+			dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))
+		} else {
+			continue
+		}
+
+		at, err := s.SumActivityBetweenStartAndEndInMinutes(be, en, e.ID)
+		if err != nil {
+			return 0, 0, err
+		}
+
+		ft, err := s.SumHollydaysBetweenStartAndEndInMinutes(be, en, *e)
+		if err != nil {
+			return 0, 0, err
+		}
+		dayOvertimeInMinutes := at + ft - dayWorkTimeInMinutes
+		tx := s.db.Conn.Save(pkg.WorkDay{
+			Day:        be,
+			Overtime:   dayOvertimeInMinutes,
+			ActiveTime: at,
+		})
+		if tx.Error != nil {
+			return 0, 0, tx.Error
+		}
+		st := st.AddDate(0, 0, 1)
+		if st.Unix() > end.Unix() {
 			break
 		}
+		overtimeInMinutes += dayOvertimeInMinutes
 	}
 
-	ot := at + ft - workTimeInMinutes
-
-	return at, ot, nil
+	return activeTimeInMinutes, overtimeInMinutes, nil
 }
 
 func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {

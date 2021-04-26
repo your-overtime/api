@@ -49,6 +49,7 @@ type Token struct {
 type Employee struct {
 	*User                    `gorm:"embedded"`
 	WeekWorkingTimeInMinutes uint
+	WorkingDays              string
 }
 
 type Activity struct {
@@ -77,6 +78,14 @@ type InputHollyday struct {
 	Start       time.Time
 	End         time.Time
 	Description string
+}
+
+type WorkDay struct {
+	gorm.Model
+	Day        time.Time
+	Overtime   int64
+	ActiveTime int64
+	UserID     uint
 }
 
 type Overview struct {
