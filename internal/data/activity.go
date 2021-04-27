@@ -2,9 +2,11 @@ package data
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"git.goasum.de/jasper/overtime/pkg"
+	"gorm.io/gorm"
 )
 
 func (d *Db) SaveActivity(a *pkg.Activity) error {
@@ -16,7 +18,7 @@ func (d *Db) GetRunningActivityByEmployeeID(eID uint) (*pkg.Activity, error) {
 	a := pkg.Activity{}
 	tx := d.Conn.Where("user_id = ? and end is null", eID).First(&a)
 	if tx.Error != nil {
-		if tx.Error == sql.ErrNoRows {
+		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 			return nil, pkg.ErrNoActivityIsRunning
 		}
 		return nil, tx.Error
