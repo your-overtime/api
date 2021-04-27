@@ -110,7 +110,9 @@ func (a *API) createEndPoints() {
 			return
 		}
 		ac, err := a.os.StopRunningActivity(*e)
-		if err != nil {
+		if err != nil && err == pkg.ErrNoActivityIsRunning {
+			c.JSON(http.StatusOK, err)
+		} else if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
 		} else {

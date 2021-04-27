@@ -28,8 +28,9 @@ type OvertimeService interface {
 }
 
 var (
-	ErrUserNotFound       = errors.New("User not found")
-	ErrInvalidCredentials = errors.New("Login or password are wrong")
-	ErrPermissionDenied   = errors.New("Permission denied")
-	ErrActivityIsRunning  = errors.New("A activity is currently running")
+	ErrUserNotFound        = errors.New("User not found")
+	ErrInvalidCredentials  = errors.New("Login or password are wrong")
+	ErrPermissionDenied    = errors.New("Permission denied")
+	ErrActivityIsRunning   = errors.New("A activity is currently running")
+	ErrNoActivityIsRunning = errors.New("No activity is currently running")
 )

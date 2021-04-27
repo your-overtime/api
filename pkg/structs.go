@@ -82,7 +82,7 @@ type InputHollyday struct {
 
 type WorkDay struct {
 	gorm.Model
-	Day        time.Time
+	Day        time.Time `gorm:"unique"`
 	Overtime   int64
 	ActiveTime int64
 	UserID     uint
