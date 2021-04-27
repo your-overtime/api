@@ -57,8 +57,9 @@ func weekDayToInt(wd time.Weekday) int {
 	}
 }
 
-func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, employee pkg.Employee) (int64, error) {
-	hollydays, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
+func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, error) {
+	workingDays := strings.Split(e.WorkingDays, ",")
+	hollydays, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, e.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -69,11 +70,21 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 			s = start
 		}
 		for {
-			if weekDayToInt(s.Weekday()) < 6 {
-				freeTimeInMinutes += int64(employee.WeekWorkingTimeInMinutes / 5)
+			dayFreeTimeInMinutes := int64(0)
+			if weekDayToInt(s.Weekday()) < 6 && len(e.WorkingDays) == 0 {
+				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
+			} else if strings.Contains(e.WorkingDays, s.Weekday().String()) {
+				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))
+			} else {
+				s = s.AddDate(0, 0, 1)
+				if end.Unix() < s.Unix() {
+					break
+				}
+				continue
 			}
+			freeTimeInMinutes += dayFreeTimeInMinutes
 			s = s.AddDate(0, 0, 1)
-			if s.Unix() > a.End.Unix() {
+			if end.Unix() < s.Unix() {
 				break
 			}
 		}
@@ -83,31 +94,44 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 
 func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *pkg.Employee) (int64, int64, error) {
 	workingDays := strings.Split(e.WorkingDays, ",")
+	overtimeInMinutes := int64(0)
+	activeTimeInMinutes := int64(0)
+	now := time.Now()
 
-	var (
-		overtimeInMinutes   int64
-		activeTimeInMinutes int64
-	)
 	st := start
 	for {
 		be := time.Date(st.Year(), st.Month(), st.Day(), 0, 0, 0, 0, st.Location())
 		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 0, st.Location())
-		wd, err := s.db.GetWorkDay(be, e.ID)
-		if err != nil {
-			log.Debug(err)
+		if end.Unix() < en.Unix() {
+			en = end
 		}
-		if wd != nil {
-			activeTimeInMinutes = wd.ActiveTime
-			overtimeInMinutes = wd.Overtime
-			continue
+		isNowDay := (be.Year() == now.Year() && be.Month() == now.Month() && be.Day() == now.Day())
+		if !isNowDay && (weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 || strings.Contains(e.WorkingDays, st.Weekday().String())) {
+			wd, err := s.db.GetWorkDay(be, e.ID)
+			if err != nil {
+				log.Debug(err)
+			}
+			if wd != nil && err == nil {
+				activeTimeInMinutes += wd.ActiveTime
+				overtimeInMinutes += wd.Overtime
+				st = st.AddDate(0, 0, 1)
+				if st.Unix() > end.Unix() {
+					break
+				}
+				continue
+			}
 		}
 
-		var dayWorkTimeInMinutes int64
-		if st.Weekday() < 6 && len(e.WorkingDays) == 0 {
+		dayWorkTimeInMinutes := int64(0)
+		if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
 			dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
 		} else if strings.Contains(e.WorkingDays, st.Weekday().String()) {
 			dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))
 		} else {
+			st = st.AddDate(0, 0, 1)
+			if st.Unix() > end.Unix() {
+				break
+			}
 			continue
 		}
 
@@ -121,19 +145,23 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			return 0, 0, err
 		}
 		dayOvertimeInMinutes := at + ft - dayWorkTimeInMinutes
-		tx := s.db.Conn.Save(pkg.WorkDay{
-			Day:        be,
-			Overtime:   dayOvertimeInMinutes,
-			ActiveTime: at,
-		})
-		if tx.Error != nil {
-			return 0, 0, tx.Error
+		if !isNowDay {
+			tx := s.db.Conn.Create(&pkg.WorkDay{
+				Day:        be,
+				Overtime:   dayOvertimeInMinutes,
+				ActiveTime: at,
+				UserID:     e.ID,
+			})
+			if tx.Error != nil {
+				return 0, 0, tx.Error
+			}
 		}
-		st := st.AddDate(0, 0, 1)
+		overtimeInMinutes += dayOvertimeInMinutes
+		activeTimeInMinutes += at
+		st = st.AddDate(0, 0, 1)
 		if st.Unix() > end.Unix() {
 			break
 		}
-		overtimeInMinutes += dayOvertimeInMinutes
 	}
 
 	return activeTimeInMinutes, overtimeInMinutes, nil
