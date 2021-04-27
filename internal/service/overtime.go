@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -104,7 +103,6 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 		if st.Unix() > end.Unix() {
 			break
 		}
-		fmt.Println(st)
 		be := time.Date(st.Year(), st.Month(), st.Day(), 0, 0, 0, 0, st.Location())
 		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 0, st.Location())
 		if end.Unix() < en.Unix() {
