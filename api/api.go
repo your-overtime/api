@@ -406,6 +406,22 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, "token deleted")
 		}
 	})
+	v1.PATCH("account", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		var payload map[string]interface{}
+		e, err = a.os.UpdateAccount(payload, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, e)
+		}
+	})
 	authorizedV1 := v1.Group("/", a.adminAuth())
 	{
 		authorizedV1.POST("/employee", func(c *gin.Context) {

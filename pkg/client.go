@@ -235,10 +235,24 @@ func (c *client) SaveEmployee(employee Employee, adminToken string) (*Employee, 
 	return &e, nil
 }
 
+func (c *client) UpdateAccount(fields map[string]interface{}, employee Employee) (*Employee, error) {
+	resp, err := c.doRequest("PATCH", "account", fields)
+	if err != nil {
+		return nil, err
+	}
+	var e Employee
+	err = respToJson(resp, &e)
+	if err != nil {
+		return nil, err
+	}
+	return &e, nil
+}
+
 func (c *client) DeleteEmployee(login string, adminToken string) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("employee/%s?adminToken=%s", login, adminToken), nil)
 	return err
 }
+
 func (c *client) CreateToken(token InputToken, employee Employee) (*Token, error) {
 	resp, err := c.doRequest("POST", "token", token)
 	if err != nil {

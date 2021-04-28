@@ -12,6 +12,7 @@ type InputEmployee struct {
 	Login                    string
 	Password                 string
 	WeekWorkingTimeInMinutes uint
+	WorkingDays              string
 }
 
 func (u *InputEmployee) ToEmployee() Employee {
@@ -23,6 +24,7 @@ func (u *InputEmployee) ToEmployee() Employee {
 			Password: u.Password,
 		},
 		WeekWorkingTimeInMinutes: u.WeekWorkingTimeInMinutes,
+		WorkingDays:              u.WorkingDays,
 	}
 }
 

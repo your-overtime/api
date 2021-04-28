@@ -34,7 +34,7 @@ func (d *Db) SaveEmployee(user *pkg.Employee) error {
 	return nil
 }
 
-func (d *Db) GetEmployee(id int) (*pkg.Employee, error) {
+func (d *Db) GetEmployee(id uint) (*pkg.Employee, error) {
 	e := pkg.Employee{}
 	tx := d.Conn.First(&e, id)
 	if tx.Error != nil {

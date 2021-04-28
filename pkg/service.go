@@ -22,6 +22,8 @@ type OvertimeService interface {
 
 	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
 	DeleteEmployee(login string, adminToken string) error
+	UpdateAccount(fields map[string]interface{}, employee Employee) (*Employee, error)
+
 	CreateToken(token InputToken, employee Employee) (*Token, error)
 	DeleteToken(tokenID uint, employee Employee) error
 	GetTokens(employee Employee) ([]Token, error)
@@ -30,6 +32,7 @@ type OvertimeService interface {
 var (
 	ErrUserNotFound        = errors.New("User not found")
 	ErrInvalidCredentials  = errors.New("Login or password are wrong")
+	ErrBadRequest          = errors.New("Bad request")
 	ErrPermissionDenied    = errors.New("Permission denied")
 	ErrActivityIsRunning   = errors.New("A activity is currently running")
 	ErrNoActivityIsRunning = errors.New("No activity is currently running")

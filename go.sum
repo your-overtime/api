@@ -2,6 +2,8 @@ git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2 h1:io1V3/NHAEZ9
 git.goasum.de/jasper/go-utils v0.0.0-20210417194415-4fd847eb42d2/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
 git.goasum.de/jasper/go-utils v0.0.0-20210421200206-fa38da763607 h1:g1sapMcApkb1RbwSuvh3bB7nNla0ne/+mBSQEQM6DCY=
 git.goasum.de/jasper/go-utils v0.0.0-20210421200206-fa38da763607/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
+git.goasum.de/jasper/go-utils v0.0.0-20210428184937-b8616760a432 h1:/0QeGJQmvqO0ZthY1o/HnuSAsCUZMZAItzXdn234o2U=
+git.goasum.de/jasper/go-utils v0.0.0-20210428184937-b8616760a432/go.mod h1:A1+GHodpT3+Kff6yBt2JytleFowoJ0BLm0G+GNECWA0=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d h1:U+s90UTSYgptZMwQh2aRr3LuazLJIa+Pg3Kc1ylSYVY=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=

@@ -49,6 +49,33 @@ func (s *Service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
 	return &employee, nil
 }
 
+func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Employee) (*pkg.Employee, error) {
+	for f := range fields {
+		switch f {
+		case "Name":
+			employee.Name = fields[f].(string)
+		case "Surname":
+			employee.Surname = fields[f].(string)
+		case "Password":
+			employee.Password = fields[f].(string)
+		case "Login":
+			employee.Login = fields[f].(string)
+		case "WorkingDays":
+			employee.WorkingDays = fields[f].(string)
+		case "WeekWorkingTimeInMinutes":
+			employee.WeekWorkingTimeInMinutes = fields[f].(uint)
+		default:
+			return nil, pkg.ErrBadRequest
+		}
+	}
+	dbE, err := s.SaveEmployee(employee)
+	if err != nil {
+		return nil, err
+	}
+
+	return dbE, nil
+}
+
 func (s *Service) DeleteEmployee(employeeID string) error {
 	tx := s.db.Conn.Model(pkg.Employee{}).Delete(employeeID)
 	return tx.Error
