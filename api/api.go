@@ -424,6 +424,11 @@ func (a *API) createEndPoints() {
 			return
 		}
 		var payload map[string]interface{}
+		err = c.Bind(&payload)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
 		e, err = a.os.UpdateAccount(payload, *e)
 		if err != nil {
 			log.Debug(err)
