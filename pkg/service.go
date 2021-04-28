@@ -22,7 +22,9 @@ type OvertimeService interface {
 
 	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
 	DeleteEmployee(login string, adminToken string) error
+
 	UpdateAccount(fields map[string]interface{}, employee Employee) (*Employee, error)
+	GetAccount() (*Employee, error)
 
 	CreateToken(token InputToken, employee Employee) (*Token, error)
 	DeleteToken(tokenID uint, employee Employee) error

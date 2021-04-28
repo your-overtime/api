@@ -33,7 +33,7 @@ type User struct {
 	Name     string
 	Surname  string
 	Login    string `gorm:"unique"`
-	Password string
+	Password string `json:"-"`
 	Tokens   []Token
 }
 

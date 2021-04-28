@@ -406,6 +406,16 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, "token deleted")
 		}
 	})
+	v1.GET("account", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		} else {
+			c.JSON(http.StatusOK, e)
+		}
+	})
 	v1.PATCH("account", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
