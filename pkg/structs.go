@@ -87,7 +87,7 @@ type WorkDay struct {
 	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 	Overtime   int64
 	ActiveTime int64
-	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;type:text;not null"`
+	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;not null"`
 }
 
 type Overview struct {
