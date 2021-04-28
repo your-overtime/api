@@ -5,6 +5,7 @@ import (
 
 	utils "git.goasum.de/jasper/go-utils/pkg/string_utils"
 	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -70,6 +71,9 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Empl
 	}
 	dbE, err := s.SaveEmployee(employee)
 	if err != nil {
+		if err.(*mysql.MySQLError).Number == 1062 {
+			return nil, pkg.ErrDuplicateValue
+		}
 		return nil, err
 	}
 

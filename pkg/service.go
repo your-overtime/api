@@ -38,4 +38,5 @@ var (
 	ErrPermissionDenied    = errors.New("Permission denied")
 	ErrActivityIsRunning   = errors.New("A activity is currently running")
 	ErrNoActivityIsRunning = errors.New("No activity is currently running")
+	ErrDuplicateValue      = errors.New("Duplicate value")
 )

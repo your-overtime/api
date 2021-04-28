@@ -432,7 +432,11 @@ func (a *API) createEndPoints() {
 		e, err = a.os.UpdateAccount(payload, *e)
 		if err != nil {
 			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
+			if errors.Is(err, pkg.ErrDuplicateValue) {
+				c.JSON(http.StatusBadRequest, err)
+			} else {
+				c.JSON(http.StatusInternalServerError, err)
+			}
 		} else {
 			c.JSON(http.StatusOK, e)
 		}
