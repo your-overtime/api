@@ -16,3 +16,8 @@ func (d *Db) GetWorkDay(day time.Time, userID uint) (*pkg.WorkDay, error) {
 
 	return &w, nil
 }
+
+func (d *Db) DeleteWorkDay(day time.Time, userID uint) error {
+	tx := d.Conn.Delete(&pkg.WorkDay{}, d.Conn.Where("DATE(day) = DATE(?)", day).Where("user_id = ?", userID))
+	return tx.Error
+}

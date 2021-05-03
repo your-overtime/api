@@ -254,7 +254,7 @@ func (s *Service) GetActivity(id uint, employee pkg.Employee) (*pkg.Activity, er
 		return nil, err
 	}
 
-	if a.UserID != employee.ID {
+	if a != nil && a.UserID != employee.ID {
 		return nil, pkg.ErrPermissionDenied
 	}
 
