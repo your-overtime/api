@@ -2,6 +2,9 @@ package data
 
 import (
 	"fmt"
+	"net/url"
+	"os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -19,12 +22,18 @@ type Db struct {
 func Init(user string, pw string, host string, name string) (*Db, error) {
 	db := Db{}
 
+	tz := os.Getenv("TZ")
+	if len(tz) == 0 {
+		tz = time.Now().Location().String()
+	}
+
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		user,
-		pw,
+		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=%s",
+		url.QueryEscape(user),
+		url.QueryEscape(pw),
 		host,
-		name,
+		url.QueryEscape(name),
+		url.QueryEscape(tz),
 	)
 
 	fmt.Println(dsn)
