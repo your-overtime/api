@@ -74,7 +74,10 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 				break
 			}
 			dayFreeTimeInMinutes := int64(0)
-			if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
+			if a.LegalHollyday {
+				// Fix legal hollydays
+				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
+			} else if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
 			} else if strings.Contains(e.WorkingDays, st.Weekday().String()) {
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))

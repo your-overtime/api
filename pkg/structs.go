@@ -52,6 +52,7 @@ type Employee struct {
 	*User                    `gorm:"embedded"`
 	WeekWorkingTimeInMinutes uint
 	WorkingDays              string
+	NumWorkingDays           uint
 }
 
 type Activity struct {
@@ -70,16 +71,18 @@ type InputActivity struct {
 
 type Hollyday struct {
 	gorm.Model
-	Start       time.Time
-	End         time.Time
-	Description string
-	UserID      uint
+	Start         time.Time
+	End           time.Time
+	Description   string
+	LegalHollyday bool
+	UserID        uint
 }
 
 type InputHollyday struct {
-	Start       time.Time
-	End         time.Time
-	Description string
+	Start         time.Time
+	End           time.Time
+	Description   string
+	LegalHollyday bool
 }
 
 type WorkDay struct {
