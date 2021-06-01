@@ -232,6 +232,9 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee) (uint, error) {
 	}
 
 	wd := uint(weekDayToInt(now.Weekday()))
+	if employee.NumWorkingDays == 0 {
+		employee.NumWorkingDays = uint(len(strings.Split(employee.WorkingDays, ",")))
+	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
 
 	if len(acs) == 0 && (7-wd) > employee.NumWorkingDays {
