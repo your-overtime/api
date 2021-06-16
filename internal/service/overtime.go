@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -237,7 +238,8 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee) (uint, error) {
 	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
 
-	if len(acs) == 0 && (7-wd) > employee.NumWorkingDays {
+	// TODO: check number of existing workdays
+	if len(acs) == 0 && (7-wd) < employee.NumWorkingDays {
 		return 0, nil
 	}
 
