@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/overtime/api/pkg"
 )
 
 func (d *Db) SaveHollyday(a *pkg.Hollyday) error {

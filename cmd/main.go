@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"git.goasum.de/jasper/overtime/api"
-	"git.goasum.de/jasper/overtime/internal/data"
-	"git.goasum.de/jasper/overtime/internal/service"
+	"github.com/overtime/api/api"
+	"github.com/overtime/api/internal/data"
+	"github.com/overtime/api/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 

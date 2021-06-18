@@ -12,8 +12,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
-	"git.goasum.de/jasper/overtime/internal/service"
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/overtime/api/internal/service"
+	"github.com/overtime/api/pkg"
 	"github.com/gin-gonic/gin"
 )
 

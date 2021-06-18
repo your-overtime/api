@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/overtime/api/pkg"
 	"gorm.io/gorm"
 )
 

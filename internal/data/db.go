@@ -8,7 +8,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/overtime/api/pkg"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

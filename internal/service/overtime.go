@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"git.goasum.de/jasper/overtime/internal/data"
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/overtime/api/internal/data"
+	"github.com/overtime/api/pkg"
 	log "github.com/sirupsen/logrus"
 )
 

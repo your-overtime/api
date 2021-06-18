@@ -3,7 +3,7 @@ package data
 import (
 	"strings"
 
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/overtime/api/pkg"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
