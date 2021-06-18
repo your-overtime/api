@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/overtime/api/pkg"
+	"github.com/your-overtime/api/pkg"
 	"gorm.io/gorm"
 )
 

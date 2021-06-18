@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/overtime/api/internal/data"
-	"github.com/overtime/api/pkg"
+	"github.com/your-overtime/api/internal/data"
+	"github.com/your-overtime/api/pkg"
 	log "github.com/sirupsen/logrus"
 )
 

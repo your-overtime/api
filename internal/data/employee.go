@@ -3,7 +3,7 @@ package data
 import (
 	"strings"
 
-	"github.com/overtime/api/pkg"
+	"github.com/your-overtime/api/pkg"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 

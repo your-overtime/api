@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/overtime/api/api"
-	"github.com/overtime/api/internal/data"
-	"github.com/overtime/api/internal/service"
+	"github.com/your-overtime/api/api"
+	"github.com/your-overtime/api/internal/data"
+	"github.com/your-overtime/api/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/overtime/api/pkg"
-	"github.com/overtime/api/pkg/stringutils"
+	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/stringutils"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )

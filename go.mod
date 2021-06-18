@@ -1,4 +1,4 @@
-module github.com/overtime/api
+module github.com/your-overtime/api
 
 go 1.15
 

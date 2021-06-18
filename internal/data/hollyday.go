@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/overtime/api/pkg"
+	"github.com/your-overtime/api/pkg"
 )
 
 func (d *Db) SaveHollyday(a *pkg.Hollyday) error {

@@ -12,8 +12,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
-	"github.com/overtime/api/internal/service"
-	"github.com/overtime/api/pkg"
+	"github.com/your-overtime/api/internal/service"
+	"github.com/your-overtime/api/pkg"
 	"github.com/gin-gonic/gin"
 )
 

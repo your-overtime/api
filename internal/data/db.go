@@ -8,7 +8,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/overtime/api/pkg"
+	"github.com/your-overtime/api/pkg"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
