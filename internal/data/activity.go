@@ -45,11 +45,8 @@ func (d *Db) GetActivity(id uint) (*pkg.Activity, error) {
 func (d *Db) GetActivitiesBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Activity, error) {
 	activities := []pkg.Activity{}
 	tx := d.Conn.Where("user_id = ?", employeeID).
-		Where("start between ? and ?", start, end).
-		Or(
-			d.Conn.Where("end is not null AND end between ? and ?", start, end).
-				Where("start not between ? and ?", start, end),
-		).Find(&activities)
+		Where("? < end AND ? > start", start, end).
+		Find(&activities)
 	if tx.Error != nil && tx.Error != sql.ErrNoRows {
 		return nil, tx.Error
 	}
