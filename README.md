@@ -1,9 +1,11 @@
+# Your Overtime - API
+
+
+```yml
 version: "3.3"
-services: 
+services:
   api:
-    build: 
-      context: .
-      dockerfile: DockerfileWithBuild
+    image: ghcr.io/your-overtime/api:1.0.0
     environment:
       - HOST=0.0.0.0:8080
       - DB_USER=overtime
@@ -14,3 +16,4 @@ services:
       - ADMIN_TOKEN=secret
       - TZ=Europe/Berlin
     restart: unless-stopped
+```
