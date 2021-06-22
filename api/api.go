@@ -236,27 +236,27 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, "")
 		}
 	})
-	v1.POST("/hollyday", func(c *gin.Context) {
+	v1.POST("/holiday", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		var ih pkg.InputHollyday
+		var ih pkg.InputHoliday
 		err = c.Bind(&ih)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ho := pkg.Hollyday{
+		ho := pkg.Holiday{
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
 			Description: ih.Description,
 		}
-		h, err := a.os.AddHollyday(ho, *e)
+		h, err := a.os.AddHoliday(ho, *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -264,7 +264,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, h)
 		}
 	})
-	v1.PUT("/hollyday/:id", func(c *gin.Context) {
+	v1.PUT("/holiday/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			log.Debug(err)
@@ -272,21 +272,21 @@ func (a *API) createEndPoints() {
 			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-		var ih pkg.InputHollyday
+		var ih pkg.InputHoliday
 		err = c.Bind(&ih)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ho := pkg.Hollyday{
+		ho := pkg.Holiday{
 			Model:       gorm.Model{ID: uint(id)},
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
 			Description: ih.Description,
 		}
-		h, err := a.os.AddHollyday(ho, *e)
+		h, err := a.os.AddHoliday(ho, *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -294,7 +294,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, h)
 		}
 	})
-	v1.GET("/hollyday/:id", func(c *gin.Context) {
+	v1.GET("/holiday/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			log.Debug(err)
@@ -302,7 +302,7 @@ func (a *API) createEndPoints() {
 			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-		h, err := a.os.GetHollyday(uint(id), *e)
+		h, err := a.os.GetHoliday(uint(id), *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -310,7 +310,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, h)
 		}
 	})
-	v1.GET("/hollyday", func(c *gin.Context) {
+	v1.GET("/holiday", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			log.Debug(err)
@@ -329,7 +329,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		h, err := a.os.GetHollydays(start, end, *e)
+		h, err := a.os.GetHolidays(start, end, *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -337,7 +337,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, h)
 		}
 	})
-	v1.DELETE("/hollyday/:id", func(c *gin.Context) {
+	v1.DELETE("/holiday/:id", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {
 			log.Debug(err)
@@ -345,7 +345,7 @@ func (a *API) createEndPoints() {
 			return
 		}
 		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-		err = a.os.DelHollyday(uint(id), *e)
+		err = a.os.DelHoliday(uint(id), *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
