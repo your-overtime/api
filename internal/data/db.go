@@ -49,7 +49,7 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 	conn.AutoMigrate(&pkg.Activity{})
 	conn.AutoMigrate(&pkg.Employee{})
 	conn.AutoMigrate(&pkg.Token{})
-	conn.AutoMigrate(&pkg.Hollyday{})
+	conn.AutoMigrate(&pkg.Holiday{})
 	conn.AutoMigrate(&pkg.WorkDay{})
 
 	return &db, err

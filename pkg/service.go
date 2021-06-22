@@ -14,11 +14,11 @@ type OvertimeService interface {
 	GetActivity(id uint, employee Employee) (*Activity, error)
 	GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error)
 	DelActivity(id uint, employee Employee) error
-	AddHollyday(h Hollyday, employee Employee) (*Hollyday, error)
-	UpdateHollyday(h Hollyday, employee Employee) (*Hollyday, error)
-	GetHollyday(id uint, employee Employee) (*Hollyday, error)
-	GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error)
-	DelHollyday(id uint, employee Employee) error
+	AddHoliday(h Holiday, employee Employee) (*Holiday, error)
+	UpdateHoliday(h Holiday, employee Employee) (*Holiday, error)
+	GetHoliday(id uint, employee Employee) (*Holiday, error)
+	GetHolidays(start time.Time, end time.Time, employee Employee) ([]Holiday, error)
+	DelHoliday(id uint, employee Employee) error
 
 	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
 	DeleteEmployee(login string, adminToken string) error

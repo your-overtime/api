@@ -165,12 +165,12 @@ func (c *client) DelActivity(id uint, employee Employee) error {
 	return err
 }
 
-func (c *client) AddHollyday(hollyday Hollyday, employee Employee) (*Hollyday, error) {
-	resp, err := c.doRequest("POST", "hollyday", hollyday)
+func (c *client) AddHoliday(holiday Holiday, employee Employee) (*Holiday, error) {
+	resp, err := c.doRequest("POST", "holiday", holiday)
 	if err != nil {
 		return nil, err
 	}
-	var h Hollyday
+	var h Holiday
 	err = respToJson(resp, &h)
 	if err != nil {
 		return nil, err
@@ -178,12 +178,12 @@ func (c *client) AddHollyday(hollyday Hollyday, employee Employee) (*Hollyday, e
 	return &h, nil
 }
 
-func (c *client) UpdateHollyday(hollyday Hollyday, employee Employee) (*Hollyday, error) {
-	resp, err := c.doRequest("PUT", fmt.Sprintf("hollyday/%d", hollyday.ID), hollyday)
+func (c *client) UpdateHoliday(holiday Holiday, employee Employee) (*Holiday, error) {
+	resp, err := c.doRequest("PUT", fmt.Sprintf("holiday/%d", holiday.ID), holiday)
 	if err != nil {
 		return nil, err
 	}
-	var h Hollyday
+	var h Holiday
 	err = respToJson(resp, &h)
 	if err != nil {
 		return nil, err
@@ -191,12 +191,12 @@ func (c *client) UpdateHollyday(hollyday Hollyday, employee Employee) (*Hollyday
 	return &h, nil
 }
 
-func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday/%d", id), nil)
+func (c *client) GetHoliday(id uint, employee Employee) (*Holiday, error) {
+	resp, err := c.doRequest("GET", fmt.Sprintf("holiday/%d", id), nil)
 	if err != nil {
 		return nil, err
 	}
-	var h Hollyday
+	var h Holiday
 	err = respToJson(resp, &h)
 	if err != nil {
 		return nil, err
@@ -204,12 +204,12 @@ func (c *client) GetHollyday(id uint, employee Employee) (*Hollyday, error) {
 	return &h, nil
 }
 
-func (c *client) GetHollydays(start time.Time, end time.Time, employee Employee) ([]Hollyday, error) {
-	resp, err := c.doRequest("GET", fmt.Sprintf("hollyday?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
+func (c *client) GetHolidays(start time.Time, end time.Time, employee Employee) ([]Holiday, error) {
+	resp, err := c.doRequest("GET", fmt.Sprintf("holiday?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
 	if err != nil {
 		return nil, err
 	}
-	var h []Hollyday
+	var h []Holiday
 	err = respToJson(resp, &h)
 	if err != nil {
 		return nil, err
@@ -217,8 +217,8 @@ func (c *client) GetHollydays(start time.Time, end time.Time, employee Employee)
 	return h, nil
 }
 
-func (c *client) DelHollyday(id uint, employee Employee) error {
-	_, err := c.doRequest("DELETE", fmt.Sprintf("hollyday/%d", id), nil)
+func (c *client) DelHoliday(id uint, employee Employee) error {
+	_, err := c.doRequest("DELETE", fmt.Sprintf("holiday/%d", id), nil)
 	return err
 }
 
