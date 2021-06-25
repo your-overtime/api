@@ -3,9 +3,9 @@ package service
 import (
 	"fmt"
 
-	utils "git.goasum.de/jasper/go-utils/pkg/string_utils"
-	"git.goasum.de/jasper/overtime/pkg"
 	"github.com/go-sql-driver/mysql"
+	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/stringutils"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -98,7 +98,7 @@ func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.To
 	token := pkg.Token{
 		UserID: employee.ID,
 		Name:   it.Name,
-		Token:  utils.RandString(40),
+		Token:  stringutils.RandString(40),
 	}
 	tx := s.db.Conn.Create(&token)
 	if tx.Error != nil {

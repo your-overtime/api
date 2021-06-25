@@ -1,9 +1,8 @@
-module git.goasum.de/jasper/overtime
+module github.com/your-overtime/api
 
 go 1.15
 
 require (
-	git.goasum.de/jasper/go-utils v0.0.0-20210428184937-b8616760a432 // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/joho/godotenv v1.3.0 // indirect

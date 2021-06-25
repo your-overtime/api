@@ -3,7 +3,7 @@ package data
 import (
 	"time"
 
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/your-overtime/api/pkg"
 )
 
 func (d *Db) GetWorkDay(day time.Time, userID uint) (*pkg.WorkDay, error) {

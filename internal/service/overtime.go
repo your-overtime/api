@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"git.goasum.de/jasper/overtime/internal/data"
-	"git.goasum.de/jasper/overtime/pkg"
+	"github.com/your-overtime/api/internal/data"
+	"github.com/your-overtime/api/pkg"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -58,14 +58,14 @@ func weekDayToInt(wd time.Weekday) int {
 	}
 }
 
-func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, error) {
+func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, error) {
 	workingDays := strings.Split(e.WorkingDays, ",")
-	hollydays, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, e.ID)
+	holidays, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, e.ID)
 	if err != nil {
 		return 0, err
 	}
 	freeTimeInMinutes := int64(0)
-	for _, a := range hollydays {
+	for _, a := range holidays {
 		st := a.Start
 		if a.Start.Unix() < start.Unix() {
 			st = start
@@ -75,8 +75,8 @@ func (s *Service) SumHollydaysBetweenStartAndEndInMinutes(start time.Time, end t
 				break
 			}
 			dayFreeTimeInMinutes := int64(0)
-			if a.LegalHollyday {
-				// Fix legal hollydays
+			if a.LegalHoliday {
+				// Fix legal holidays
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
 			} else if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
@@ -140,7 +140,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			return 0, 0, err
 		}
 
-		ft, err := s.SumHollydaysBetweenStartAndEndInMinutes(be, en, *e)
+		ft, err := s.SumHolidaysBetweenStartAndEndInMinutes(be, en, *e)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -320,16 +320,16 @@ func (s *Service) DelActivity(id uint, employee pkg.Employee) error {
 	return tx.Error
 }
 
-func (s *Service) AddHollyday(h pkg.Hollyday, employee pkg.Employee) (*pkg.Hollyday, error) {
-	err := s.db.SaveHollyday(&h)
+func (s *Service) AddHoliday(h pkg.Holiday, employee pkg.Employee) (*pkg.Holiday, error) {
+	err := s.db.SaveHoliday(&h)
 	if err != nil {
 		return nil, err
 	}
 	return &h, nil
 }
 
-func (s *Service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, error) {
-	h, err := s.db.GetHollyday(id)
+func (s *Service) GetHoliday(id uint, employee pkg.Employee) (*pkg.Holiday, error) {
+	h, err := s.db.GetHoliday(id)
 	if err != nil {
 		return nil, err
 	}
@@ -341,8 +341,8 @@ func (s *Service) GetHollyday(id uint, employee pkg.Employee) (*pkg.Hollyday, er
 	return h, nil
 }
 
-func (s *Service) GetHollydays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Hollyday, error) {
-	h, err := s.db.GetHollydaysBetweenStartAndEnd(start, end, employee.ID)
+func (s *Service) GetHolidays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Holiday, error) {
+	h, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, employee.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -350,8 +350,8 @@ func (s *Service) GetHollydays(start time.Time, end time.Time, employee pkg.Empl
 	return h, nil
 }
 
-func (s *Service) DelHollyday(id uint, employee pkg.Employee) error {
-	h, err := s.GetHollyday(id, employee)
+func (s *Service) DelHoliday(id uint, employee pkg.Employee) error {
+	h, err := s.GetHoliday(id, employee)
 	if err != nil {
 		return err
 	}
