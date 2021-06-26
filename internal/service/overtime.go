@@ -128,11 +128,6 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 		if err != nil {
 			return 0, 0, err
 		}
-		// if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
-		//  	dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
-		// } else if strings.Contains(e.WorkingDays, st.Weekday().String()) {
-		//  	dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))
-		// }
 
 		at, err := s.SumActivityBetweenStartAndEndInMinutes(be, en, e.ID)
 		if err != nil {
