@@ -1,13 +1,12 @@
 package service
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
-	log "github.com/sirupsen/logrus"
 )
 
 type Service struct {
@@ -216,15 +215,6 @@ func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 
 func (s *Service) CalcDailyWorktime(employee pkg.Employee) (uint, error) {
 	now := time.Now()
-	acs, err := s.GetActivities(
-		time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()),
-		now,
-		employee,
-	)
-	if err != nil {
-		return 0, err
-	}
-
 	weekStart := time.Date(now.Year(), now.Month(), now.Day()-int(now.Weekday()), 0, 0, 0, 0, now.Location())
 
 	activeTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(weekStart, now, employee.ID)
@@ -232,14 +222,22 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee) (uint, error) {
 		return 0, err
 	}
 
-	wd := uint(weekDayToInt(now.Weekday()))
 	if employee.NumWorkingDays == 0 {
 		employee.NumWorkingDays = uint(len(strings.Split(employee.WorkingDays, ",")))
 	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
 
-	// TODO: check number of existing workdays
-	if len(acs) == 0 && (7-wd) < employee.NumWorkingDays {
+	wds, err := s.db.GetWorkDayBetweenStartAndEnd(weekStart, now, employee.ID)
+	if err != nil {
+		return 0, err
+	}
+	existingWDs := uint(0)
+	for _, wd := range wds {
+		if wd.ActiveTime > 0 {
+			existingWDs += 1
+		}
+	}
+	if existingWDs >= employee.NumWorkingDays {
 		return 0, nil
 	}
 

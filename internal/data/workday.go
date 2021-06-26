@@ -3,6 +3,7 @@ package data
 import (
 	"time"
 
+	"database/sql"
 	"github.com/your-overtime/api/pkg"
 )
 
@@ -20,4 +21,15 @@ func (d *Db) GetWorkDay(day time.Time, userID uint) (*pkg.WorkDay, error) {
 func (d *Db) DeleteWorkDay(day time.Time, userID uint) error {
 	tx := d.Conn.Delete(&pkg.WorkDay{}, d.Conn.Where("DATE(day) = DATE(?)", day).Where("user_id = ?", userID))
 	return tx.Error
+}
+
+func (d *Db) GetWorkDayBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.WorkDay, error) {
+	activities := []pkg.WorkDay{}
+	tx := d.Conn.Where("user_id = ?", employeeID).
+		Where("? <= day <= ?", start, end).Find(&activities)
+	if tx.Error != nil && tx.Error != sql.ErrNoRows {
+		return nil, tx.Error
+	}
+
+	return activities, nil
 }
