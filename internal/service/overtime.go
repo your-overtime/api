@@ -124,7 +124,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			}
 		}
 
-		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e)
+		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, be)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -213,11 +213,10 @@ func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	return o, nil
 }
 
-func (s *Service) CalcDailyWorktime(employee pkg.Employee) (uint, error) {
-	now := time.Now()
-	weekStart := time.Date(now.Year(), now.Month(), now.Day()-int(now.Weekday()), 0, 0, 0, 0, now.Location())
+func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint, error) {
+	weekStart := time.Date(day.Year(), day.Month(), day.Day()-int(day.Weekday()), 0, 0, 0, 0, day.Location())
 
-	activeTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(weekStart, now, employee.ID)
+	activeTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(weekStart, day, employee.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -227,7 +226,7 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee) (uint, error) {
 	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
 
-	wds, err := s.db.GetWorkDayBetweenStartAndEnd(weekStart, now, employee.ID)
+	wds, err := s.db.GetWorkDayBetweenStartAndEnd(weekStart, day, employee.ID)
 	if err != nil {
 		return 0, err
 	}
