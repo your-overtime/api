@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
-	log "github.com/sirupsen/logrus"
 )
 
 type Service struct {
@@ -96,7 +96,6 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 }
 
 func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *pkg.Employee) (int64, int64, error) {
-	workingDays := strings.Split(e.WorkingDays, ",")
 	overtimeInMinutes := int64(0)
 	activeTimeInMinutes := int64(0)
 	now := time.Now()
@@ -125,11 +124,9 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			}
 		}
 
-		dayWorkTimeInMinutes := int64(0)
-		if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
-			dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
-		} else if strings.Contains(e.WorkingDays, st.Weekday().String()) {
-			dayWorkTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))
+		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, be)
+		if err != nil {
+			return 0, 0, err
 		}
 
 		at, err := s.SumActivityBetweenStartAndEndInMinutes(be, en, e.ID)
@@ -141,7 +138,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 		if err != nil {
 			return 0, 0, err
 		}
-		dayOvertimeInMinutes := at + ft - dayWorkTimeInMinutes
+		dayOvertimeInMinutes := at + ft - int64(dayWorkTimeInMinutes)
 		if !isNowDay {
 			tx := s.db.Conn.Create(&pkg.WorkDay{
 				Day:        be,
@@ -209,6 +206,40 @@ func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 	}
 
 	return o, nil
+}
+
+func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint, error) {
+	weekStart := time.Date(day.Year(), day.Month(), day.Day()-int(day.Weekday()), 0, 0, 0, 0, day.Location())
+
+	activeTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(weekStart, day, employee.ID)
+	if err != nil {
+		return 0, err
+	}
+
+	if employee.NumWorkingDays == 0 {
+		employee.NumWorkingDays = uint(len(strings.Split(employee.WorkingDays, ",")))
+	}
+	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
+
+	wds, err := s.db.GetWorkDayBetweenStartAndEnd(weekStart, day, employee.ID)
+	if err != nil {
+		return 0, err
+	}
+	existingWDs := uint(0)
+	for _, wd := range wds {
+		if wd.ActiveTime > 0 {
+			existingWDs += 1
+		}
+	}
+	if existingWDs >= employee.NumWorkingDays {
+		return 0, nil
+	}
+
+	if activeTimeInMinutes >= int64(employee.WeekWorkingTimeInMinutes) {
+		return 0, nil
+	}
+
+	return dayWorkTimeInMinutes, nil
 }
 
 func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
