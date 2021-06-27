@@ -12,9 +12,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
+	"github.com/gin-gonic/gin"
 	"github.com/your-overtime/api/internal/service"
 	"github.com/your-overtime/api/pkg"
-	"github.com/gin-gonic/gin"
 )
 
 // API struct
@@ -351,6 +351,62 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			c.JSON(http.StatusOK, "")
+		}
+	})
+	v1.GET("/workday", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
+		if err != nil {
+			log.Debug(start, err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
+		if err != nil {
+			log.Debug(end, err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		wds, err := a.os.GetWorkDays(start, end, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, wds)
+		}
+	})
+	v1.POST("/workday", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		// TODO: finish endpoint
+		var ih pkg.InputHoliday
+		err = c.Bind(&ih)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		ho := pkg.Holiday{
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			Description: ih.Description,
+		}
+		h, err := a.os.AddHoliday(ho, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, h)
 		}
 	})
 	v1.POST("/token", func(c *gin.Context) {
