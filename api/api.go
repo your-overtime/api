@@ -387,21 +387,20 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		// TODO: finish endpoint
-		var ih pkg.InputHoliday
-		err = c.Bind(&ih)
+		var iw pkg.InputWorkDay
+		err = c.Bind(&iw)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ho := pkg.Holiday{
-			UserID:      e.ID,
-			Start:       ih.Start,
-			End:         ih.End,
-			Description: ih.Description,
+		wo := pkg.WorkDay{
+			UserID:     e.ID,
+			Day:        iw.Day,
+			Overtime:   iw.Overtime,
+			ActiveTime: iw.ActiveTime,
 		}
-		h, err := a.os.AddHoliday(ho, *e)
+		h, err := a.os.AddWorkDay(wo, *e)
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
