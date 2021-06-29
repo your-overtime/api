@@ -32,12 +32,12 @@ func (d *Db) DeleteWorkDay(day time.Time, userID uint) error {
 }
 
 func (d *Db) GetWorkDaysBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.WorkDay, error) {
-	activities := []pkg.WorkDay{}
+	ws := []pkg.WorkDay{}
 	tx := d.Conn.Where("user_id = ?", employeeID).
-		Where("? <= day <= ?", start, end).Find(&activities)
+		Where("day >= ? and day <= ?", start, end).Find(&ws)
 	if tx.Error != nil && tx.Error != sql.ErrNoRows {
 		return nil, tx.Error
 	}
 
-	return activities, nil
+	return ws, nil
 }
