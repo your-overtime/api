@@ -71,17 +71,17 @@ type InputActivity struct {
 
 type Holiday struct {
 	gorm.Model
-	Start         time.Time
-	End           time.Time
-	Description   string
+	Start        time.Time
+	End          time.Time
+	Description  string
 	LegalHoliday bool
-	UserID        uint
+	UserID       uint
 }
 
 type InputHoliday struct {
-	Start         time.Time
-	End           time.Time
-	Description   string
+	Start        time.Time
+	End          time.Time
+	Description  string
 	LegalHoliday bool
 }
 
