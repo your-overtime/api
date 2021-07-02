@@ -238,6 +238,14 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 	if activeTimeInMinutes >= int64(employee.WeekWorkingTimeInMinutes) {
 		return 0, nil
 	}
+	dayActiveTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(day, time.Now(), employee.ID)
+	if err != nil {
+		return 0, err
+	}
+
+	if dayActiveTimeInMinutes == 0 && !(weekDayToInt(day.Weekday())-int(existingWDs) > int(employee.NumWorkingDays)/int(existingWDs)) {
+		return 0, nil
+	}
 
 	return dayWorkTimeInMinutes, nil
 }
