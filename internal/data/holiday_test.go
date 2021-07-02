@@ -1,31 +1,12 @@
 package data_test
 
 import (
-	"bytes"
-	"encoding/json"
 	"testing"
 	"time"
 
-	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/your-overtime/api/tests"
 )
-
-const DBConnection = "file::memory:"
-
-func setupDb(t *testing.T) data.Db {
-	conn, err := gorm.Open(sqlite.Open(DBConnection), &gorm.Config{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	db := data.Db{Conn: conn}
-
-	if err := conn.AutoMigrate(&pkg.Holiday{}); err != nil {
-		t.Fatal(err)
-	}
-	return db
-}
 
 func createHoliday(start string) pkg.Holiday {
 	startTime, _ := time.Parse("2006-01-02", start)
@@ -50,14 +31,14 @@ func createHolidayWithEnd(start, end string) pkg.Holiday {
 	}
 }
 func TestSaveHoliday(t *testing.T) {
-	db := setupDb(t)
+	db := tests.SetupDb(t)
 	insert := createHoliday("2021-07-01")
 	if err := db.SaveHoliday(&insert); err != nil {
 		t.Fatal(err)
 	}
 
 	if insert.ID == 0 {
-		t.Fatal("exptected auto incremented id after instert")
+		t.Fatal("exptected auto incremented id after insert")
 	}
 
 	if insert.ID != 1 {
@@ -66,7 +47,7 @@ func TestSaveHoliday(t *testing.T) {
 }
 
 func TestGetHoliday(t *testing.T) {
-	db := setupDb(t)
+	db := tests.SetupDb(t)
 	expected := createHoliday("2021-07-02")
 	db.SaveHoliday(&expected)
 
@@ -75,7 +56,7 @@ func TestGetHoliday(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !Equals(t, actual, expected) {
+	if !tests.Equals(t, actual, expected) {
 		t.Fatalf("%v does not equal %v", actual, expected)
 	}
 
@@ -86,10 +67,10 @@ func TestGetHoliday(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !Equals(t, actual2, expected2) {
+	if !tests.Equals(t, actual2, expected2) {
 		t.Fatalf("%v does not equal %v", actual2, expected2)
 	}
-	if Equals(t, actual2, expected) {
+	if tests.Equals(t, actual2, expected) {
 		t.Fatalf("%v shoud not equal %v", actual2, expected)
 	}
 
@@ -116,7 +97,7 @@ func TestGetHolidayBetweenStartAndEnd(t *testing.T) {
 	h6 := createHolidayWithEnd("2021-06-09", "2021-06-30")
 
 	// insert
-	db := setupDb(t)
+	db := tests.SetupDb(t)
 	db.SaveHoliday(&h1)
 	db.SaveHoliday(&h2)
 	db.SaveHoliday(&h3)
@@ -132,26 +113,29 @@ func TestGetHolidayBetweenStartAndEnd(t *testing.T) {
 		t.Fatalf("expected result len is 4 not %v", len(list))
 	}
 
-	if !(Equals(t, list[0], h1) && Equals(t, list[1], h2) && Equals(t, list[2], h3) && Equals(t, list[3], h4)) {
+	if !(tests.Equals(t, list[0], h1) && tests.Equals(t, list[1], h2) && tests.Equals(t, list[2], h3) && tests.Equals(t, list[3], h4)) {
 		t.Fatalf("nope")
 	}
 
-	// TODO edge cases
 	// * start is on start
 	// * start is on end
 	// * end is on start
+	h7 := createHoliday("2021-06-01")
+	h8 := createHoliday("2021-06-07")
+	h9 := createHolidayWithEnd("2021-05-01", "2021-06-01")
+	db.SaveHoliday(&h7)
+	db.SaveHoliday(&h8)
+	db.SaveHoliday(&h9)
 
-}
-
-func Equals(t *testing.T, actual interface{}, expected interface{}) bool {
-	aBytes, aErr := json.Marshal(actual)
-	if aErr != nil {
-		t.Fatal(aErr)
+	list, err = db.GetHolidaysBetweenStartAndEnd(start, end, 1)
+	if err != nil {
+		t.Fatal(err)
 	}
-	bBytes, bErr := json.Marshal(expected)
-	if bErr != nil {
-		t.Fatal(bErr)
+	if len(list) != 7 {
+		t.Fatalf("expect result len is 7 not %v", len(list))
+	}
+	if !tests.Equals(t, list[4], h7) && tests.Equals(t, list[5], h8) && tests.Equals(t, list[6], h9) {
+		t.Fatal("nope")
 	}
 
-	return bytes.Equal(aBytes, bBytes)
 }
