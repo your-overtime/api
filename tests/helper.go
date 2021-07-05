@@ -24,6 +24,9 @@ func SetupDb(t *testing.T) data.Db {
 	if err := conn.AutoMigrate(&pkg.Activity{}); err != nil {
 		t.Fatal(err)
 	}
+	if err := conn.AutoMigrate(&pkg.WorkDay{}); err != nil {
+		t.Fatal(err)
+	}
 	return db
 }
 
