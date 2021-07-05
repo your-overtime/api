@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"database/sql"
+
 	"github.com/your-overtime/api/pkg"
 )
 
@@ -26,7 +27,7 @@ func (d *Db) DeleteWorkDay(day time.Time, userID uint) error {
 func (d *Db) GetWorkDayBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.WorkDay, error) {
 	ws := []pkg.WorkDay{}
 	tx := d.Conn.Where("user_id = ?", employeeID).
-		Where("day >= ? and day <= ?", start, end).Find(&ws)
+		Where("DATE(day) BETWEEN DATE(?) AND DATE(?)", start, end).Find(&ws)
 	if tx.Error != nil && tx.Error != sql.ErrNoRows {
 		return nil, tx.Error
 	}
