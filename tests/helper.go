@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
@@ -41,4 +42,21 @@ func Equals(t *testing.T, actual interface{}, expected interface{}) bool {
 	}
 
 	return bytes.Equal(aBytes, bBytes)
+}
+
+func ParseDay(val string) time.Time {
+	date, err := time.Parse("2006-01-02", val)
+
+	if err != nil {
+		panic(err)
+	}
+	return date
+}
+
+func ParseDayTime(val string) time.Time {
+	daytime, err := time.Parse("2006-01-02 15:04", val)
+	if err != nil {
+		panic(err)
+	}
+	return daytime
 }

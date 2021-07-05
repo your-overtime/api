@@ -140,6 +140,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 		}
 		dayOvertimeInMinutes := at + ft - int64(dayWorkTimeInMinutes)
 		if !isNowDay {
+			// TODO @jasperem why isn't there an db.SaveWorkDay method?
 			tx := s.db.Conn.Create(&pkg.WorkDay{
 				Day:        be,
 				Overtime:   dayOvertimeInMinutes,
