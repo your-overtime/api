@@ -95,4 +95,16 @@ func TestGetWorkDayBetweenStartAndEnd(t *testing.T) {
 	if !tests.Equals(t, workDayList[0], wd) {
 		t.Fatalf("expected %v equals %v", workDayList[0], wd)
 	}
+
+	workDayList, err = db.GetWorkDayBetweenStartAndEnd(
+		tests.ParseDay("2021-06-30"),
+		tests.ParseDay("2021-07-04"), 1,
+	)
+
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+	if len(workDayList) != 0 {
+		t.Fatalf("expected workday list has len 0 but got %v", len(workDayList))
+	}
 }
