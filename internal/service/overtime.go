@@ -142,7 +142,6 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			log.Debug(err)
 			return 0, 0, err
 		}
-		fmt.Println(be, " ", dayWorkTimeInMinutes, " ", at, " ", ft, " ")
 		dayOvertimeInMinutes := at + ft - int64(dayWorkTimeInMinutes)
 		if !isNowDay {
 			tx := s.db.Conn.Create(&pkg.WorkDay{
@@ -241,8 +240,6 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 		log.Debugln(err)
 		return 0, err
 	}
-
-	fmt.Println(weekStart, " ", day, " ", existingWDs, " ", weekDayToInt(day.Weekday()), " ", employee.NumWorkingDays, " ", dayActiveTimeInMinutes)
 
 	if existingWDs >= employee.NumWorkingDays ||
 		(dayActiveTimeInMinutes == 0 && (7-weekDayToInt(day.Weekday())-int(existingWDs)) > (int(employee.NumWorkingDays)-int(existingWDs))) {
