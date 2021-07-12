@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
+	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/pkg/stringutils"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -95,6 +95,7 @@ func (s *Service) GetTokens(employee pkg.Employee) ([]pkg.Token, error) {
 }
 
 func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.Token, error) {
+	// TODO add database method to create token?
 	token := pkg.Token{
 		UserID: employee.ID,
 		Name:   it.Name,
