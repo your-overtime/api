@@ -90,6 +90,7 @@ type WorkDay struct {
 	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 	Overtime   int64
 	ActiveTime int64
+	IsHoliday  bool
 	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 }
 
