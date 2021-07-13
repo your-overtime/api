@@ -12,9 +12,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
+	"github.com/gin-gonic/gin"
 	"github.com/your-overtime/api/internal/service"
 	"github.com/your-overtime/api/pkg"
-	"github.com/gin-gonic/gin"
 )
 
 // API struct
@@ -75,7 +75,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		overview, err := a.os.CalcOverview(*e)
+		overview, err := a.os.CalcOverview(*e, time.Now())
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)

@@ -165,40 +165,39 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 	return activeTimeInMinutes, overtimeInMinutes, nil
 }
 
-func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
-	now := time.Now()
-	yyyy, mm, dd := now.Date()
-	wd := now.Weekday()
+func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, error) {
+	yyyy, mm, dd := day.Date()
+	wd := day.Weekday()
 	wdNumber := weekDayToInt(wd)
 	// This year
-	yStart := time.Date(yyyy, 01, 01, 0, 0, 0, 0, now.Location())
-	yat, yot, err := s.calcOvertimeAndActivetime(yStart, now, &e)
+	yStart := time.Date(yyyy, 01, 01, 0, 0, 0, 0, day.Location())
+	yat, yot, err := s.calcOvertimeAndActivetime(yStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
 
 	// This month
-	mStart := time.Date(yyyy, mm, 01, 0, 0, 0, 0, now.Location())
-	mat, mot, err := s.calcOvertimeAndActivetime(mStart, now, &e)
+	mStart := time.Date(yyyy, mm, 01, 0, 0, 0, 0, day.Location())
+	mat, mot, err := s.calcOvertimeAndActivetime(mStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
 	// This week
-	wStart := time.Date(yyyy, mm, dd-wdNumber+1, 0, 0, 0, 0, now.Location())
-	wat, wot, err := s.calcOvertimeAndActivetime(wStart, now, &e)
+	wStart := time.Date(yyyy, mm, dd-wdNumber+1, 0, 0, 0, 0, day.Location())
+	wat, wot, err := s.calcOvertimeAndActivetime(wStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
 	// This day
-	dStart := time.Date(yyyy, mm, dd, 0, 0, 0, 0, now.Location())
-	at, ot, err := s.calcOvertimeAndActivetime(dStart, now, &e)
+	dStart := time.Date(yyyy, mm, dd, 0, 0, 0, 0, day.Location())
+	at, ot, err := s.calcOvertimeAndActivetime(dStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
 
-	_, wn := now.ISOWeek()
+	_, wn := day.ISOWeek()
 	o := &pkg.Overview{
-		Date:                         now,
+		Date:                         day,
 		WeekNumber:                   wn,
 		ActiveTimeThisDayInMinutes:   at,
 		ActiveTimeThisWeekInMinutes:  wat,
