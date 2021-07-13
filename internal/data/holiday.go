@@ -25,9 +25,8 @@ func (d *Db) GetHolidaysBetweenStartAndEnd(start time.Time, end time.Time, emplo
 	holidays := []pkg.Holiday{}
 	tx := d.Conn.Where("user_id = ?", employeeID).
 		Where(
-			d.Conn.Where("start >= ? AND start <= ?", start, end).
-				Or("end >= ? AND end <= ?", start, end).Or(
-				d.Conn.Where("? <= end AND ? <= end", start, end).Where("? >= start AND ? >= start", start, end)),
+			d.Conn.Where("? <= start <= ? ", start, end).
+				Or("? <= end <= ?", start, end),
 		).Find(&holidays)
 	if tx.Error != nil && tx.Error != sql.ErrNoRows {
 		return nil, tx.Error
