@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/your-overtime/api/internal/service"
@@ -43,5 +44,6 @@ func TestOverview(t *testing.T) {
 		t.Fatal("expect no error but got ", err)
 	}
 
-	t.Log(o)
+	x, _ := json.MarshalIndent(&o, " ", "")
+	t.Log(string(x))
 }

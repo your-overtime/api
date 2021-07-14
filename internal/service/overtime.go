@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -223,7 +222,6 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 		employee.NumWorkingDays = uint(len(strings.Split(employee.WorkingDays, ",")))
 	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
-	fmt.Println(dayWorkTimeInMinutes, " ", employee.NumWorkingDays, " ", employee.WorkingDays, " ", employee.WeekWorkingTimeInMinutes)
 
 	wds, err := s.db.GetWorkDayBetweenStartAndEnd(weekStart, day, employee.ID)
 	if err != nil {
@@ -232,10 +230,14 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 	}
 	existingWDs := uint(0)
 	for _, wd := range wds {
-		log.Error(wd)
 		if wd.ActiveTime > 0 || wd.IsHoliday || wd.Overtime > 0 {
 			existingWDs += 1
 		}
+	}
+
+	// Fix first week of the year
+	if weekStart.Year() != day.Year() {
+		existingWDs += 31 - uint(weekStart.Day())
 	}
 
 	dayActiveTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location()), day, employee.ID)
@@ -246,7 +248,6 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 
 	if existingWDs >= employee.NumWorkingDays ||
 		(dayActiveTimeInMinutes == 0 && 7-weekDayToInt(day.Weekday())-int(employee.NumWorkingDays)+int(existingWDs) >= 0) {
-		fmt.Println(dayActiveTimeInMinutes, " ", 7-weekDayToInt(day.Weekday()), " ", int(employee.NumWorkingDays-existingWDs), " ", day)
 		return 0, nil
 	}
 
