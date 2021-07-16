@@ -451,7 +451,7 @@ func (a *API) createEndPoints() {
 				c.JSON(http.StatusBadRequest, err)
 				return
 			}
-			e, err := a.os.SaveEmployee(ie.ToEmployee())
+			e, err := a.os.SaveEmployee(ie.ToEmployee(), "")
 			if err != nil {
 				log.Debug(err)
 				c.JSON(http.StatusInternalServerError, err)

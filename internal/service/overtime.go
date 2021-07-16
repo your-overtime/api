@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -315,6 +316,11 @@ func (s *Service) GetActivities(start time.Time, end time.Time, employee pkg.Emp
 
 	return a, nil
 }
+
+func (s *Service) UpdateActivity(activity pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (s *Service) DelActivity(id uint, employee pkg.Employee) error {
 	a, err := s.GetActivity(id, employee)
 	if err != nil {
@@ -343,6 +349,10 @@ func (s *Service) GetHoliday(id uint, employee pkg.Employee) (*pkg.Holiday, erro
 	}
 
 	return h, nil
+}
+
+func (s *Service) UpdateHoliday(activity pkg.Holiday, employee pkg.Employee) (*pkg.Holiday, error) {
+	return nil, errors.New("not implemented")
 }
 
 func (s *Service) GetHolidays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Holiday, error) {

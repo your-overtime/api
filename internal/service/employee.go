@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
@@ -41,7 +42,7 @@ func (s *Service) Login(login string, password string) (*pkg.Employee, error) {
 	return nil, pkg.ErrInvalidCredentials
 }
 
-func (s *Service) SaveEmployee(employee pkg.Employee) (*pkg.Employee, error) {
+func (s *Service) SaveEmployee(employee pkg.Employee, adminToken string) (*pkg.Employee, error) {
 	err := s.db.SaveEmployee(&employee)
 	if err != nil {
 		log.Debug(err)
@@ -69,7 +70,7 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Empl
 			return nil, pkg.ErrBadRequest
 		}
 	}
-	dbE, err := s.SaveEmployee(employee)
+	dbE, err := s.SaveEmployee(employee, "")
 	if err != nil {
 		if err.(*mysql.MySQLError).Number == 1062 {
 			return nil, pkg.ErrDuplicateValue
@@ -80,8 +81,8 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Empl
 	return dbE, nil
 }
 
-func (s *Service) DeleteEmployee(employeeID string) error {
-	tx := s.db.Conn.Model(pkg.Employee{}).Delete(employeeID)
+func (s *Service) DeleteEmployee(login string, adminToken string) error {
+	tx := s.db.Conn.Model(pkg.Employee{}).Delete("login = ?", login)
 	return tx.Error
 }
 
@@ -122,4 +123,8 @@ func (s *Service) DeleteToken(tokenID uint, employee pkg.Employee) error {
 		return tx.Error
 	}
 	return pkg.ErrPermissionDenied
+}
+
+func (s *Service) GetAccount() (*pkg.Employee, error) {
+	return nil, errors.New("not implemented")
 }
