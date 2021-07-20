@@ -71,17 +71,17 @@ type InputActivity struct {
 
 type Holiday struct {
 	gorm.Model
-	Start         time.Time
-	End           time.Time
-	Description   string
+	Start        time.Time
+	End          time.Time
+	Description  string
 	LegalHoliday bool
-	UserID        uint
+	UserID       uint
 }
 
 type InputHoliday struct {
-	Start         time.Time
-	End           time.Time
-	Description   string
+	Start        time.Time
+	End          time.Time
+	Description  string
 	LegalHoliday bool
 }
 
@@ -90,6 +90,7 @@ type WorkDay struct {
 	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 	Overtime   int64
 	ActiveTime int64
+	IsHoliday  bool
 	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 }
 

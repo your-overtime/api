@@ -65,7 +65,7 @@ func InitOvertimeClient(host string, authHeader string) OvertimeService {
 	}
 }
 
-func (c *client) CalcOverview(e Employee) (*Overview, error) {
+func (c *client) CalcOverview(e Employee, d time.Time) (*Overview, error) {
 	resp, err := c.doRequest("GET", "overview", nil)
 	if err != nil {
 		return nil, err
