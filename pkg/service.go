@@ -6,7 +6,7 @@ import (
 )
 
 type OvertimeService interface {
-	CalcOverview(e Employee) (*Overview, error)
+	CalcOverview(e Employee, day time.Time) (*Overview, error)
 	StartActivity(desc string, employee Employee) (*Activity, error)
 	AddActivity(activity Activity, employee Employee) (*Activity, error)
 	UpdateActivity(activity Activity, employee Employee) (*Activity, error)

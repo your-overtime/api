@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -57,17 +58,21 @@ func weekDayToInt(wd time.Weekday) int {
 	}
 }
 
-func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, error) {
-	workingDays := strings.Split(e.WorkingDays, ",")
+func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, bool, error) {
+	isLegal := false
 	holidays, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, e.ID)
 	if err != nil {
-		return 0, err
+		return 0, isLegal, err
 	}
 	freeTimeInMinutes := int64(0)
 	for _, a := range holidays {
 		st := a.Start
 		if a.Start.Unix() < start.Unix() {
 			st = start
+		}
+
+		if e.NumWorkingDays == 0 {
+			e.NumWorkingDays = uint(len(strings.Split(e.WorkingDays, ",")))
 		}
 		for {
 			if st.Unix() > end.Unix() || st.Unix() > a.End.Unix() {
@@ -76,23 +81,16 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 			dayFreeTimeInMinutes := int64(0)
 			if a.LegalHoliday {
 				// Fix legal holidays
+				isLegal = true
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
-			} else if weekDayToInt(st.Weekday()) < 6 && len(e.WorkingDays) == 0 {
-				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
-			} else if strings.Contains(e.WorkingDays, st.Weekday().String()) {
-				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / uint(len(workingDays)))
 			} else {
-				st = st.AddDate(0, 0, 1)
-				if st.Unix() > end.Unix() || st.Unix() > a.End.Unix() {
-					break
-				}
-				continue
+				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / e.NumWorkingDays)
 			}
 			freeTimeInMinutes += dayFreeTimeInMinutes
 			st = st.AddDate(0, 0, 1)
 		}
 	}
-	return freeTimeInMinutes, nil
+	return freeTimeInMinutes, isLegal, nil
 }
 
 func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *pkg.Employee) (int64, int64, error) {
@@ -106,7 +104,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			break
 		}
 		be := time.Date(st.Year(), st.Month(), st.Day(), 0, 0, 0, 0, st.Location())
-		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 0, st.Location())
+		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 59, st.Location())
 		if end.Unix() < en.Unix() {
 			en = end
 		}
@@ -114,7 +112,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 		if !isNowDay {
 			wd, err := s.db.GetWorkDay(be, e.ID)
 			if err != nil {
-				log.Debug(err)
+				log.Info(err)
 			}
 			if wd != nil && err == nil {
 				activeTimeInMinutes += wd.ActiveTime
@@ -124,27 +122,34 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			}
 		}
 
-		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, be)
+		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, en)
 		if err != nil {
+			log.Debug(err)
 			return 0, 0, err
 		}
 
 		at, err := s.SumActivityBetweenStartAndEndInMinutes(be, en, e.ID)
 		if err != nil {
+			log.Debug(err)
 			return 0, 0, err
 		}
 
-		ft, err := s.SumHolidaysBetweenStartAndEndInMinutes(be, en, *e)
+		ft, isLegal, err := s.SumHolidaysBetweenStartAndEndInMinutes(be, en, *e)
 		if err != nil {
+			log.Debug(err)
 			return 0, 0, err
 		}
 		dayOvertimeInMinutes := at + ft - int64(dayWorkTimeInMinutes)
+		if ft > 0 && dayWorkTimeInMinutes == 0 && !isLegal {
+			dayOvertimeInMinutes = at
+		}
 		if !isNowDay {
 			err = s.db.SaveWorkDay(&pkg.WorkDay{
 				Day:        be,
 				Overtime:   dayOvertimeInMinutes,
 				ActiveTime: at,
 				UserID:     e.ID,
+				IsHoliday:  ft > 0,
 			})
 			if err != nil {
 				return 0, 0, err
@@ -158,38 +163,39 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 	return activeTimeInMinutes, overtimeInMinutes, nil
 }
 
-func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
-	now := time.Now()
-	yyyy, mm, dd := now.Date()
-	wd := now.Weekday()
+func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, error) {
+	yyyy, mm, dd := day.Date()
+	wd := day.Weekday()
 	wdNumber := weekDayToInt(wd)
-	// This day
-	dStart := time.Date(yyyy, mm, dd, 0, 0, 0, 0, now.Location())
-	at, ot, err := s.calcOvertimeAndActivetime(dStart, now, &e)
+	// This year
+	yStart := time.Date(yyyy, 01, 01, 0, 0, 0, 0, day.Location())
+	yat, yot, err := s.calcOvertimeAndActivetime(yStart, day, &e)
+	if err != nil {
+		return nil, err
+	}
+
+	// This month
+	mStart := time.Date(yyyy, mm, 01, 0, 0, 0, 0, day.Location())
+	mat, mot, err := s.calcOvertimeAndActivetime(mStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
 	// This week
-	wStart := time.Date(yyyy, mm, dd-wdNumber+1, 0, 0, 0, 0, now.Location())
-	wat, wot, err := s.calcOvertimeAndActivetime(wStart, now, &e)
+	wStart := time.Date(yyyy, mm, dd-wdNumber+1, 0, 0, 0, 0, day.Location())
+	wat, wot, err := s.calcOvertimeAndActivetime(wStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
-	// This month
-	mStart := time.Date(yyyy, mm, 01, 0, 0, 0, 0, now.Location())
-	mat, mot, err := s.calcOvertimeAndActivetime(mStart, now, &e)
+	// This day
+	dStart := time.Date(yyyy, mm, dd, 0, 0, 0, 0, day.Location())
+	at, ot, err := s.calcOvertimeAndActivetime(dStart, day, &e)
 	if err != nil {
 		return nil, err
 	}
-	// This year
-	yStart := time.Date(yyyy, 01, 01, 0, 0, 0, 0, now.Location())
-	yat, yot, err := s.calcOvertimeAndActivetime(yStart, now, &e)
-	if err != nil {
-		return nil, err
-	}
-	_, wn := now.ISOWeek()
+
+	_, wn := day.ISOWeek()
 	o := &pkg.Overview{
-		Date:                         now,
+		Date:                         day,
 		WeekNumber:                   wn,
 		ActiveTimeThisDayInMinutes:   at,
 		ActiveTimeThisWeekInMinutes:  wat,
@@ -209,12 +215,7 @@ func (s *Service) CalcOverview(e pkg.Employee) (*pkg.Overview, error) {
 }
 
 func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint, error) {
-	weekStart := time.Date(day.Year(), day.Month(), day.Day()-int(day.Weekday()), 0, 0, 0, 0, day.Location())
-
-	activeTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(weekStart, day, employee.ID)
-	if err != nil {
-		return 0, err
-	}
+	weekStart := time.Date(day.Year(), day.Month(), day.Day()-weekDayToInt(day.Weekday())+1, 0, 0, 0, 0, day.Location())
 
 	if employee.NumWorkingDays == 0 {
 		employee.NumWorkingDays = uint(len(strings.Split(employee.WorkingDays, ",")))
@@ -223,19 +224,29 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 
 	wds, err := s.db.GetWorkDaysBetweenStartAndEnd(weekStart, day, employee.ID)
 	if err != nil {
+		log.Debugln(err)
 		return 0, err
 	}
 	existingWDs := uint(0)
 	for _, wd := range wds {
-		if wd.ActiveTime > 0 {
+		if wd.ActiveTime > 0 || wd.IsHoliday || wd.Overtime > 0 {
 			existingWDs += 1
 		}
 	}
-	if existingWDs >= employee.NumWorkingDays {
-		return 0, nil
+
+	// Fix first week of the year
+	if weekStart.Year() != day.Year() {
+		existingWDs += 31 - uint(weekStart.Day())
 	}
 
-	if activeTimeInMinutes >= int64(employee.WeekWorkingTimeInMinutes) {
+	dayActiveTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location()), day, employee.ID)
+	if err != nil {
+		log.Debugln(err)
+		return 0, err
+	}
+
+	if existingWDs >= employee.NumWorkingDays ||
+		(dayActiveTimeInMinutes == 0 && 7-weekDayToInt(day.Weekday())-int(employee.NumWorkingDays)+int(existingWDs) >= 0) {
 		return 0, nil
 	}
 
@@ -304,6 +315,10 @@ func (s *Service) GetActivities(start time.Time, end time.Time, employee pkg.Emp
 	return a, nil
 }
 
+func (s *Service) UpdateActivity(activity pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (s *Service) DelActivity(id uint, employee pkg.Employee) error {
 	a, err := s.GetActivity(id, employee)
 	if err != nil {
@@ -332,6 +347,10 @@ func (s *Service) GetHoliday(id uint, employee pkg.Employee) (*pkg.Holiday, erro
 	}
 
 	return h, nil
+}
+
+func (s *Service) UpdateHoliday(activity pkg.Holiday, employee pkg.Employee) (*pkg.Holiday, error) {
+	return nil, errors.New("not implemented")
 }
 
 func (s *Service) GetHolidays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Holiday, error) {

@@ -75,7 +75,7 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		overview, err := a.os.CalcOverview(*e)
+		overview, err := a.os.CalcOverview(*e, time.Now())
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)
@@ -506,7 +506,7 @@ func (a *API) createEndPoints() {
 				c.JSON(http.StatusBadRequest, err)
 				return
 			}
-			e, err := a.os.SaveEmployee(ie.ToEmployee())
+			e, err := a.os.SaveEmployee(ie.ToEmployee(), "")
 			if err != nil {
 				log.Debug(err)
 				c.JSON(http.StatusInternalServerError, err)
