@@ -94,6 +94,13 @@ type WorkDay struct {
 	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 }
 
+type InputWorkDay struct {
+	Day        time.Time
+	Overtime   int64
+	ActiveTime int64
+	UserID     uint
+}
+
 type Overview struct {
 	Date                         time.Time
 	WeekNumber                   int

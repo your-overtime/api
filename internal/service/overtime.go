@@ -144,17 +144,15 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			dayOvertimeInMinutes = at
 		}
 		if !isNowDay {
-			// TODO @jasperem why isn't there an db.SaveWorkDay method?
-			tx := s.db.Conn.Create(&pkg.WorkDay{
+			err = s.db.SaveWorkDay(&pkg.WorkDay{
 				Day:        be,
 				Overtime:   dayOvertimeInMinutes,
 				ActiveTime: at,
 				UserID:     e.ID,
 				IsHoliday:  ft > 0,
 			})
-			if tx.Error != nil {
-				log.Debug(tx.Error)
-				return 0, 0, tx.Error
+			if err != nil {
+				return 0, 0, err
 			}
 		}
 		overtimeInMinutes += dayOvertimeInMinutes
@@ -224,7 +222,7 @@ func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint,
 	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
 
-	wds, err := s.db.GetWorkDayBetweenStartAndEnd(weekStart, day, employee.ID)
+	wds, err := s.db.GetWorkDaysBetweenStartAndEnd(weekStart, day, employee.ID)
 	if err != nil {
 		log.Debugln(err)
 		return 0, err
@@ -371,4 +369,21 @@ func (s *Service) DelHoliday(id uint, employee pkg.Employee) error {
 	}
 	tx := s.db.Conn.Delete(h)
 	return tx.Error
+}
+
+func (s *Service) GetWorkDays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.WorkDay, error) {
+	wds, err := s.db.GetWorkDaysBetweenStartAndEnd(start, end, employee.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return wds, nil
+}
+
+func (s *Service) AddWorkDay(w pkg.WorkDay, employee pkg.Employee) (*pkg.WorkDay, error) {
+	err := s.db.SaveWorkDay(&w)
+	if err != nil {
+		return nil, err
+	}
+	return &w, nil
 }

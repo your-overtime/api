@@ -58,7 +58,7 @@ func TestDeleteWorkDay(t *testing.T) {
 	}
 }
 
-func TestGetWorkDayBetweenStartAndEnd(t *testing.T) {
+func TestGetWorkDaysBetweenStartAndEnd(t *testing.T) {
 	db := tests.SetupDb(t)
 	wd := pkg.WorkDay{
 		Day:        tests.ParseDay("2021-07-05"),
@@ -68,7 +68,7 @@ func TestGetWorkDayBetweenStartAndEnd(t *testing.T) {
 	}
 	db.Conn.Create(&wd)
 
-	workDayList, err := db.GetWorkDayBetweenStartAndEnd(
+	workDayList, err := db.GetWorkDaysBetweenStartAndEnd(
 		tests.ParseDay("2021-07-05"), tests.ParseDay("2021-07-05"), 1,
 	)
 	if err != nil {
@@ -81,7 +81,7 @@ func TestGetWorkDayBetweenStartAndEnd(t *testing.T) {
 		t.Fatalf("expected %v equals %v", workDayList[0], wd)
 	}
 
-	workDayList, err = db.GetWorkDayBetweenStartAndEnd(
+	workDayList, err = db.GetWorkDaysBetweenStartAndEnd(
 		tests.ParseDayTime("2021-07-05 08:00"),
 		tests.ParseDayTime("2021-07-05 16:00"),
 		1,
@@ -96,7 +96,7 @@ func TestGetWorkDayBetweenStartAndEnd(t *testing.T) {
 		t.Fatalf("expected %v equals %v", workDayList[0], wd)
 	}
 
-	workDayList, err = db.GetWorkDayBetweenStartAndEnd(
+	workDayList, err = db.GetWorkDaysBetweenStartAndEnd(
 		tests.ParseDay("2021-06-30"),
 		tests.ParseDay("2021-07-04"), 1,
 	)

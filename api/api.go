@@ -353,6 +353,61 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusOK, "")
 		}
 	})
+	v1.GET("/workday", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
+		if err != nil {
+			log.Debug(start, err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
+		if err != nil {
+			log.Debug(end, err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		wds, err := a.os.GetWorkDays(start, end, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, wds)
+		}
+	})
+	v1.POST("/workday", func(c *gin.Context) {
+		e, err := a.getEmployeeFromRequest(c)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		var iw pkg.InputWorkDay
+		err = c.Bind(&iw)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		wo := pkg.WorkDay{
+			UserID:     e.ID,
+			Day:        iw.Day,
+			Overtime:   iw.Overtime,
+			ActiveTime: iw.ActiveTime,
+		}
+		h, err := a.os.AddWorkDay(wo, *e)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+		} else {
+			c.JSON(http.StatusOK, h)
+		}
+	})
 	v1.POST("/token", func(c *gin.Context) {
 		e, err := a.getEmployeeFromRequest(c)
 		if err != nil {

@@ -20,6 +20,9 @@ type OvertimeService interface {
 	GetHolidays(start time.Time, end time.Time, employee Employee) ([]Holiday, error)
 	DelHoliday(id uint, employee Employee) error
 
+	GetWorkDays(start time.Time, end time.Time, employee Employee) ([]WorkDay, error)
+	AddWorkDay(w WorkDay, employee Employee) (*WorkDay, error)
+
 	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
 	DeleteEmployee(login string, adminToken string) error
 
