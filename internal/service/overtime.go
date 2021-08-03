@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -71,9 +70,6 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 			st = start
 		}
 
-		if e.NumWorkingDays == 0 {
-			e.NumWorkingDays = uint(len(strings.Split(e.WorkingDays, ",")))
-		}
 		for {
 			if st.Unix() > end.Unix() || st.Unix() > a.End.Unix() {
 				break
@@ -216,10 +212,6 @@ func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, er
 
 func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint, error) {
 	weekStart := time.Date(day.Year(), day.Month(), day.Day()-weekDayToInt(day.Weekday())+1, 0, 0, 0, 0, day.Location())
-
-	if employee.NumWorkingDays == 0 {
-		employee.NumWorkingDays = uint(len(strings.Split(employee.WorkingDays, ",")))
-	}
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
 
 	wds, err := s.db.GetWorkDaysBetweenStartAndEnd(weekStart, day, employee.ID)

@@ -12,7 +12,7 @@ type InputEmployee struct {
 	Login                    string
 	Password                 string
 	WeekWorkingTimeInMinutes uint
-	WorkingDays              string
+	NumWorkingDays           uint
 }
 
 func (u *InputEmployee) ToEmployee() Employee {
@@ -24,7 +24,7 @@ func (u *InputEmployee) ToEmployee() Employee {
 			Password: u.Password,
 		},
 		WeekWorkingTimeInMinutes: u.WeekWorkingTimeInMinutes,
-		WorkingDays:              u.WorkingDays,
+		NumWorkingDays:           u.NumWorkingDays,
 	}
 }
 
@@ -51,7 +51,6 @@ type Token struct {
 type Employee struct {
 	*User                    `gorm:"embedded"`
 	WeekWorkingTimeInMinutes uint
-	WorkingDays              string
 	NumWorkingDays           uint
 }
 
