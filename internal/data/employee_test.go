@@ -18,7 +18,7 @@ func TestSaveEmployee(t *testing.T) {
 			Password: "supersecurepassword",
 		},
 		WeekWorkingTimeInMinutes: 1280,
-		WorkingDays:              "Monday,Tuesday,Wednesday",
+		NumWorkingDays:           3,
 	}
 	if err := db.SaveEmployee(&newEmployee); err != nil {
 		t.Fatal(err)
@@ -42,7 +42,7 @@ func TestGetEmployee(t *testing.T) {
 			Password: "supersecurepassword",
 		},
 		WeekWorkingTimeInMinutes: 1280,
-		WorkingDays:              "Monday,Tuesday,Wednesday",
+		NumWorkingDays:           3,
 	}
 	db.SaveEmployee(&employee)
 
@@ -73,7 +73,7 @@ func TestEmployeeTokens(t *testing.T) {
 			Password: "supersecurepassword",
 		},
 		WeekWorkingTimeInMinutes: 1280,
-		WorkingDays:              "Monday,Tuesday,Wednesday",
+		NumWorkingDays:           3,
 	}
 	db.SaveEmployee(&employee)
 	tokens, err := db.GetTokens(employee)
