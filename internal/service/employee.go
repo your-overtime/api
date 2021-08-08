@@ -63,9 +63,9 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Empl
 		case "Login":
 			employee.Login = fields[f].(string)
 		case "WeekWorkingTimeInMinutes":
-			employee.WeekWorkingTimeInMinutes = uint(fields[f].(float64))
+			employee.WeekWorkingTimeInMinutes = utils.SafeGetUInt(fields[f])
 		case "NumWorkingDays":
-			employee.NumWorkingDays = uint(fields[f].(float64))
+			employee.NumWorkingDays = utils.SafeGetUInt(fields[f])
 		default:
 			return nil, pkg.ErrBadRequest
 		}
