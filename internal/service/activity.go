@@ -111,6 +111,7 @@ func (s *Service) GetActivities(start time.Time, end time.Time, employee pkg.Emp
 }
 
 func (s *Service) UpdateActivity(activity pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	// only needed in client
 	return nil, errors.New("not implemented")
 }
 

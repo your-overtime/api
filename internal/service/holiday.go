@@ -65,6 +65,7 @@ func (s *Service) GetHoliday(id uint, employee pkg.Employee) (*pkg.Holiday, erro
 }
 
 func (s *Service) UpdateHoliday(activity pkg.Holiday, employee pkg.Employee) (*pkg.Holiday, error) {
+	// only needed in client
 	return nil, errors.New("not implemented")
 }
 
