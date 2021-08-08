@@ -56,6 +56,25 @@ func (d *Db) GetTokens(e pkg.Employee) ([]pkg.Token, error) {
 	return ts, nil
 }
 
+func (d *Db) GetTokenByToken(token string) (*pkg.Token, error) {
+	var t pkg.Token
+	tx := d.Conn.Where("token = ?", token).First(&t)
+	if tx.Error != nil {
+		log.Debug(tx.Error)
+		return nil, tx.Error
+	}
+
+	return &t, nil
+}
+
+func (d *Db) SaveToken(token *pkg.Token) error {
+	tx := d.Conn.Save(token)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
+}
+
 func (d *Db) GetEmployeeByToken(token string) (*pkg.Employee, error) {
 	t := pkg.Token{}
 	tx := d.Conn.Where("token = ?", token).First(&t)
