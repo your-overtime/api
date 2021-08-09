@@ -7,7 +7,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/pkg"
-	"github.com/your-overtime/api/pkg/stringutils"
+	"github.com/your-overtime/api/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -63,9 +63,9 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Empl
 		case "Login":
 			employee.Login = fields[f].(string)
 		case "WeekWorkingTimeInMinutes":
-			employee.WeekWorkingTimeInMinutes = uint(fields[f].(float64))
+			employee.WeekWorkingTimeInMinutes = utils.SafeGetUInt(fields[f])
 		case "NumWorkingDays":
-			employee.NumWorkingDays = uint(fields[f].(float64))
+			employee.NumWorkingDays = utils.SafeGetUInt(fields[f])
 		default:
 			return nil, pkg.ErrBadRequest
 		}
@@ -100,7 +100,7 @@ func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.To
 	token := pkg.Token{
 		UserID: employee.ID,
 		Name:   it.Name,
-		Token:  stringutils.RandString(40),
+		Token:  utils.RandString(40),
 	}
 	tx := s.db.Conn.Create(&token)
 	if tx.Error != nil {
