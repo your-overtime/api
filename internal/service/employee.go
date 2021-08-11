@@ -21,17 +21,6 @@ func createSHA256Hash(v string) string {
 func (s *Service) FromToken(token string) (*pkg.Employee, error) {
 	hashedToken := createSHA256Hash(token)
 
-	t, err := s.db.GetTokenByToken(token)
-	if err == nil {
-		t.Token = hashedToken
-
-		err = s.db.SaveToken(t)
-		if err != nil {
-			log.Debug(err)
-			return nil, err
-		}
-	}
-
 	return s.db.GetEmployeeByToken(hashedToken)
 }
 
