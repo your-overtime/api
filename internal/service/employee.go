@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/sha256"
 	"errors"
 	"fmt"
 
@@ -11,9 +12,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func createSHA256Hash(v string) string {
+	return fmt.Sprintf("%x",
+		sha256.Sum256([]byte(v)),
+	)
+}
+
 func (s *Service) FromToken(token string) (*pkg.Employee, error) {
-	fmt.Println(token)
-	return s.db.GetEmployeeByToken(token)
+	hashedToken := createSHA256Hash(token)
+
+	return s.db.GetEmployeeByToken(hashedToken)
 }
 
 func comparePasswords(hashedPw string, plainPw string) bool {
@@ -102,12 +110,22 @@ func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.To
 		Name:   it.Name,
 		Token:  utils.RandString(40),
 	}
+
 	tx := s.db.Conn.Create(&token)
 	if tx.Error != nil {
 		log.Debug(tx.Error)
 		return nil, tx.Error
 	}
-	return &token, nil
+
+	respToken := token
+	token.Token = createSHA256Hash(token.Token)
+	err := s.db.SaveToken(&token)
+	if err != nil {
+		log.Debug(err)
+		return nil, err
+	}
+
+	return &respToken, nil
 }
 
 func (s *Service) DeleteToken(tokenID uint, employee pkg.Employee) error {
