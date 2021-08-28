@@ -11,11 +11,11 @@ import (
 func createHoliday(start string) pkg.Holiday {
 	startTime, _ := time.Parse("2006-01-02", start)
 	return pkg.Holiday{
-		UserID:       1,
-		Start:        startTime,
-		End:          startTime,
-		Description:  "Test",
-		LegalHoliday: false,
+		UserID:      1,
+		Start:       startTime,
+		End:         startTime,
+		Description: "Test",
+		HolidayType: pkg.HolidayTypeFree,
 	}
 }
 
@@ -23,11 +23,11 @@ func createHolidayWithEnd(start, end string) pkg.Holiday {
 	startTime, _ := time.Parse("2006-01-02", start)
 	endTime, _ := time.Parse("2006-01-02", end)
 	return pkg.Holiday{
-		UserID:       1,
-		Start:        startTime,
-		End:          endTime,
-		Description:  "Test",
-		LegalHoliday: false,
+		UserID:      1,
+		Start:       startTime,
+		End:         endTime,
+		Description: "Test",
+		HolidayType: pkg.HolidayTypeFree,
 	}
 }
 func TestSaveHoliday(t *testing.T) {

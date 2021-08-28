@@ -68,20 +68,28 @@ type InputActivity struct {
 	Description string
 }
 
+type HolidayType string
+
+const (
+	HolidayTypeFree         HolidayType = "free"
+	HolidayTypeSick         HolidayType = "sick"
+	HolidayTypeLegalHoliday HolidayType = "legal_holiday"
+)
+
 type Holiday struct {
 	gorm.Model
-	Start        time.Time
-	End          time.Time
-	Description  string
-	LegalHoliday bool
-	UserID       uint
+	Start       time.Time
+	End         time.Time
+	Description string
+	HolidayType HolidayType
+	UserID      uint
 }
 
 type InputHoliday struct {
-	Start        time.Time
-	End          time.Time
-	Description  string
-	LegalHoliday bool
+	Start       time.Time
+	End         time.Time
+	Description string
+	HolidayType HolidayType
 }
 
 type WorkDay struct {

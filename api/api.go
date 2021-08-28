@@ -251,11 +251,11 @@ func (a *API) createEndPoints() {
 			return
 		}
 		ho := pkg.Holiday{
-			UserID:       e.ID,
-			Start:        ih.Start,
-			End:          ih.End,
-			LegalHoliday: ih.LegalHoliday,
-			Description:  ih.Description,
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			HolidayType: ih.HolidayType,
+			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
 		if err != nil {
@@ -281,12 +281,12 @@ func (a *API) createEndPoints() {
 			return
 		}
 		ho := pkg.Holiday{
-			Model:        gorm.Model{ID: uint(id)},
-			UserID:       e.ID,
-			Start:        ih.Start,
-			End:          ih.End,
-			LegalHoliday: ih.LegalHoliday,
-			Description:  ih.Description,
+			Model:       gorm.Model{ID: uint(id)},
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			HolidayType: ih.HolidayType,
+			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
 		if err != nil {

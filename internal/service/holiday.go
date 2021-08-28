@@ -27,7 +27,7 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 				break
 			}
 			dayFreeTimeInMinutes := int64(0)
-			if a.LegalHoliday {
+			if a.HolidayType == pkg.HolidayTypeLegalHoliday {
 				// Fix legal holidays
 				isLegal = true
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
