@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"errors"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -76,12 +78,27 @@ const (
 	HolidayTypeLegalHoliday HolidayType = "legal_holiday"
 )
 
+var ErrInvalidType = errors.New("invalid type")
+
+func StrToHolidayType(str string) (HolidayType, error) {
+	switch strings.ToLower(str) {
+	case "free":
+		return HolidayTypeFree, nil
+	case "sick":
+		return HolidayTypeSick, nil
+	case "legal_holiday":
+		return HolidayTypeLegalHoliday, nil
+	}
+
+	return HolidayTypeFree, ErrInvalidType
+}
+
 type Holiday struct {
 	gorm.Model
 	Start       time.Time
 	End         time.Time
 	Description string
-	HolidayType HolidayType
+	Type        HolidayType
 	UserID      uint
 }
 

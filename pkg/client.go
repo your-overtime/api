@@ -217,6 +217,19 @@ func (c *client) GetHolidays(start time.Time, end time.Time, employee Employee) 
 	return h, nil
 }
 
+func (c *client) GetHolidaysByType(start time.Time, end time.Time, hType HolidayType, employee Employee) ([]Holiday, error) {
+	resp, err := c.doRequest("GET", fmt.Sprintf("holiday?start=%s&end=%s&type=%s", timeFormatForQuery(start), timeFormatForQuery(end), hType), nil)
+	if err != nil {
+		return nil, err
+	}
+	var h []Holiday
+	err = respToJson(resp, &h)
+	if err != nil {
+		return nil, err
+	}
+	return h, nil
+}
+
 func (c *client) AddWorkDay(workday WorkDay, employee Employee) (*WorkDay, error) {
 	resp, err := c.doRequest("POST", "workday", workday)
 	if err != nil {

@@ -254,7 +254,7 @@ func (a *API) createEndPoints() {
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
-			HolidayType: ih.HolidayType,
+			Type:        ih.HolidayType,
 			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
@@ -285,7 +285,7 @@ func (a *API) createEndPoints() {
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
-			HolidayType: ih.HolidayType,
+			Type:        ih.HolidayType,
 			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
@@ -331,7 +331,19 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		h, err := a.os.GetHolidays(start, end, *e)
+		h := []pkg.Holiday{}
+		typeStr := c.Query("type")
+		if len(typeStr) > 0 {
+			hType, err := pkg.StrToHolidayType(typeStr)
+			if err != nil {
+				log.Debug(end, err)
+				c.JSON(http.StatusBadRequest, err)
+				return
+			}
+			h, err = a.os.GetHolidaysByType(start, end, hType, *e)
+		} else {
+			h, err = a.os.GetHolidays(start, end, *e)
+		}
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)

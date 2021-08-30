@@ -15,7 +15,7 @@ func createHoliday(start string) pkg.Holiday {
 		Start:       startTime,
 		End:         startTime,
 		Description: "Test",
-		HolidayType: pkg.HolidayTypeFree,
+		Type:        pkg.HolidayTypeFree,
 	}
 }
 
@@ -27,7 +27,7 @@ func createHolidayWithEnd(start, end string) pkg.Holiday {
 		Start:       startTime,
 		End:         endTime,
 		Description: "Test",
-		HolidayType: pkg.HolidayTypeFree,
+		Type:        pkg.HolidayTypeFree,
 	}
 }
 func TestSaveHoliday(t *testing.T) {
@@ -95,6 +95,7 @@ func TestGetHolidayBetweenStartAndEnd(t *testing.T) {
 	h4 := createHolidayWithEnd("2021-06-02", "2021-06-06")
 	h5 := createHolidayWithEnd("2021-05-20", "2021-05-30")
 	h6 := createHolidayWithEnd("2021-06-09", "2021-06-30")
+	h4.Type = pkg.HolidayTypeSick
 
 	// insert
 	db := tests.SetupDb(t)
@@ -138,4 +139,19 @@ func TestGetHolidayBetweenStartAndEnd(t *testing.T) {
 		t.Fatal("nope")
 	}
 
+	list, err = db.GetHolidaysBetweenStartAndEndByType(start, end, pkg.HolidayTypeFree, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 6 {
+		t.Fatalf("expect result len is 6 not %v", len(list))
+	}
+
+	list, err = db.GetHolidaysBetweenStartAndEndByType(start, end, pkg.HolidayTypeSick, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 1 {
+		t.Fatalf("expect result len is 1 not %v", len(list))
+	}
 }
