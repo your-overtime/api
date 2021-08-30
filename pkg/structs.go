@@ -106,7 +106,7 @@ type InputHoliday struct {
 	Start       time.Time
 	End         time.Time
 	Description string
-	HolidayType HolidayType
+	Type        HolidayType
 }
 
 type WorkDay struct {

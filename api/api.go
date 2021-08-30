@@ -254,7 +254,7 @@ func (a *API) createEndPoints() {
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
-			Type:        ih.HolidayType,
+			Type:        ih.Type,
 			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
@@ -285,7 +285,7 @@ func (a *API) createEndPoints() {
 			UserID:      e.ID,
 			Start:       ih.Start,
 			End:         ih.End,
-			Type:        ih.HolidayType,
+			Type:        ih.Type,
 			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
