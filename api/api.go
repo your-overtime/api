@@ -251,11 +251,11 @@ func (a *API) createEndPoints() {
 			return
 		}
 		ho := pkg.Holiday{
-			UserID:       e.ID,
-			Start:        ih.Start,
-			End:          ih.End,
-			LegalHoliday: ih.LegalHoliday,
-			Description:  ih.Description,
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			Type:        ih.Type,
+			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
 		if err != nil {
@@ -281,12 +281,12 @@ func (a *API) createEndPoints() {
 			return
 		}
 		ho := pkg.Holiday{
-			Model:        gorm.Model{ID: uint(id)},
-			UserID:       e.ID,
-			Start:        ih.Start,
-			End:          ih.End,
-			LegalHoliday: ih.LegalHoliday,
-			Description:  ih.Description,
+			Model:       gorm.Model{ID: uint(id)},
+			UserID:      e.ID,
+			Start:       ih.Start,
+			End:         ih.End,
+			Type:        ih.Type,
+			Description: ih.Description,
 		}
 		h, err := a.os.AddHoliday(ho, *e)
 		if err != nil {
@@ -331,7 +331,19 @@ func (a *API) createEndPoints() {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		h, err := a.os.GetHolidays(start, end, *e)
+		h := []pkg.Holiday{}
+		typeStr := c.Query("type")
+		if len(typeStr) > 0 {
+			hType, err := pkg.StrToHolidayType(typeStr)
+			if err != nil {
+				log.Debug(end, err)
+				c.JSON(http.StatusBadRequest, err)
+				return
+			}
+			h, err = a.os.GetHolidaysByType(start, end, hType, *e)
+		} else {
+			h, err = a.os.GetHolidays(start, end, *e)
+		}
 		if err != nil {
 			log.Debug(err)
 			c.JSON(http.StatusInternalServerError, err)

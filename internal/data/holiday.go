@@ -30,3 +30,13 @@ func (d *Db) GetHolidaysBetweenStartAndEnd(start time.Time, end time.Time, emplo
 
 	return holidays, nil
 }
+
+func (d *Db) GetHolidaysBetweenStartAndEndByType(start time.Time, end time.Time, hType pkg.HolidayType, employeeID uint) ([]pkg.Holiday, error) {
+	holidays := []pkg.Holiday{}
+	tx := d.Conn.Where("user_id = ?", employeeID).Where("? <= `end` AND ? >= `start` AND `type` = ?", start, end, hType).Find(&holidays)
+	if tx.Error != nil && tx.Error != sql.ErrNoRows {
+		return nil, tx.Error
+	}
+
+	return holidays, nil
+}

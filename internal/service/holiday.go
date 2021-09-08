@@ -27,7 +27,7 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 				break
 			}
 			dayFreeTimeInMinutes := int64(0)
-			if a.LegalHoliday {
+			if a.Type == pkg.HolidayTypeLegalHoliday {
 				// Fix legal holidays
 				isLegal = true
 				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
@@ -71,6 +71,16 @@ func (s *Service) UpdateHoliday(activity pkg.Holiday, employee pkg.Employee) (*p
 
 func (s *Service) GetHolidays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Holiday, error) {
 	h, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, employee.ID)
+	if err != nil {
+		log.Debug(err)
+		return nil, err
+	}
+
+	return h, nil
+}
+
+func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.HolidayType, employee pkg.Employee) ([]pkg.Holiday, error) {
+	h, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, hType, employee.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err

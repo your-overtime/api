@@ -5,8 +5,7 @@ import (
 	"time"
 )
 
-type OvertimeService interface {
-	CalcOverview(e Employee, day time.Time) (*Overview, error)
+type ActivityService interface {
 	StartActivity(desc string, employee Employee) (*Activity, error)
 	AddActivity(activity Activity, employee Employee) (*Activity, error)
 	UpdateActivity(activity Activity, employee Employee) (*Activity, error)
@@ -14,15 +13,23 @@ type OvertimeService interface {
 	GetActivity(id uint, employee Employee) (*Activity, error)
 	GetActivities(start time.Time, end time.Time, employee Employee) ([]Activity, error)
 	DelActivity(id uint, employee Employee) error
+}
+
+type HolidayService interface {
 	AddHoliday(h Holiday, employee Employee) (*Holiday, error)
 	UpdateHoliday(h Holiday, employee Employee) (*Holiday, error)
 	GetHoliday(id uint, employee Employee) (*Holiday, error)
 	GetHolidays(start time.Time, end time.Time, employee Employee) ([]Holiday, error)
+	GetHolidaysByType(start time.Time, end time.Time, hType HolidayType, employee Employee) ([]Holiday, error)
 	DelHoliday(id uint, employee Employee) error
+}
 
+type WorkDayService interface {
 	GetWorkDays(start time.Time, end time.Time, employee Employee) ([]WorkDay, error)
 	AddWorkDay(w WorkDay, employee Employee) (*WorkDay, error)
+}
 
+type EmployeeService interface {
 	SaveEmployee(employee Employee, adminToken string) (*Employee, error)
 	DeleteEmployee(login string, adminToken string) error
 
@@ -32,6 +39,15 @@ type OvertimeService interface {
 	CreateToken(token InputToken, employee Employee) (*Token, error)
 	DeleteToken(tokenID uint, employee Employee) error
 	GetTokens(employee Employee) ([]Token, error)
+}
+
+type OvertimeService interface {
+	CalcOverview(e Employee, day time.Time) (*Overview, error)
+
+	ActivityService
+	HolidayService
+	WorkDayService
+	EmployeeService
 }
 
 var (

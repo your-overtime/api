@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"errors"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -68,20 +70,43 @@ type InputActivity struct {
 	Description string
 }
 
+type HolidayType string
+
+const (
+	HolidayTypeFree         HolidayType = "free"
+	HolidayTypeSick         HolidayType = "sick"
+	HolidayTypeLegalHoliday HolidayType = "legal_holiday"
+)
+
+var ErrInvalidType = errors.New("invalid type")
+
+func StrToHolidayType(str string) (HolidayType, error) {
+	switch strings.ToLower(str) {
+	case "free":
+		return HolidayTypeFree, nil
+	case "sick":
+		return HolidayTypeSick, nil
+	case "legal_holiday":
+		return HolidayTypeLegalHoliday, nil
+	}
+
+	return HolidayTypeFree, ErrInvalidType
+}
+
 type Holiday struct {
 	gorm.Model
-	Start        time.Time
-	End          time.Time
-	Description  string
-	LegalHoliday bool
-	UserID       uint
+	Start       time.Time
+	End         time.Time
+	Description string
+	Type        HolidayType
+	UserID      uint
 }
 
 type InputHoliday struct {
-	Start        time.Time
-	End          time.Time
-	Description  string
-	LegalHoliday bool
+	Start       time.Time
+	End         time.Time
+	Description string
+	Type        HolidayType
 }
 
 type WorkDay struct {
