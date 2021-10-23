@@ -99,6 +99,11 @@ func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, er
 		return nil, err
 	}
 
+	holidays, err := s.CountHolidaysBetweenStartAndEnd(yStart, day, e)
+	if err != nil {
+		return nil, err
+	}
+
 	// This month
 	mStart := time.Date(yyyy, mm, 01, 0, 0, 0, 0, day.Location())
 	mat, mot, err := s.calcOvertimeAndActivetime(mStart, day, &e)
@@ -130,6 +135,8 @@ func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, er
 		OvertimeThisWeekInMinutes:    wot,
 		OvertimeThisMonthInMinutes:   mot,
 		OvertimeThisYearInMinutes:    yot,
+		UsedHolidays:                 int(holidays),
+		HolidaysStillAvailable:       int(e.NumHolidays - holidays),
 	}
 	cra, err := s.db.GetRunningActivityByEmployeeID(e.ID)
 	if err == nil {
