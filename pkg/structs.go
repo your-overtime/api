@@ -15,6 +15,7 @@ type InputEmployee struct {
 	Password                 string
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
+	NumHolidays              uint
 }
 
 func (u *InputEmployee) ToEmployee() Employee {
@@ -27,6 +28,7 @@ func (u *InputEmployee) ToEmployee() Employee {
 		},
 		WeekWorkingTimeInMinutes: u.WeekWorkingTimeInMinutes,
 		NumWorkingDays:           u.NumWorkingDays,
+		NumHolidays:              u.NumHolidays,
 	}
 }
 
@@ -54,6 +56,7 @@ type Employee struct {
 	*User                    `gorm:"embedded"`
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
+	NumHolidays              uint
 }
 
 type Activity struct {
@@ -73,9 +76,10 @@ type InputActivity struct {
 type HolidayType string
 
 const (
-	HolidayTypeFree         HolidayType = "free"
-	HolidayTypeSick         HolidayType = "sick"
-	HolidayTypeLegalHoliday HolidayType = "legal_holiday"
+	HolidayTypeFree            HolidayType = "free"
+	HolidayTypeSick            HolidayType = "sick"
+	HolidayTypeLegalHoliday    HolidayType = "legal_holiday"
+	HolidayTypeLegalUnpaidFree HolidayType = "unpaid_free"
 )
 
 var ErrInvalidType = errors.New("invalid type")
@@ -88,6 +92,8 @@ func StrToHolidayType(str string) (HolidayType, error) {
 		return HolidayTypeSick, nil
 	case "legal_holiday":
 		return HolidayTypeLegalHoliday, nil
+	case "unpaid_free":
+		return HolidayTypeLegalUnpaidFree, nil
 	}
 
 	return HolidayTypeFree, ErrInvalidType
@@ -128,6 +134,8 @@ type InputWorkDay struct {
 type Overview struct {
 	Date                         time.Time
 	WeekNumber                   int
+	UsedHolidays                 int
+	HolidaysStillAvailable       int
 	OvertimeThisDayInMinutes     int64
 	ActiveTimeThisDayInMinutes   int64
 	OvertimeThisWeekInMinutes    int64

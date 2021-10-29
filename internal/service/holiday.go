@@ -8,6 +8,10 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
+func (s *Service) CountHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.Employee) (uint, error) {
+	return s.db.CountHolidaysBetweenStartAndEnd(start, end, e.ID)
+}
+
 func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, bool, error) {
 	isLegal := false
 	holidays, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, e.ID)
