@@ -2,14 +2,31 @@ package service
 
 import (
 	"errors"
+	"math"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/pkg"
 )
 
-func (s *Service) CountHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.Employee) (uint, error) {
-	return s.db.CountHolidaysBetweenStartAndEnd(start, end, e.ID)
+func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.Employee) (uint, error) {
+	useHolidays := uint(0)
+	hs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, pkg.HolidayTypeFree, e.ID)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, h := range hs {
+		h := h
+		cs := h.Start
+		e := h.End
+		cs = time.Date(cs.Year(), cs.Month(), cs.Day(), 0, 0, 0, 0, cs.Location())
+		e = time.Date(e.Year(), e.Month(), e.Day(), 23, 59, 59, 0, e.Location())
+
+		useHolidays += uint(math.Round((float64(e.Unix()-cs.Unix()) / 60 / 60 / 24)))
+	}
+
+	return useHolidays, nil
 }
 
 func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, bool, error) {

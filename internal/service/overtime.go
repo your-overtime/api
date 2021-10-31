@@ -99,7 +99,7 @@ func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, er
 		return nil, err
 	}
 
-	holidays, err := s.CountHolidaysBetweenStartAndEnd(yStart, day, e)
+	holidays, err := s.CountUsedHolidaysBetweenStartAndEnd(yStart, day, e)
 	if err != nil {
 		return nil, err
 	}
