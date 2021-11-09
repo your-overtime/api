@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"math"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -21,9 +20,9 @@ func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.
 		cs := h.Start
 		e := h.End
 		cs = time.Date(cs.Year(), cs.Month(), cs.Day(), 0, 0, 0, 0, cs.Location())
-		e = time.Date(e.Year(), e.Month(), e.Day(), 23, 59, 59, 0, e.Location())
+		e = time.Date(e.Year(), e.Month(), e.Day()+1, 0, 0, 0, 0, e.Location())
 
-		useHolidays += uint(math.Round((float64(e.Unix()-cs.Unix()) / 60 / 60 / 24)))
+		useHolidays += uint((float64(e.Unix()-cs.Unix()) / 60 / 60 / 24))
 	}
 
 	return useHolidays, nil
