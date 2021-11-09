@@ -22,7 +22,7 @@ func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.
 		cs = time.Date(cs.Year(), cs.Month(), cs.Day(), 0, 0, 0, 0, cs.Location())
 		e = time.Date(e.Year(), e.Month(), e.Day()+1, 0, 0, 0, 0, e.Location())
 
-		useHolidays += uint((float64(e.Unix()-cs.Unix()) / 60 / 60 / 24))
+		useHolidays += uint(float64(e.Unix()-cs.Unix()) / 60 / 60 / 24)
 	}
 
 	return useHolidays, nil
