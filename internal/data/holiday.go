@@ -12,19 +12,6 @@ func (d *Db) SaveHoliday(a *pkg.Holiday) error {
 	return tx.Error
 }
 
-func (d *Db) CountHolidaysBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) (uint, error) {
-	nh := int64(0)
-	tx := d.Conn.Model(pkg.Holiday{}).
-		Where("user_id = ?", employeeID).
-		Where("type = ?", pkg.HolidayTypeFree).Count(&nh)
-
-	if tx.Error != nil {
-		return 0, tx.Error
-	}
-
-	return uint(nh), nil
-}
-
 func (d *Db) GetHoliday(id uint) (*pkg.Holiday, error) {
 	h := pkg.Holiday{}
 	tx := d.Conn.First(&h, id)
