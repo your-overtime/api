@@ -1,0 +1,201 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/activity": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a activities by start and end",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Creates a activity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Stops a activity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            }
+        },
+        "/activity/:desc": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Starts a activity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            }
+        },
+        "/activity/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete a activity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Updates a activity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            }
+        },
+        "/overview": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Retrieves overview of your overtime",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Overview"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "gorm.DeletedAt": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
+                }
+            }
+        },
+        "pkg.Activity": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "start": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.Overview": {
+            "type": "object",
+            "properties": {
+                "activeActivity": {
+                    "$ref": "#/definitions/pkg.Activity"
+                },
+                "activeTimeThisDayInMinutes": {
+                    "type": "integer"
+                },
+                "activeTimeThisMonthInMinutes": {
+                    "type": "integer"
+                },
+                "activeTimeThisWeekInMinutes": {
+                    "type": "integer"
+                },
+                "activeTimeThisYearInMinutes": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "holidaysStillAvailable": {
+                    "type": "integer"
+                },
+                "overtimeThisDayInMinutes": {
+                    "type": "integer"
+                },
+                "overtimeThisMonthInMinutes": {
+                    "type": "integer"
+                },
+                "overtimeThisWeekInMinutes": {
+                    "type": "integer"
+                },
+                "overtimeThisYearInMinutes": {
+                    "type": "integer"
+                },
+                "usedHolidays": {
+                    "type": "integer"
+                },
+                "weekNumber": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

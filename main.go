@@ -5,11 +5,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/your-overtime/api/api"
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/internal/service"
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 
 	log "github.com/sirupsen/logrus"
 )
