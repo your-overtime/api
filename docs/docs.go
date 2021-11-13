@@ -23,26 +23,142 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/activity": {
+        "/account": {
             "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get a activities by start and end",
+                "tags": [
+                    "account"
+                ],
+                "summary": "Retrieves account information",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/pkg.Employee"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "updates a account",
+                "parameters": [
+                    {
+                        "description": "input account fields",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Employee"
+                        }
+                    }
+                }
+            }
+        },
+        "/activity": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "Get a activities by start and end",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg.Activity"
+                            }
                         }
                     }
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "activity"
+                ],
                 "summary": "Creates a activity",
+                "parameters": [
+                    {
+                        "description": "input activity",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputActivity"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -53,8 +169,19 @@ var doc = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "activity"
                 ],
                 "summary": "Stops a activity",
                 "responses": {
@@ -67,12 +194,32 @@ var doc = `{
                 }
             }
         },
-        "/activity/:desc": {
+        "/activity/{desc}": {
             "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "activity"
+                ],
                 "summary": "Starts a activity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Activity description",
+                        "name": "desc",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -83,12 +230,32 @@ var doc = `{
                 }
             }
         },
-        "/activity/:id": {
+        "/activity/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Delete a activity",
+                "tags": [
+                    "activity"
+                ],
+                "summary": "Get a activity by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Activity id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -99,10 +266,76 @@ var doc = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BasicAuth ApiKeyAuth": []
+                    },
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "activity"
+                ],
                 "summary": "Updates a activity",
+                "parameters": [
+                    {
+                        "description": "input activity",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputActivity"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Activity id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Activity"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "Delete a activity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Activity id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -113,10 +346,251 @@ var doc = `{
                 }
             }
         },
-        "/overview": {
-            "get": {
+        "/employee": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "creates a employee",
+                "parameters": [
+                    {
+                        "description": "input employee",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputEmployee"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Employee"
+                        }
+                    }
+                }
+            }
+        },
+        "/holiday": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holiday"
+                ],
+                "summary": "Get a activities by start and end",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg.Holiday"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holiday"
+                ],
+                "summary": "Creates a holiday",
+                "parameters": [
+                    {
+                        "description": "input holiday",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputHoliday"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Holiday"
+                        }
+                    }
+                }
+            }
+        },
+        "/holiday/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holiday"
+                ],
+                "summary": "Get a holiday by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Holiday id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Holiday"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holiday"
+                ],
+                "summary": "Updates a holiday",
+                "parameters": [
+                    {
+                        "description": "input holiday",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputHoliday"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Holiday id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Holiday"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holiday"
+                ],
+                "summary": "Delete a holiday",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Holiday id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Holiday"
+                        }
+                    }
+                }
+            }
+        },
+        "/overview": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "overview"
                 ],
                 "summary": "Retrieves overview of your overtime",
                 "responses": {
@@ -128,29 +602,182 @@ var doc = `{
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "gorm.DeletedAt": {
-            "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
+        },
+        "/token": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "summary": "Retrieves tokens",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg.Token"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "summary": "creates a token",
+                "parameters": [
+                    {
+                        "description": "input token",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Token"
+                        }
+                    }
                 }
             }
         },
+        "/token/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "summary": "Delete a token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Token id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Token"
+                        }
+                    }
+                }
+            }
+        },
+        "/workday": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workday"
+                ],
+                "summary": "Retrieves workdays",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg.WorkDay"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workday"
+                ],
+                "summary": "creates a workdays",
+                "parameters": [
+                    {
+                        "description": "input workday",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.InputWorkDay"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.WorkDay"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
         "pkg.Activity": {
             "type": "object",
             "properties": {
                 "createdAt": {
                     "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
                 },
                 "description": {
                     "type": "string"
@@ -166,6 +793,155 @@ var doc = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.Employee": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "numHolidays": {
+                    "type": "integer"
+                },
+                "numWorkingDays": {
+                    "type": "integer"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "tokens": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pkg.Token"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "weekWorkingTimeInMinutes": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.Holiday": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "start": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.InputActivity": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "string"
+                }
+            }
+        },
+        "pkg.InputEmployee": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "numHolidays": {
+                    "type": "integer"
+                },
+                "numWorkingDays": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "weekWorkingTimeInMinutes": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.InputHoliday": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pkg.InputToken": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pkg.InputWorkDay": {
+            "type": "object",
+            "properties": {
+                "activeTime": {
+                    "type": "integer"
+                },
+                "day": {
+                    "type": "string"
+                },
+                "overtime": {
+                    "type": "integer"
                 },
                 "userID": {
                     "type": "integer"
@@ -215,6 +991,73 @@ var doc = `{
                     "type": "integer"
                 }
             }
+        },
+        "pkg.Token": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.WorkDay": {
+            "type": "object",
+            "properties": {
+                "activeTime": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "day": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isHoliday": {
+                    "type": "boolean"
+                },
+                "overtime": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "AdminAuth": {
+            "type": "apiKey",
+            "name": "adminToken",
+            "in": "query"
+        },
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "BasicAuth": {
+            "type": "basic"
         }
     }
 }`
@@ -230,11 +1073,11 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "",
+	Version:     "1.0",
 	Host:        "",
-	BasePath:    "",
+	BasePath:    "/api/v1",
 	Schemes:     []string{},
-	Title:       "",
+	Title:       "Your Overtime API",
 	Description: "",
 }
 

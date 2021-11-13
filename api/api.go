@@ -3,10 +3,9 @@ package api
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -16,8 +15,6 @@ import (
 
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-
-	docs "github.com/your-overtime/api/docs"
 )
 
 // API struct
@@ -33,7 +30,7 @@ func (a *API) adminAuth() gin.HandlerFunc {
 		token := c.Request.FormValue("adminToken")
 		log.Debug(token, " ", a.adminToken, " ", token == a.adminToken)
 		if token != a.adminToken {
-			c.AbortWithError(http.StatusUnauthorized, errors.New("Invalid token"))
+			c.AbortWithError(http.StatusUnauthorized, errors.New("invalid token"))
 		}
 	}
 }
@@ -44,6 +41,7 @@ func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
 		return a.os.FromToken(token)
 	}
 	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
+	fmt.Println(authHeaderSlice)
 	if len(authHeaderSlice) == 2 {
 		switch strings.ToLower(authHeaderSlice[0]) {
 		case "basic":
@@ -74,7 +72,10 @@ func (a *API) createEndPoints() {
 
 	a.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	v1.GET("overview", a.GetOverview)
+	// Overview
+	v1.GET("/overview", a.GetOverview)
+
+	// activity
 	v1.POST("/activity/:desc", a.StartActivity)
 	v1.DELETE("/activity", a.StopActivity)
 	v1.POST("/activity", a.CreateActivity)
@@ -83,173 +84,30 @@ func (a *API) createEndPoints() {
 	v1.GET("/activity", a.GetActivities)
 	v1.DELETE("/activity/:id", a.DeleteActivity)
 
+	// holiday
 	v1.POST("/holiday", a.CreateHoliday)
 	v1.PUT("/holiday/:id", a.UpdateHoliday)
 	v1.GET("/holiday/:id", a.GetHoliday)
 	v1.GET("/holiday", a.GetHolidays)
 	v1.DELETE("/holiday/:id", a.DeleteHoliday)
 
-	v1.GET("/workday", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
-		if err != nil {
-			log.Debug(start, err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		end, err := time.Parse(time.RFC3339Nano, c.Query("end"))
-		if err != nil {
-			log.Debug(end, err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		wds, err := a.os.GetWorkDays(start, end, *e)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
-		} else {
-			c.JSON(http.StatusOK, wds)
-		}
-	})
-	v1.POST("/workday", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		var iw pkg.InputWorkDay
-		err = c.Bind(&iw)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		wo := pkg.WorkDay{
-			UserID:     e.ID,
-			Day:        iw.Day,
-			Overtime:   iw.Overtime,
-			ActiveTime: iw.ActiveTime,
-		}
-		h, err := a.os.AddWorkDay(wo, *e)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
-		} else {
-			c.JSON(http.StatusOK, h)
-		}
-	})
-	v1.POST("/token", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		var it pkg.InputToken
-		err = c.Bind(&it)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		t, err := a.os.CreateToken(it, *e)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
-		} else {
-			c.JSON(http.StatusCreated, t)
-		}
-	})
-	v1.GET("/token", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
+	// workday
+	v1.GET("/workday", a.GetWorkDays)
+	v1.POST("/workday", a.CreateWorkDay)
 
-		ts, err := a.os.GetTokens(*e)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
-		} else {
-			c.JSON(http.StatusCreated, ts)
-		}
-	})
-	v1.DELETE("/token/:id", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-		err = a.os.DeleteToken(uint(id), *e)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusInternalServerError, err)
-		} else {
-			c.JSON(http.StatusOK, "token deleted")
-		}
-	})
-	v1.GET("account", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		} else {
-			c.JSON(http.StatusOK, e)
-		}
-	})
-	v1.PATCH("account", func(c *gin.Context) {
-		e, err := a.getEmployeeFromRequest(c)
-		if err != nil {
-			log.Debug(err)
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		var payload map[string]interface{}
-		err = c.Bind(&payload)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, err)
-			return
-		}
-		e, err = a.os.UpdateAccount(payload, *e)
-		if err != nil {
-			log.Debug(err)
-			if errors.Is(err, pkg.ErrDuplicateValue) {
-				c.JSON(http.StatusBadRequest, err)
-			} else {
-				c.JSON(http.StatusInternalServerError, err)
-			}
-		} else {
-			c.JSON(http.StatusOK, e)
-		}
-	})
+	// token
+	v1.GET("/token", a.GetTokens)
+	v1.POST("/token", a.CreateToken)
+	v1.DELETE("/token/:id", a.DeleteToken)
+
+	// account
+	v1.GET("account", a.GetAccount)
+	v1.PATCH("account", a.UpdateAccount)
+
+	// employee
 	authorizedV1 := v1.Group("/", a.adminAuth())
 	{
-		authorizedV1.POST("/employee", func(c *gin.Context) {
-			var ie pkg.InputEmployee
-			err := c.Bind(&ie)
-			if err != nil {
-				log.Debug(err)
-				c.JSON(http.StatusBadRequest, err)
-				return
-			}
-			e, err := a.os.SaveEmployee(ie.ToEmployee(), "")
-			if err != nil {
-				log.Debug(err)
-				c.JSON(http.StatusInternalServerError, err)
-			} else {
-				c.JSON(http.StatusCreated, e)
-			}
-		})
+		authorizedV1.POST("/employee", a.CreateEmployee)
 	}
 }
 
@@ -263,9 +121,6 @@ func Init(os *service.Service, adminToken string) *API {
 }
 
 func (a API) Start(host string) {
-	docs.SwaggerInfo.Title = "Your Overtime Swagger API"
-	docs.SwaggerInfo.BasePath = "/api/v1/"
-
 	a.createEndPoints()
 	panic(a.router.Run(host))
 }

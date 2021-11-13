@@ -1,18 +1,9 @@
+basePath: /api/v1
 definitions:
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
-    type: object
   pkg.Activity:
     properties:
       createdAt:
         type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
       end:
@@ -23,6 +14,103 @@ definitions:
         type: string
       updatedAt:
         type: string
+      userID:
+        type: integer
+    type: object
+  pkg.Employee:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      login:
+        type: string
+      name:
+        type: string
+      numHolidays:
+        type: integer
+      numWorkingDays:
+        type: integer
+      surname:
+        type: string
+      tokens:
+        items:
+          $ref: '#/definitions/pkg.Token'
+        type: array
+      updatedAt:
+        type: string
+      weekWorkingTimeInMinutes:
+        type: integer
+    type: object
+  pkg.Holiday:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      end:
+        type: string
+      id:
+        type: integer
+      start:
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
+  pkg.InputActivity:
+    properties:
+      description:
+        type: string
+      end:
+        type: string
+      start:
+        type: string
+    type: object
+  pkg.InputEmployee:
+    properties:
+      login:
+        type: string
+      name:
+        type: string
+      numHolidays:
+        type: integer
+      numWorkingDays:
+        type: integer
+      password:
+        type: string
+      surname:
+        type: string
+      weekWorkingTimeInMinutes:
+        type: integer
+    type: object
+  pkg.InputHoliday:
+    properties:
+      description:
+        type: string
+      end:
+        type: string
+      start:
+        type: string
+      type:
+        type: string
+    type: object
+  pkg.InputToken:
+    properties:
+      name:
+        type: string
+    type: object
+  pkg.InputWorkDay:
+    properties:
+      activeTime:
+        type: integer
+      day:
+        type: string
+      overtime:
+        type: integer
       userID:
         type: integer
     type: object
@@ -55,9 +143,82 @@ definitions:
       weekNumber:
         type: integer
     type: object
+  pkg.Token:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      token:
+        type: string
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
+  pkg.WorkDay:
+    properties:
+      activeTime:
+        type: integer
+      createdAt:
+        type: string
+      day:
+        type: string
+      id:
+        type: integer
+      isHoliday:
+        type: boolean
+      overtime:
+        type: integer
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
 info:
   contact: {}
+  title: Your Overtime API
+  version: "1.0"
 paths:
+  /account:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Employee'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves account information
+      tags:
+      - account
+    patch:
+      parameters:
+      - description: input account fields
+        in: body
+        name: bottles
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Employee'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: updates a account
+      tags:
+      - account
   /activity:
     delete:
       produces:
@@ -67,17 +228,47 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/pkg.Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Stops a activity
+      tags:
+      - activity
     get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: Start date
+        in: query
+        name: end
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            items:
+              $ref: '#/definitions/pkg.Activity'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Get a activities by start and end
+      tags:
+      - activity
     post:
+      parameters:
+      - description: input activity
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputActivity'
       produces:
       - application/json
       responses:
@@ -85,9 +276,20 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/pkg.Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Creates a activity
-  /activity/:desc:
+      tags:
+      - activity
+  /activity/{desc}:
     post:
+      parameters:
+      - description: Activity description
+        in: path
+        name: desc
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -95,9 +297,20 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/pkg.Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Starts a activity
-  /activity/:id:
-    get:
+      tags:
+      - activity
+  /activity/{id}:
+    delete:
+      parameters:
+      - description: Activity id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -105,8 +318,19 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/pkg.Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Delete a activity
-    put:
+      tags:
+      - activity
+    get:
+      parameters:
+      - description: Activity id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -114,7 +338,176 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/pkg.Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activity by id
+      tags:
+      - activity
+    put:
+      parameters:
+      - description: input activity
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputActivity'
+      - description: Activity id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Activity'
+      security:
+      - BasicAuth ApiKeyAuth: []
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Updates a activity
+      tags:
+      - activity
+  /employee:
+    post:
+      parameters:
+      - description: input employee
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputEmployee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Employee'
+      security:
+      - AdminAuth: []
+      summary: creates a employee
+      tags:
+      - employee
+  /holiday:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: Start date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg.Holiday'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activities by start and end
+      tags:
+      - holiday
+    post:
+      parameters:
+      - description: input holiday
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputHoliday'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Creates a holiday
+      tags:
+      - holiday
+  /holiday/{id}:
+    delete:
+      parameters:
+      - description: Holiday id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Delete a holiday
+      tags:
+      - holiday
+    get:
+      parameters:
+      - description: Holiday id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a holiday by id
+      tags:
+      - holiday
+    put:
+      parameters:
+      - description: input holiday
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputHoliday'
+      - description: Holiday id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Updates a holiday
+      tags:
+      - holiday
   /overview:
     get:
       produces:
@@ -124,5 +517,118 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/pkg.Overview'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
       summary: Retrieves overview of your overtime
+      tags:
+      - overview
+  /token:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg.Token'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves tokens
+      tags:
+      - token
+    post:
+      parameters:
+      - description: input token
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Token'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: creates a token
+      tags:
+      - token
+  /token/{id}:
+    delete:
+      parameters:
+      - description: Token id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.Token'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Delete a token
+      tags:
+      - token
+  /workday:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg.WorkDay'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves workdays
+      tags:
+      - workday
+    post:
+      parameters:
+      - description: input workday
+        in: body
+        name: bottles
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.InputWorkDay'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg.WorkDay'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: creates a workdays
+      tags:
+      - workday
+securityDefinitions:
+  AdminAuth:
+    in: query
+    name: adminToken
+    type: apiKey
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
 swagger: "2.0"

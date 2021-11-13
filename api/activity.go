@@ -9,41 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/pkg"
-	"gorm.io/gorm"
 )
 
-// GetOverview godoc
-// @Summary Retrieves overview of your overtime
-// @Produce json
-// @Success 200 {object} pkg.Overview
-// @Router /overview [get]
-func (a *API) GetOverview(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
-	if err != nil {
-		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
-		return
-	}
-	overview, err := a.os.CalcOverview(*e, time.Now())
-	if err != nil {
-		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
-	} else {
-		c.JSON(http.StatusOK, overview)
-	}
-}
-
 // StartActivity godoc
+// @Tags activity
 // @Summary Starts a activity
 // @Produce json
 // @Success 200 {object} pkg.Activity
 // @Param desc path string true "Activity description"
-// @Router /activity/:desc [post]
+// @Router /activity/{desc} [post]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) StartActivity(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	fmt.Println(e)
@@ -60,15 +41,18 @@ func (a *API) StartActivity(c *gin.Context) {
 }
 
 // StopActivity godoc
+// @Tags activity
 // @Summary Stops a activity
 // @Produce json
 // @Success 200 {object} pkg.Activity
 // @Router /activity [delete]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) StopActivity(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	ac, err := a.os.StopRunningActivity(*e)
@@ -83,15 +67,20 @@ func (a *API) StopActivity(c *gin.Context) {
 }
 
 // CreateActivity godoc
+// @Tags activity
 // @Summary Creates a activity
 // @Produce json
+// @Consume json
+// @Param bottles body pkg.InputActivity true "input activity"
 // @Success 200 {object} pkg.Activity
 // @Router /activity [post]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) CreateActivity(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	var ia pkg.InputActivity
@@ -117,16 +106,22 @@ func (a *API) CreateActivity(c *gin.Context) {
 }
 
 // UpdateActivity godoc
+// @Tags activity
+// @Security BasicAuth ApiKeyAuth
 // @Summary Updates a activity
 // @Produce json
+// @Consume json
+// @Param bottles body pkg.InputActivity true "input activity"
 // @Success 200 {object} pkg.Activity
 // @Param id path string true "Activity id"
 // @Router /activity/{id} [put]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) UpdateActivity(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -138,7 +133,7 @@ func (a *API) UpdateActivity(c *gin.Context) {
 		return
 	}
 	act := pkg.Activity{
-		Model:       gorm.Model{ID: uint(id)},
+		Model:       pkg.Model{ID: uint(id)},
 		UserID:      e.ID,
 		Start:       ia.Start,
 		End:         ia.End,
@@ -154,16 +149,19 @@ func (a *API) UpdateActivity(c *gin.Context) {
 }
 
 // GetActivity godoc
+// @Tags activity
 // @Summary Get a activity by id
 // @Produce json
 // @Success 200 {object} pkg.Activity
 // @Param id path string true "Activity id"
 // @Router /activity/{id} [get]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) GetActivity(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -177,17 +175,20 @@ func (a *API) GetActivity(c *gin.Context) {
 }
 
 // GetActivities godoc
+// @Tags activity
 // @Summary Get a activities by start and end
 // @Produce json
 // @Param start query string true "Start date"
 // @Param end query string true "Start date"
-// @Success 200 {object} pkg.Activity
+// @Success 200 {object} []pkg.Activity
 // @Router /activity [get]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) GetActivities(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	start, err := time.Parse(time.RFC3339, c.Query("start"))
@@ -212,16 +213,19 @@ func (a *API) GetActivities(c *gin.Context) {
 }
 
 // DeleteActivity godoc
+// @Tags activity
 // @Summary Delete a activity
 // @Produce json
 // @Success 200 {object} pkg.Activity
 // @Param id path string true "Activity id"
-// @Router /activity/{id} [get]
+// @Router /activity/{id} [delete]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) DeleteActivity(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)

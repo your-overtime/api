@@ -8,3 +8,5 @@ test:
 	go test -v -cover -bench . ./...
 test-html:
 	go test -coverprofile=coverage.out -bench . ./... && go tool cover -html=coverage.out
+gen-swagger:
+	~/go/bin/swag init --parseDependency --parseInternal

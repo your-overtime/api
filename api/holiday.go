@@ -7,20 +7,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+
 	"github.com/your-overtime/api/pkg"
-	"gorm.io/gorm"
 )
 
 // CreateHoliday godoc
+// @Tags holiday
 // @Summary Creates a holiday
 // @Produce json
+// @Consume json
+// @Param bottles body pkg.InputHoliday true "input holiday"
 // @Success 200 {object} pkg.Holiday
 // @Router /holiday [post]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) CreateHoliday(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	var ih pkg.InputHoliday
@@ -47,16 +52,21 @@ func (a *API) CreateHoliday(c *gin.Context) {
 }
 
 // UpdateHoliday godoc
+// @Tags holiday
 // @Summary Updates a holiday
 // @Produce json
+// @Consume json
+// @Param bottles body pkg.InputHoliday true "input holiday"
 // @Success 200 {object} pkg.Holiday
 // @Param id path string true "Holiday id"
 // @Router /holiday/{id} [put]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) UpdateHoliday(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -68,7 +78,7 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 		return
 	}
 	ho := pkg.Holiday{
-		Model:       gorm.Model{ID: uint(id)},
+		Model:       pkg.Model{ID: uint(id)},
 		UserID:      e.ID,
 		Start:       ih.Start,
 		End:         ih.End,
@@ -85,16 +95,19 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 }
 
 // GetHoliday godoc
+// @Tags holiday
 // @Summary Get a holiday by id
 // @Produce json
 // @Success 200 {object} pkg.Holiday
 // @Param id path string true "Holiday id"
 // @Router /holiday/{id} [get]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) GetHoliday(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -108,17 +121,20 @@ func (a *API) GetHoliday(c *gin.Context) {
 }
 
 // GetHolidays godoc
+// @Tags holiday
 // @Summary Get a activities by start and end
 // @Produce json
 // @Param start query string true "Start date"
 // @Param end query string true "Start date"
-// @Success 200 {object} pkg.Holiday
+// @Success 200 {object} []pkg.Holiday
 // @Router /holiday [get]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) GetHolidays(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	start, err := time.Parse(time.RFC3339Nano, c.Query("start"))
@@ -154,17 +170,20 @@ func (a *API) GetHolidays(c *gin.Context) {
 	}
 }
 
-// UpdateHoliday godoc
+// DeleteHoliday godoc
+// @Tags holiday
 // @Summary Delete a holiday
 // @Produce json
 // @Success 200 {object} pkg.Holiday
 // @Param id path string true "Holiday id"
-// @Router /holiday/{id} [get]
+// @Router /holiday/{id} [delete]
+// @Security BasicAuth
+// @Security ApiKeyAuth
 func (a *API) DeleteHoliday(c *gin.Context) {
 	e, err := a.getEmployeeFromRequest(c)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)

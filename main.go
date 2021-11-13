@@ -8,13 +8,29 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/your-overtime/api/api"
+	docs "github.com/your-overtime/api/docs"
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/internal/service"
 
 	log "github.com/sirupsen/logrus"
 )
 
+// @title Your Overtime API
+// @version 1.0
+// @BasePath /api/v1
+// @securityDefinitions.basic BasicAuth
+//
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
+// @securityDefinitions.apikey AdminAuth
+// @in query
+// @name adminToken
 func main() {
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	docs.SwaggerInfo.Version = "1.3.5"
+
 	godotenv.Load()
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: true,
