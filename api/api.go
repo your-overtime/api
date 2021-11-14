@@ -70,7 +70,7 @@ func (a *API) createEndPoints() {
 
 	v1 := api.Group("/v1")
 
-	a.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Overview
 	v1.GET("/overview", a.GetOverview)

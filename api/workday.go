@@ -14,6 +14,8 @@ import (
 // @Summary Retrieves workdays
 // @Produce json
 // @Success 200 {object} []pkg.WorkDay
+// @Param start query string true "Start date"
+// @Param end query string true "End date"
 // @Router /workday [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -50,7 +52,7 @@ func (a *API) GetWorkDays(c *gin.Context) {
 // @Summary creates a workdays
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputWorkDay true "input workday"
+// @Param bottles body pkg.InputWorkDay true "Input workday"
 // @Success 200 {object} pkg.WorkDay
 // @Router /workday [post]
 // @Security BasicAuth

@@ -8,12 +8,12 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-// UpdateAccount godoc
+// CreateEmployee godoc
 // @Tags employee
 // @Summary creates a employee
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputEmployee true "input employee"
+// @Param bottles body pkg.InputEmployee true "Input employee"
 // @Success 200 {object} pkg.Employee
 // @Router /employee [post]
 // @Security AdminAuth

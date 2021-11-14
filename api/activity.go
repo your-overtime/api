@@ -179,7 +179,7 @@ func (a *API) GetActivity(c *gin.Context) {
 // @Summary Get a activities by start and end
 // @Produce json
 // @Param start query string true "Start date"
-// @Param end query string true "Start date"
+// @Param end query string true "End date"
 // @Success 200 {object} []pkg.Activity
 // @Router /activity [get]
 // @Security BasicAuth
@@ -234,6 +234,6 @@ func (a *API) DeleteActivity(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, "")
+		c.JSON(http.StatusOK, "activity deletet")
 	}
 }

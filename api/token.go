@@ -39,7 +39,7 @@ func (a *API) GetTokens(c *gin.Context) {
 // @Summary creates a token
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputToken true "input token"
+// @Param bottles body pkg.InputToken true "Input token"
 // @Success 200 {object} pkg.Token
 // @Router /token [post]
 // @Security BasicAuth

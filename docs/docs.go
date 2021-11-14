@@ -114,7 +114,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "Start date",
+                        "description": "End date",
                         "name": "end",
                         "in": "query",
                         "required": true
@@ -362,7 +362,7 @@ var doc = `{
                 "summary": "creates a employee",
                 "parameters": [
                     {
-                        "description": "input employee",
+                        "description": "Input employee",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -408,7 +408,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "Start date",
+                        "description": "End date",
                         "name": "end",
                         "in": "query",
                         "required": true
@@ -444,7 +444,7 @@ var doc = `{
                 "summary": "Creates a holiday",
                 "parameters": [
                     {
-                        "description": "input holiday",
+                        "description": "Input holiday",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -516,7 +516,7 @@ var doc = `{
                 "summary": "Updates a holiday",
                 "parameters": [
                     {
-                        "description": "input holiday",
+                        "description": "Input holiday",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -650,7 +650,7 @@ var doc = `{
                 "summary": "creates a token",
                 "parameters": [
                     {
-                        "description": "input token",
+                        "description": "Input token",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -722,6 +722,22 @@ var doc = `{
                     "workday"
                 ],
                 "summary": "Retrieves workdays",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -752,7 +768,7 @@ var doc = `{
                 "summary": "creates a workdays",
                 "parameters": [
                     {
-                        "description": "input workday",
+                        "description": "Input workday",
                         "name": "bottles",
                         "in": "body",
                         "required": true,

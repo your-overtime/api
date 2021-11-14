@@ -98,7 +98,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "Start date",
+                        "description": "End date",
                         "name": "end",
                         "in": "query",
                         "required": true
@@ -346,7 +346,7 @@
                 "summary": "creates a employee",
                 "parameters": [
                     {
-                        "description": "input employee",
+                        "description": "Input employee",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -392,7 +392,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "Start date",
+                        "description": "End date",
                         "name": "end",
                         "in": "query",
                         "required": true
@@ -428,7 +428,7 @@
                 "summary": "Creates a holiday",
                 "parameters": [
                     {
-                        "description": "input holiday",
+                        "description": "Input holiday",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -500,7 +500,7 @@
                 "summary": "Updates a holiday",
                 "parameters": [
                     {
-                        "description": "input holiday",
+                        "description": "Input holiday",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -634,7 +634,7 @@
                 "summary": "creates a token",
                 "parameters": [
                     {
-                        "description": "input token",
+                        "description": "Input token",
                         "name": "bottles",
                         "in": "body",
                         "required": true,
@@ -706,6 +706,22 @@
                     "workday"
                 ],
                 "summary": "Retrieves workdays",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -736,7 +752,7 @@
                 "summary": "creates a workdays",
                 "parameters": [
                     {
-                        "description": "input workday",
+                        "description": "Input workday",
                         "name": "bottles",
                         "in": "body",
                         "required": true,

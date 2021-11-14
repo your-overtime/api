@@ -241,7 +241,7 @@ paths:
         name: start
         required: true
         type: string
-      - description: Start date
+      - description: End date
         in: query
         name: end
         required: true
@@ -374,7 +374,7 @@ paths:
   /employee:
     post:
       parameters:
-      - description: input employee
+      - description: Input employee
         in: body
         name: bottles
         required: true
@@ -400,7 +400,7 @@ paths:
         name: start
         required: true
         type: string
-      - description: Start date
+      - description: End date
         in: query
         name: end
         required: true
@@ -422,7 +422,7 @@ paths:
       - holiday
     post:
       parameters:
-      - description: input holiday
+      - description: Input holiday
         in: body
         name: bottles
         required: true
@@ -484,7 +484,7 @@ paths:
       - holiday
     put:
       parameters:
-      - description: input holiday
+      - description: Input holiday
         in: body
         name: bottles
         required: true
@@ -542,7 +542,7 @@ paths:
       - token
     post:
       parameters:
-      - description: input token
+      - description: Input token
         in: body
         name: bottles
         required: true
@@ -584,6 +584,17 @@ paths:
       - token
   /workday:
     get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -601,7 +612,7 @@ paths:
       - workday
     post:
       parameters:
-      - description: input workday
+      - description: Input workday
         in: body
         name: bottles
         required: true
