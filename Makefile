@@ -9,4 +9,4 @@ test:
 test-html:
 	go test -coverprofile=coverage.out -bench . ./... && go tool cover -html=coverage.out
 gen-swagger:
-	~/go/bin/swag init --parseDependency --parseInternal
+	~/go/bin/swag init --parseDependency --parseInternal -p pascalcase

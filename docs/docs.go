@@ -68,7 +68,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "input account fields",
-                        "name": "bottles",
+                        "name": "account",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -151,7 +151,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "input activity",
-                        "name": "bottles",
+                        "name": "activity",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -287,7 +287,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "input activity",
-                        "name": "bottles",
+                        "name": "activity",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -445,7 +445,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Input holiday",
-                        "name": "bottles",
+                        "name": "holiday",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -517,7 +517,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Input holiday",
-                        "name": "bottles",
+                        "name": "holiday",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -651,7 +651,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Input token",
-                        "name": "bottles",
+                        "name": "token",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -769,7 +769,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Input workday",
-                        "name": "bottles",
+                        "name": "workday",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -792,25 +792,25 @@ var doc = `{
         "pkg.Activity": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "CreatedAt": {
                     "type": "string"
                 },
-                "description": {
+                "Description": {
                     "type": "string"
                 },
-                "end": {
+                "End": {
                     "type": "string"
                 },
-                "id": {
+                "ID": {
                     "type": "integer"
                 },
-                "start": {
+                "Start": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 },
-                "userID": {
+                "UserID": {
                     "type": "integer"
                 }
             }
@@ -818,37 +818,37 @@ var doc = `{
         "pkg.Employee": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "CreatedAt": {
                     "type": "string"
                 },
-                "id": {
+                "ID": {
                     "type": "integer"
                 },
-                "login": {
+                "Login": {
                     "type": "string"
                 },
-                "name": {
+                "Name": {
                     "type": "string"
                 },
-                "numHolidays": {
+                "NumHolidays": {
                     "type": "integer"
                 },
-                "numWorkingDays": {
+                "NumWorkingDays": {
                     "type": "integer"
                 },
-                "surname": {
+                "Surname": {
                     "type": "string"
                 },
-                "tokens": {
+                "Tokens": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/pkg.Token"
                     }
                 },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 },
-                "weekWorkingTimeInMinutes": {
+                "WeekWorkingTimeInMinutes": {
                     "type": "integer"
                 }
             }
@@ -856,28 +856,28 @@ var doc = `{
         "pkg.Holiday": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "CreatedAt": {
                     "type": "string"
                 },
-                "description": {
+                "Description": {
                     "type": "string"
                 },
-                "end": {
+                "End": {
                     "type": "string"
                 },
-                "id": {
+                "ID": {
                     "type": "integer"
                 },
-                "start": {
+                "Start": {
                     "type": "string"
                 },
-                "type": {
+                "Type": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 },
-                "userID": {
+                "UserID": {
                     "type": "integer"
                 }
             }
@@ -885,13 +885,13 @@ var doc = `{
         "pkg.InputActivity": {
             "type": "object",
             "properties": {
-                "description": {
+                "Description": {
                     "type": "string"
                 },
-                "end": {
+                "End": {
                     "type": "string"
                 },
-                "start": {
+                "Start": {
                     "type": "string"
                 }
             }
@@ -899,25 +899,25 @@ var doc = `{
         "pkg.InputEmployee": {
             "type": "object",
             "properties": {
-                "login": {
+                "Login": {
                     "type": "string"
                 },
-                "name": {
+                "Name": {
                     "type": "string"
                 },
-                "numHolidays": {
+                "NumHolidays": {
                     "type": "integer"
                 },
-                "numWorkingDays": {
+                "NumWorkingDays": {
                     "type": "integer"
                 },
-                "password": {
+                "Password": {
                     "type": "string"
                 },
-                "surname": {
+                "Surname": {
                     "type": "string"
                 },
-                "weekWorkingTimeInMinutes": {
+                "WeekWorkingTimeInMinutes": {
                     "type": "integer"
                 }
             }
@@ -925,16 +925,16 @@ var doc = `{
         "pkg.InputHoliday": {
             "type": "object",
             "properties": {
-                "description": {
+                "Description": {
                     "type": "string"
                 },
-                "end": {
+                "End": {
                     "type": "string"
                 },
-                "start": {
+                "Start": {
                     "type": "string"
                 },
-                "type": {
+                "Type": {
                     "type": "string"
                 }
             }
@@ -942,7 +942,7 @@ var doc = `{
         "pkg.InputToken": {
             "type": "object",
             "properties": {
-                "name": {
+                "Name": {
                     "type": "string"
                 }
             }
@@ -950,16 +950,16 @@ var doc = `{
         "pkg.InputWorkDay": {
             "type": "object",
             "properties": {
-                "activeTime": {
+                "ActiveTime": {
                     "type": "integer"
                 },
-                "day": {
+                "Day": {
                     "type": "string"
                 },
-                "overtime": {
+                "Overtime": {
                     "type": "integer"
                 },
-                "userID": {
+                "UserID": {
                     "type": "integer"
                 }
             }
@@ -967,43 +967,43 @@ var doc = `{
         "pkg.Overview": {
             "type": "object",
             "properties": {
-                "activeActivity": {
+                "ActiveActivity": {
                     "$ref": "#/definitions/pkg.Activity"
                 },
-                "activeTimeThisDayInMinutes": {
+                "ActiveTimeThisDayInMinutes": {
                     "type": "integer"
                 },
-                "activeTimeThisMonthInMinutes": {
+                "ActiveTimeThisMonthInMinutes": {
                     "type": "integer"
                 },
-                "activeTimeThisWeekInMinutes": {
+                "ActiveTimeThisWeekInMinutes": {
                     "type": "integer"
                 },
-                "activeTimeThisYearInMinutes": {
+                "ActiveTimeThisYearInMinutes": {
                     "type": "integer"
                 },
-                "date": {
+                "Date": {
                     "type": "string"
                 },
-                "holidaysStillAvailable": {
+                "HolidaysStillAvailable": {
                     "type": "integer"
                 },
-                "overtimeThisDayInMinutes": {
+                "OvertimeThisDayInMinutes": {
                     "type": "integer"
                 },
-                "overtimeThisMonthInMinutes": {
+                "OvertimeThisMonthInMinutes": {
                     "type": "integer"
                 },
-                "overtimeThisWeekInMinutes": {
+                "OvertimeThisWeekInMinutes": {
                     "type": "integer"
                 },
-                "overtimeThisYearInMinutes": {
+                "OvertimeThisYearInMinutes": {
                     "type": "integer"
                 },
-                "usedHolidays": {
+                "UsedHolidays": {
                     "type": "integer"
                 },
-                "weekNumber": {
+                "WeekNumber": {
                     "type": "integer"
                 }
             }
@@ -1011,22 +1011,22 @@ var doc = `{
         "pkg.Token": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "CreatedAt": {
                     "type": "string"
                 },
-                "id": {
+                "ID": {
                     "type": "integer"
                 },
-                "name": {
+                "Name": {
                     "type": "string"
                 },
-                "token": {
+                "Token": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 },
-                "userID": {
+                "UserID": {
                     "type": "integer"
                 }
             }
@@ -1034,28 +1034,28 @@ var doc = `{
         "pkg.WorkDay": {
             "type": "object",
             "properties": {
-                "activeTime": {
+                "ActiveTime": {
                     "type": "integer"
                 },
-                "createdAt": {
+                "CreatedAt": {
                     "type": "string"
                 },
-                "day": {
+                "Day": {
                     "type": "string"
                 },
-                "id": {
+                "ID": {
                     "type": "integer"
                 },
-                "isHoliday": {
+                "IsHoliday": {
                     "type": "boolean"
                 },
-                "overtime": {
+                "Overtime": {
                     "type": "integer"
                 },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 },
-                "userID": {
+                "UserID": {
                     "type": "integer"
                 }
             }

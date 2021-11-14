@@ -2,179 +2,179 @@ basePath: /api/v1
 definitions:
   pkg.Activity:
     properties:
-      createdAt:
+      CreatedAt:
         type: string
-      description:
+      Description:
         type: string
-      end:
+      End:
         type: string
-      id:
+      ID:
         type: integer
-      start:
+      Start:
         type: string
-      updatedAt:
+      UpdatedAt:
         type: string
-      userID:
+      UserID:
         type: integer
     type: object
   pkg.Employee:
     properties:
-      createdAt:
+      CreatedAt:
         type: string
-      id:
+      ID:
         type: integer
-      login:
+      Login:
         type: string
-      name:
+      Name:
         type: string
-      numHolidays:
+      NumHolidays:
         type: integer
-      numWorkingDays:
+      NumWorkingDays:
         type: integer
-      surname:
+      Surname:
         type: string
-      tokens:
+      Tokens:
         items:
           $ref: '#/definitions/pkg.Token'
         type: array
-      updatedAt:
+      UpdatedAt:
         type: string
-      weekWorkingTimeInMinutes:
+      WeekWorkingTimeInMinutes:
         type: integer
     type: object
   pkg.Holiday:
     properties:
-      createdAt:
+      CreatedAt:
         type: string
-      description:
+      Description:
         type: string
-      end:
+      End:
         type: string
-      id:
+      ID:
         type: integer
-      start:
+      Start:
         type: string
-      type:
+      Type:
         type: string
-      updatedAt:
+      UpdatedAt:
         type: string
-      userID:
+      UserID:
         type: integer
     type: object
   pkg.InputActivity:
     properties:
-      description:
+      Description:
         type: string
-      end:
+      End:
         type: string
-      start:
+      Start:
         type: string
     type: object
   pkg.InputEmployee:
     properties:
-      login:
+      Login:
         type: string
-      name:
+      Name:
         type: string
-      numHolidays:
+      NumHolidays:
         type: integer
-      numWorkingDays:
+      NumWorkingDays:
         type: integer
-      password:
+      Password:
         type: string
-      surname:
+      Surname:
         type: string
-      weekWorkingTimeInMinutes:
+      WeekWorkingTimeInMinutes:
         type: integer
     type: object
   pkg.InputHoliday:
     properties:
-      description:
+      Description:
         type: string
-      end:
+      End:
         type: string
-      start:
+      Start:
         type: string
-      type:
+      Type:
         type: string
     type: object
   pkg.InputToken:
     properties:
-      name:
+      Name:
         type: string
     type: object
   pkg.InputWorkDay:
     properties:
-      activeTime:
+      ActiveTime:
         type: integer
-      day:
+      Day:
         type: string
-      overtime:
+      Overtime:
         type: integer
-      userID:
+      UserID:
         type: integer
     type: object
   pkg.Overview:
     properties:
-      activeActivity:
+      ActiveActivity:
         $ref: '#/definitions/pkg.Activity'
-      activeTimeThisDayInMinutes:
+      ActiveTimeThisDayInMinutes:
         type: integer
-      activeTimeThisMonthInMinutes:
+      ActiveTimeThisMonthInMinutes:
         type: integer
-      activeTimeThisWeekInMinutes:
+      ActiveTimeThisWeekInMinutes:
         type: integer
-      activeTimeThisYearInMinutes:
+      ActiveTimeThisYearInMinutes:
         type: integer
-      date:
+      Date:
         type: string
-      holidaysStillAvailable:
+      HolidaysStillAvailable:
         type: integer
-      overtimeThisDayInMinutes:
+      OvertimeThisDayInMinutes:
         type: integer
-      overtimeThisMonthInMinutes:
+      OvertimeThisMonthInMinutes:
         type: integer
-      overtimeThisWeekInMinutes:
+      OvertimeThisWeekInMinutes:
         type: integer
-      overtimeThisYearInMinutes:
+      OvertimeThisYearInMinutes:
         type: integer
-      usedHolidays:
+      UsedHolidays:
         type: integer
-      weekNumber:
+      WeekNumber:
         type: integer
     type: object
   pkg.Token:
     properties:
-      createdAt:
+      CreatedAt:
         type: string
-      id:
+      ID:
         type: integer
-      name:
+      Name:
         type: string
-      token:
+      Token:
         type: string
-      updatedAt:
+      UpdatedAt:
         type: string
-      userID:
+      UserID:
         type: integer
     type: object
   pkg.WorkDay:
     properties:
-      activeTime:
+      ActiveTime:
         type: integer
-      createdAt:
+      CreatedAt:
         type: string
-      day:
+      Day:
         type: string
-      id:
+      ID:
         type: integer
-      isHoliday:
+      IsHoliday:
         type: boolean
-      overtime:
+      Overtime:
         type: integer
-      updatedAt:
+      UpdatedAt:
         type: string
-      userID:
+      UserID:
         type: integer
     type: object
 info:
@@ -201,7 +201,7 @@ paths:
       parameters:
       - description: input account fields
         in: body
-        name: bottles
+        name: account
         required: true
         schema:
           additionalProperties: true
@@ -265,7 +265,7 @@ paths:
       parameters:
       - description: input activity
         in: body
-        name: bottles
+        name: activity
         required: true
         schema:
           $ref: '#/definitions/pkg.InputActivity'
@@ -348,7 +348,7 @@ paths:
       parameters:
       - description: input activity
         in: body
-        name: bottles
+        name: activity
         required: true
         schema:
           $ref: '#/definitions/pkg.InputActivity'
@@ -424,7 +424,7 @@ paths:
       parameters:
       - description: Input holiday
         in: body
-        name: bottles
+        name: holiday
         required: true
         schema:
           $ref: '#/definitions/pkg.InputHoliday'
@@ -486,7 +486,7 @@ paths:
       parameters:
       - description: Input holiday
         in: body
-        name: bottles
+        name: holiday
         required: true
         schema:
           $ref: '#/definitions/pkg.InputHoliday'
@@ -544,7 +544,7 @@ paths:
       parameters:
       - description: Input token
         in: body
-        name: bottles
+        name: token
         required: true
         schema:
           $ref: '#/definitions/pkg.InputToken'
@@ -614,7 +614,7 @@ paths:
       parameters:
       - description: Input workday
         in: body
-        name: bottles
+        name: workday
         required: true
         schema:
           $ref: '#/definitions/pkg.InputWorkDay'
