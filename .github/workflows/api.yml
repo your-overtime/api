@@ -33,8 +33,6 @@ jobs:
         with:
           file:  DockerfileWithBuild
           platforms: linux/amd64,linux/arm/v7,linux/arm64
-          env:
-            VERSION=${{ env.TAG }}
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest
