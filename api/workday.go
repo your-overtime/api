@@ -52,7 +52,7 @@ func (a *API) GetWorkDays(c *gin.Context) {
 // @Summary creates a workdays
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputWorkDay true "Input workday"
+// @Param workday body pkg.InputWorkDay true "Input workday"
 // @Success 200 {object} pkg.WorkDay
 // @Router /workday [post]
 // @Security BasicAuth

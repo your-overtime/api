@@ -33,7 +33,7 @@ func (a *API) GetAccount(c *gin.Context) {
 // @Summary updates a account
 // @Produce json
 // @Consume json
-// @Param bottles body map[string]interface{} true "input account fields"
+// @Param account body map[string]interface{} true "input account fields"
 // @Success 200 {object} pkg.Employee
 // @Router /account [patch]
 // @Security BasicAuth

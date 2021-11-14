@@ -16,7 +16,7 @@ import (
 // @Summary Creates a holiday
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputHoliday true "Input holiday"
+// @Param holiday body pkg.InputHoliday true "Input holiday"
 // @Success 200 {object} pkg.Holiday
 // @Router /holiday [post]
 // @Security BasicAuth
@@ -56,7 +56,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 // @Summary Updates a holiday
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputHoliday true "Input holiday"
+// @Param holiday body pkg.InputHoliday true "Input holiday"
 // @Success 200 {object} pkg.Holiday
 // @Param id path string true "Holiday id"
 // @Router /holiday/{id} [put]

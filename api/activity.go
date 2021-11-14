@@ -71,7 +71,7 @@ func (a *API) StopActivity(c *gin.Context) {
 // @Summary Creates a activity
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputActivity true "input activity"
+// @Param activity body pkg.InputActivity true "input activity"
 // @Success 200 {object} pkg.Activity
 // @Router /activity [post]
 // @Security BasicAuth
@@ -111,7 +111,7 @@ func (a *API) CreateActivity(c *gin.Context) {
 // @Summary Updates a activity
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputActivity true "input activity"
+// @Param activity body pkg.InputActivity true "input activity"
 // @Success 200 {object} pkg.Activity
 // @Param id path string true "Activity id"
 // @Router /activity/{id} [put]
