@@ -8,6 +8,13 @@ import (
 	"gorm.io/gorm"
 )
 
+type Model struct {
+	ID        uint `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+}
+
 type InputEmployee struct {
 	Name                     string
 	Surname                  string
@@ -33,7 +40,7 @@ func (u *InputEmployee) ToEmployee() Employee {
 }
 
 type User struct {
-	gorm.Model
+	Model
 	Name     string
 	Surname  string
 	Login    string `gorm:"unique"`
@@ -46,7 +53,7 @@ type InputToken struct {
 }
 
 type Token struct {
-	gorm.Model
+	Model
 	Name   string
 	UserID uint
 	Token  string
@@ -60,7 +67,7 @@ type Employee struct {
 }
 
 type Activity struct {
-	gorm.Model
+	Model
 	Start       *time.Time
 	End         *time.Time
 	Description string
@@ -100,7 +107,7 @@ func StrToHolidayType(str string) (HolidayType, error) {
 }
 
 type Holiday struct {
-	gorm.Model
+	Model
 	Start       time.Time
 	End         time.Time
 	Description string
@@ -116,7 +123,7 @@ type InputHoliday struct {
 }
 
 type WorkDay struct {
-	gorm.Model
+	Model
 	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 	Overtime   int64
 	ActiveTime int64

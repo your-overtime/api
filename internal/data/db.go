@@ -36,8 +36,6 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 		url.QueryEscape(tz),
 	)
 
-	fmt.Println(dsn)
-
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Debug(err)
