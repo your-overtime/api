@@ -15,6 +15,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var version = "1.0.0"
+
 // @title Your Overtime API
 // @version 1.0
 // @BasePath /api/v1
@@ -29,7 +31,7 @@ import (
 // @name adminToken
 func main() {
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
-	docs.SwaggerInfo.Version = "1.3.5"
+	docs.SwaggerInfo.Version = version
 
 	godotenv.Load()
 	log.SetFormatter(&log.TextFormatter{
