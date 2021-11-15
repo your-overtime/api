@@ -50,10 +50,13 @@ func weekDayToInt(wd time.Weekday) int {
 
 func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activity, error) {
 	ca, _ := s.db.GetRunningActivityByEmployeeID(employee.ID)
-	if ca != nil {
-		return nil, pkg.ErrActivityIsRunning
-	}
 	now := time.Now()
+	if ca != nil {
+		ca.End = &now
+		if err := s.db.SaveActivity(ca); err != nil {
+			return nil, err
+		}
+	}
 	a := pkg.Activity{
 		UserID:      employee.ID,
 		Start:       &now,
@@ -67,6 +70,11 @@ func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 }
 
 func (s *Service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	// handle activities without end as new started activities
+	if a.End == nil {
+		return s.StartActivity(a.Description, employee)
+	}
+
 	err := s.db.SaveActivity(&a)
 	if err != nil {
 		return nil, err
