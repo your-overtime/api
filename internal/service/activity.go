@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"time"
 
 	"github.com/your-overtime/api/pkg"
@@ -118,9 +117,12 @@ func (s *Service) GetActivities(start time.Time, end time.Time, employee pkg.Emp
 	return a, nil
 }
 
-func (s *Service) UpdateActivity(activity pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
-	// only needed in client
-	return nil, errors.New("not implemented")
+func (s *Service) UpdateActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	err := s.db.SaveActivity(&a)
+	if err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
 func (s *Service) DelActivity(id uint, employee pkg.Employee) error {
