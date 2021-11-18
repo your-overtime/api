@@ -139,7 +139,7 @@ func (a *API) UpdateActivity(c *gin.Context) {
 		End:         ia.End,
 		Description: ia.Description,
 	}
-	ac, err := a.os.AddActivity(act, *e)
+	ac, err := a.os.UpdateActivity(act, *e)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
