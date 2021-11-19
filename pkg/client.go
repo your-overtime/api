@@ -335,3 +335,11 @@ func (c *client) GetTokens(employee Employee) ([]Token, error) {
 	}
 	return ts, nil
 }
+
+func (c *client) CreateWebhook(webhook Webhook) (*Webhook, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (c *client) GetWebhooks(employee Employee) ([]Webhook, error) {
+	return nil, errors.New("not implemented")
+}

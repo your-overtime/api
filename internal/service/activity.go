@@ -56,11 +56,12 @@ func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 			return nil, err
 		}
 	}
-	a := pkg.Activity{
+	a := s.startActivityHook(pkg.Activity{
 		UserID:      employee.ID,
 		Start:       &now,
 		Description: desc,
-	}
+	})
+
 	err := s.db.SaveActivity(&a)
 	if err != nil {
 		return nil, err

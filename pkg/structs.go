@@ -153,3 +153,12 @@ type Overview struct {
 	ActiveTimeThisYearInMinutes  int64
 	ActiveActivity               *Activity
 }
+
+type Webhook struct {
+	Model
+	HeaderKey   string
+	HeaderValue string
+	TargetURL   string
+	UserID      uint
+	ReadOnly    bool
+}
