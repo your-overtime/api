@@ -155,10 +155,20 @@ type Overview struct {
 }
 
 type Webhook struct {
-	Model
 	HeaderKey   string
 	HeaderValue string
 	TargetURL   string
-	UserID      uint
 	ReadOnly    bool
 }
+
+type WebhookBody struct {
+	Event   WebhookEvent
+	Payload interface{}
+}
+
+type WebhookEvent string
+
+const (
+	StartActivityEvent WebhookEvent = "start_activity"
+	EndActivityEvent   WebhookEvent = "end_activity"
+)

@@ -158,6 +158,17 @@ definitions:
       UserID:
         type: integer
     type: object
+  pkg.Webhook:
+    properties:
+      HeaderKey:
+        type: string
+      HeaderValue:
+        type: string
+      ReadOnly:
+        type: boolean
+      TargetURL:
+        type: string
+    type: object
   pkg.WorkDay:
     properties:
       ActiveTime:
@@ -582,6 +593,44 @@ paths:
       summary: Delete a token
       tags:
       - token
+  /webhook:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg.Webhook'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Receives employees registered webhooks
+      tags:
+      - webhook
+    post:
+      parameters:
+      - description: Webhook
+        in: body
+        name: webhook
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.Webhook'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pkg.Webhook'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: create a webhook
+      tags:
+      - webhook
   /workday:
     get:
       parameters:

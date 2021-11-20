@@ -42,7 +42,7 @@ type EmployeeService interface {
 }
 
 type WebhookService interface {
-	CreateWebhook(webhook Webhook) (*Webhook, error)
+	CreateWebhook(webhook Webhook, employee Employee) (*Webhook, error)
 	GetWebhooks(employee Employee) ([]Webhook, error)
 }
 type OvertimeService interface {
