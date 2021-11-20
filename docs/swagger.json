@@ -834,6 +834,9 @@
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },
@@ -903,6 +906,9 @@
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },

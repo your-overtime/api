@@ -850,6 +850,9 @@ var doc = `{
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },
@@ -919,6 +922,9 @@ var doc = `{
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },

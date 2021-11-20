@@ -41,6 +41,8 @@ definitions:
         type: string
       WeekWorkingTimeInMinutes:
         type: integer
+      WorkingDays:
+        type: string
     type: object
   pkg.Holiday:
     properties:
@@ -86,6 +88,8 @@ definitions:
         type: string
       WeekWorkingTimeInMinutes:
         type: integer
+      WorkingDays:
+        type: string
     type: object
   pkg.InputHoliday:
     properties:
