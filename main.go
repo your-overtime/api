@@ -30,7 +30,7 @@ var version = "1.0.0"
 // @in query
 // @name adminToken
 func main() {
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	docs.SwaggerInfo.Schemes = []string{"https", "http"}
 	docs.SwaggerInfo.Version = version
 
 	godotenv.Load()
