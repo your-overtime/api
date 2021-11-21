@@ -8,19 +8,18 @@ import (
 	"net/url"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 )
 
-func (s *Service) CreateWebhook(webhook pkg.Webhook, employee pkg.Employee) (*pkg.Webhook, error) {
+func (s *Service) CreateWebhook(webhook pkg.WebhookInput, employee pkg.Employee) (*pkg.Webhook, error) {
 	_, err := url.ParseRequestURI(webhook.TargetURL)
 	if err != nil {
 		return nil, err
 	}
 
-	hook := data.Webhook{
-		Webhook: webhook,
-		UserID:  employee.ID,
+	hook := pkg.Webhook{
+		WebhookInput: webhook,
+		UserID:       employee.ID,
 	}
 
 	return s.db.SaveWebhook(hook)
@@ -60,9 +59,9 @@ func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, payload i
 	modifyErrors := []error{}
 	for _, hook := range hooks {
 		if hook.ReadOnly {
-			go s.callHook(hook, eventName, payload)
+			go s.callHook(hook.WebhookInput, eventName, payload)
 		} else {
-			resp, err := s.callHook(hook, eventName, payload)
+			resp, err := s.callHook(hook.WebhookInput, eventName, payload)
 			if err == nil {
 				payload = resp
 				mayBeModified = true
@@ -77,7 +76,7 @@ func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, payload i
 	return payload, modifyErrors, mayBeModified
 }
 
-func (s *Service) callHook(hook pkg.Webhook, eventName pkg.WebhookEvent, payload interface{}) (interface{}, error) {
+func (s *Service) callHook(hook pkg.WebhookInput, eventName pkg.WebhookEvent, payload interface{}) (interface{}, error) {
 	body, err := json.Marshal(pkg.WebhookBody{
 		Event:   eventName,
 		Payload: payload,

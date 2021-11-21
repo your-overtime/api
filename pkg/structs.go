@@ -154,11 +154,17 @@ type Overview struct {
 	ActiveActivity               *Activity
 }
 
-type Webhook struct {
+type WebhookInput struct {
 	HeaderKey   string
 	HeaderValue string
 	TargetURL   string
 	ReadOnly    bool
+}
+
+type Webhook struct {
+	Model
+	WebhookInput
+	UserID uint
 }
 
 type WebhookBody struct {

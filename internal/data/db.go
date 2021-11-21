@@ -49,7 +49,7 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 	conn.AutoMigrate(&pkg.Token{})
 	conn.AutoMigrate(&pkg.Holiday{})
 	conn.AutoMigrate(&pkg.WorkDay{})
-	conn.AutoMigrate(&pkg.Webhook{})
+	conn.AutoMigrate(&pkg.WebhookInput{})
 	db.MirgrateTokensToHashedTokens()
 	return &db, err
 }

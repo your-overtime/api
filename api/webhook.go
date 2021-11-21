@@ -25,7 +25,7 @@ func (a *API) CreateWebhook(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
-	var hook pkg.Webhook
+	var hook pkg.WebhookInput
 	if err := c.Bind(&hook); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return

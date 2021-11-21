@@ -336,10 +336,26 @@ func (c *client) GetTokens(employee Employee) ([]Token, error) {
 	return ts, nil
 }
 
-func (c *client) CreateWebhook(webhook Webhook, employee Employee) (*Webhook, error) {
-	return nil, errors.New("not implemented")
+func (c *client) CreateWebhook(webhook WebhookInput, employee Employee) (*Webhook, error) {
+	resp, err := c.doRequest("POST", "webhook", webhook)
+	if err != nil {
+		return nil, err
+	}
+	var hook Webhook
+	if err := respToJson(resp, &hook); err != nil {
+		return nil, err
+	}
+	return &hook, nil
 }
 
 func (c *client) GetWebhooks(employee Employee) ([]Webhook, error) {
-	return nil, errors.New("not implemented")
+	resp, err := c.doRequest("GET", "webhook", nil)
+	if err != nil {
+		return nil, err
+	}
+	var hooks []Webhook
+	if err := respToJson(resp, &hooks); err != nil {
+		return nil, err
+	}
+	return hooks, nil
 }
