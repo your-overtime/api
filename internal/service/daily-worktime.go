@@ -8,6 +8,7 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
+// StaticCalculation returns the daily working time if the transfer day is in the WeekWorkingdays otherwise 0
 func (s *Service) StaticCalculation(employee pkg.Employee, day time.Time) (uint, error) {
 	if strings.Contains(employee.WorkingDays, day.Weekday().String()) {
 		return uint(employee.WeekWorkingTimeInMinutes) / uint(len(employee.WorkingDaysAsArray())), nil
@@ -16,6 +17,10 @@ func (s *Service) StaticCalculation(employee pkg.Employee, day time.Time) (uint,
 	return 0, nil
 }
 
+// DynamicCalculation returns the daily working time if the number of working days in the current
+// week is < then NumWorkingDays and an activity exists for the day passing.
+// The method returns the daily working time if there are no activities when the number of days in the week is smaller
+// than the number of working days.
 func (s *Service) DynamicCalculation(employee pkg.Employee, day time.Time) (uint, error) {
 	weekStart := time.Date(day.Year(), day.Month(), day.Day()-weekDayToInt(day.Weekday())+1, 0, 0, 0, 0, day.Location())
 	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)

@@ -196,7 +196,7 @@ func TestOverviewStatic(t *testing.T) {
 	}
 
 	if o.OvertimeThisMonthInMinutes != -2240 {
-		t.Error("expect -2250 but got ", o.OvertimeThisMonthInMinutes)
+		t.Error("expect -2240 but got ", o.OvertimeThisMonthInMinutes)
 	}
 
 	if o.ActiveTimeThisMonthInMinutes != 64 {
