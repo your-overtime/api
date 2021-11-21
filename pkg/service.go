@@ -41,6 +41,10 @@ type EmployeeService interface {
 	GetTokens(employee Employee) ([]Token, error)
 }
 
+type WebhookService interface {
+	CreateWebhook(webhook WebhookInput, employee Employee) (*Webhook, error)
+	GetWebhooks(employee Employee) ([]Webhook, error)
+}
 type OvertimeService interface {
 	CalcOverview(e Employee, day time.Time) (*Overview, error)
 
@@ -48,6 +52,7 @@ type OvertimeService interface {
 	HolidayService
 	WorkDayService
 	EmployeeService
+	WebhookService
 }
 
 var (

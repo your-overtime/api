@@ -104,6 +104,10 @@ func (a *API) createEndPoints() {
 	v1.GET("account", a.GetAccount)
 	v1.PATCH("account", a.UpdateAccount)
 
+	// webhook
+	v1.POST("/webhook", a.CreateWebhook)
+	v1.GET("/webhook", a.GetWebhooks)
+
 	// employee
 	authorizedV1 := v1.Group("/", a.adminAuth())
 	{
