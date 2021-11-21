@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -121,6 +122,14 @@ func (s *Service) UpdateActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Ac
 	err := s.db.SaveActivity(&a)
 	if err != nil {
 		return nil, err
+	}
+	// delete WorkingDay of the passing day to force recalculation
+	now := time.Now()
+	if !(a.Start.Year() == now.Year() && a.Start.Month() == now.Month() && a.Start.Day() == now.Day()) {
+		err := s.db.DeleteWorkDay(utils.DayStart(*a.Start), a.UserID)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &a, nil
 }

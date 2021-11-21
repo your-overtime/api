@@ -37,3 +37,11 @@ func SafeGetUInt(i interface{}) uint {
 		return uint(0)
 	}
 }
+
+func DayStart(day time.Time) time.Time {
+	return time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location())
+}
+
+func DayEnd(day time.Time) time.Time {
+	return time.Date(day.Year(), day.Month()+1, day.Day(), 0, 0, 0, 0, day.Location())
+}

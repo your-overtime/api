@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 )
 
 type Service struct {
@@ -25,11 +26,11 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 
 	st := start
 	for {
-		if st.Unix() > end.Unix() {
+		if st.Unix() >= end.Unix() {
 			break
 		}
-		be := time.Date(st.Year(), st.Month(), st.Day(), 0, 0, 0, 0, st.Location())
-		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 59, st.Location())
+		be := utils.DayStart(st)
+		en := utils.DayEnd(st)
 		if end.Unix() < en.Unix() {
 			en = end
 		}
@@ -47,7 +48,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			}
 		}
 
-		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, en)
+		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, be)
 		if err != nil {
 			log.Debug(err)
 			return 0, 0, err

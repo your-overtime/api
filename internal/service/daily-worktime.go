@@ -6,6 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 )
 
 // StaticCalculation returns the daily working time if the transfer day is in the WeekWorkingdays otherwise 0
@@ -38,11 +39,11 @@ func (s *Service) DynamicCalculation(employee pkg.Employee, day time.Time) (uint
 	}
 
 	// Fix first week of the year
-	if weekStart.Year() != day.Year() {
+	if weekStart.Year() < day.Year() {
 		existingWDs += 31 - uint(weekStart.Day())
 	}
 
-	dayActiveTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location()), day, employee.ID)
+	dayActiveTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(utils.DayStart(day), day, employee.ID)
 	if err != nil {
 		log.Debugln(err)
 		return 0, err
@@ -56,6 +57,8 @@ func (s *Service) DynamicCalculation(employee pkg.Employee, day time.Time) (uint
 	return dayWorkTimeInMinutes, nil
 }
 
+// CalcDailyWorktime returns the daily working time and selects the calculation method used, depending on whether
+// fixed working days are stored or not. If not the dynamic calculation method is used
 func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint, error) {
 	if len(employee.WorkingDaysAsArray()) > 0 {
 		return s.StaticCalculation(employee, day)
