@@ -73,7 +73,7 @@ func (e *Employee) WorkingDaysAsArray() []string {
 	if len(e.WorkingDays) > 0 {
 		return strings.Split(e.WorkingDays, ",")
 	}
-	return []string{}
+	return nil
 }
 
 type Activity struct {
