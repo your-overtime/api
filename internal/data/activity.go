@@ -59,3 +59,22 @@ func (d *Db) GetActivitiesBetweenStartAndEnd(start time.Time, end time.Time, emp
 
 	return activities, nil
 }
+
+func (d *Db) MigrateActivityDuration() error {
+	activities := []pkg.Activity{}
+	if err := d.Conn.Find(&activities).Error; err != nil {
+		return err
+	}
+	for _, a := range activities {
+		if a.ActualDuration == 0 && a.End != nil {
+			a.ActualDuration = a.End.Sub(*a.Start)
+			if a.EventualDuration == 0 {
+				a.EventualDuration = a.ActualDuration
+			}
+			if err := d.Conn.Save(&a).Error; err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}

@@ -20,7 +20,7 @@ func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 		if a.End == nil {
 			diff = end.Sub(*a.Start)
 		} else {
-			diff = a.End.Sub(*a.Start)
+			diff = a.EventualDuration
 		}
 
 		activityTimeInMinutes += int64(diff.Minutes())
@@ -78,6 +78,8 @@ func (s *Service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activ
 	// handle activities without end as new started activities
 	if a.End == nil {
 		return s.StartActivity(a.Description, employee)
+	} else {
+		s.calculateDuration(&a)
 	}
 
 	err := s.db.SaveActivity(&a)
@@ -94,6 +96,7 @@ func (s *Service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, err
 	}
 	now := time.Now()
 	a.End = &now
+	s.calculateDuration(a)
 	a = s.endActivityHook(a)
 	err = s.db.SaveActivity(a)
 	if err != nil {
@@ -125,6 +128,7 @@ func (s *Service) GetActivities(start time.Time, end time.Time, employee pkg.Emp
 }
 
 func (s *Service) UpdateActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
+	s.calculateDuration(&a)
 	err := s.db.SaveActivity(&a)
 	if err != nil {
 		return nil, err
@@ -139,4 +143,14 @@ func (s *Service) DelActivity(id uint, employee pkg.Employee) error {
 	}
 	tx := s.db.Conn.Delete(a)
 	return tx.Error
+}
+
+func (s *Service) calculateDuration(a *pkg.Activity) {
+	if a.End != nil {
+		actualDuration := a.End.Sub(*a.Start)
+		a.ActualDuration = actualDuration
+		if a.EventualDuration == 0 {
+			a.EventualDuration = actualDuration
+		}
+	}
 }
