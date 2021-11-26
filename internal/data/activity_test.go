@@ -23,6 +23,16 @@ func TestSaveActivty(t *testing.T) {
 	}
 }
 
+func TestSaveActivtyWithoutDescriptionErr(t *testing.T) {
+	db := tests.SetupDb(t)
+	insert := createActivity("2021-07-02 08:06")
+	insert.Description = ""
+	err := db.SaveActivity(&insert)
+	if err != pkg.ErrEmptyDescriptionNotAllowed {
+		t.Fatal("empty description should return err")
+	}
+}
+
 func TestGetActivty(t *testing.T) {
 	db := tests.SetupDb(t)
 	expected := createActivity("2021-07-02 08:56")
