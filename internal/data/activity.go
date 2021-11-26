@@ -10,6 +10,11 @@ import (
 )
 
 func (d *Db) SaveActivity(a *pkg.Activity) error {
+
+	if len(a.Description) == 0 {
+		return pkg.ErrEmptyDescriptionNotAllowed
+	}
+
 	now := time.Now()
 	// TODO don't handle domain logic in data layer
 	if !(a.Start.Year() == now.Year() && a.Start.Month() == now.Month() && a.Start.Day() == now.Day()) {
