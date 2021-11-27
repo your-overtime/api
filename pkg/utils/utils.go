@@ -43,5 +43,5 @@ func DayStart(day time.Time) time.Time {
 }
 
 func DayEnd(day time.Time) time.Time {
-	return time.Date(day.Year(), day.Month()+1, day.Day(), 0, 0, 0, 0, day.Location())
+	return time.Date(day.Year(), day.Month(), day.Day()+1, 0, 0, 0, 0, day.Location())
 }
