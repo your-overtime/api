@@ -900,6 +900,9 @@
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },
@@ -969,6 +972,9 @@
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },
@@ -1084,17 +1090,29 @@
         "pkg.Webhook": {
             "type": "object",
             "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
                 "HeaderKey": {
                     "type": "string"
                 },
                 "HeaderValue": {
                     "type": "string"
                 },
+                "ID": {
+                    "type": "integer"
+                },
                 "ReadOnly": {
                     "type": "boolean"
                 },
                 "TargetURL": {
                     "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "UserID": {
+                    "type": "integer"
                 }
             }
         },

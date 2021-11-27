@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 )
 
 type Service struct {
@@ -25,11 +26,11 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 
 	st := start
 	for {
-		if st.Unix() > end.Unix() {
+		if st.Unix() >= end.Unix() {
 			break
 		}
-		be := time.Date(st.Year(), st.Month(), st.Day(), 0, 0, 0, 0, st.Location())
-		en := time.Date(st.Year(), st.Month(), st.Day(), 23, 59, 59, 59, st.Location())
+		be := utils.DayStart(st)
+		en := utils.DayEnd(st)
 		if end.Unix() < en.Unix() {
 			en = end
 		}
@@ -47,7 +48,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			}
 		}
 
-		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, en)
+		dayWorkTimeInMinutes, err := s.CalcDailyWorktime(*e, be)
 		if err != nil {
 			log.Debug(err)
 			return 0, 0, err
@@ -144,39 +145,4 @@ func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, er
 	}
 
 	return o, nil
-}
-
-func (s *Service) CalcDailyWorktime(employee pkg.Employee, day time.Time) (uint, error) {
-	weekStart := time.Date(day.Year(), day.Month(), day.Day()-weekDayToInt(day.Weekday())+1, 0, 0, 0, 0, day.Location())
-	dayWorkTimeInMinutes := uint(employee.WeekWorkingTimeInMinutes) / uint(employee.NumWorkingDays)
-
-	wds, err := s.db.GetWorkDaysBetweenStartAndEnd(weekStart, day, employee.ID)
-	if err != nil {
-		log.Debugln(err)
-		return 0, err
-	}
-	existingWDs := uint(0)
-	for _, wd := range wds {
-		if wd.ActiveTime > 0 || wd.IsHoliday || wd.Overtime > 0 {
-			existingWDs += 1
-		}
-	}
-
-	// Fix first week of the year
-	if weekStart.Year() != day.Year() {
-		existingWDs += 31 - uint(weekStart.Day())
-	}
-
-	dayActiveTimeInMinutes, err := s.SumActivityBetweenStartAndEndInMinutes(time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location()), day, employee.ID)
-	if err != nil {
-		log.Debugln(err)
-		return 0, err
-	}
-
-	if existingWDs >= employee.NumWorkingDays ||
-		(dayActiveTimeInMinutes == 0 && 7-weekDayToInt(day.Weekday())-int(employee.NumWorkingDays)+int(existingWDs) >= 0) {
-		return 0, nil
-	}
-
-	return dayWorkTimeInMinutes, nil
 }

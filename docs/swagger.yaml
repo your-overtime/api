@@ -41,6 +41,8 @@ definitions:
         type: string
       WeekWorkingTimeInMinutes:
         type: integer
+      WorkingDays:
+        type: string
     type: object
   pkg.Holiday:
     properties:
@@ -86,6 +88,8 @@ definitions:
         type: string
       WeekWorkingTimeInMinutes:
         type: integer
+      WorkingDays:
+        type: string
     type: object
   pkg.InputHoliday:
     properties:
@@ -160,14 +164,22 @@ definitions:
     type: object
   pkg.Webhook:
     properties:
+      CreatedAt:
+        type: string
       HeaderKey:
         type: string
       HeaderValue:
         type: string
+      ID:
+        type: integer
       ReadOnly:
         type: boolean
       TargetURL:
         type: string
+      UpdatedAt:
+        type: string
+      UserID:
+        type: integer
     type: object
   pkg.WorkDay:
     properties:

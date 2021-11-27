@@ -10,19 +10,10 @@ import (
 )
 
 func (d *Db) SaveActivity(a *pkg.Activity) error {
-
 	if len(a.Description) == 0 {
 		return pkg.ErrEmptyDescriptionNotAllowed
 	}
 
-	now := time.Now()
-	// TODO don't handle domain logic in data layer
-	if !(a.Start.Year() == now.Year() && a.Start.Month() == now.Month() && a.Start.Day() == now.Day()) {
-		err := d.DeleteWorkDay(time.Date(a.Start.Day(), a.Start.Month(), a.Start.Day(), 0, 0, 0, 0, a.Start.Location()), a.UserID)
-		if err != nil {
-			return err
-		}
-	}
 	tx := d.Conn.Save(a)
 	return tx.Error
 }

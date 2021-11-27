@@ -20,6 +20,7 @@ type InputEmployee struct {
 	Surname                  string
 	Login                    string
 	Password                 string
+	WorkingDays              string
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
 	NumHolidays              uint
@@ -36,6 +37,7 @@ func (u *InputEmployee) ToEmployee() Employee {
 		WeekWorkingTimeInMinutes: u.WeekWorkingTimeInMinutes,
 		NumWorkingDays:           u.NumWorkingDays,
 		NumHolidays:              u.NumHolidays,
+		WorkingDays:              u.WorkingDays,
 	}
 }
 
@@ -64,6 +66,14 @@ type Employee struct {
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
 	NumHolidays              uint
+	WorkingDays              string
+}
+
+func (e *Employee) WorkingDaysAsArray() []string {
+	if len(e.WorkingDays) > 0 {
+		return strings.Split(e.WorkingDays, ",")
+	}
+	return nil
 }
 
 type Activity struct {

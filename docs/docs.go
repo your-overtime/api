@@ -916,6 +916,9 @@ var doc = `{
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },
@@ -985,6 +988,9 @@ var doc = `{
                 },
                 "WeekWorkingTimeInMinutes": {
                     "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
                 }
             }
         },
@@ -1100,17 +1106,29 @@ var doc = `{
         "pkg.Webhook": {
             "type": "object",
             "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
                 "HeaderKey": {
                     "type": "string"
                 },
                 "HeaderValue": {
                     "type": "string"
                 },
+                "ID": {
+                    "type": "integer"
+                },
                 "ReadOnly": {
                     "type": "boolean"
                 },
                 "TargetURL": {
                     "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "UserID": {
+                    "type": "integer"
                 }
             }
         },

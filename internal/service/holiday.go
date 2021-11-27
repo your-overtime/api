@@ -6,6 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 )
 
 func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.Employee) (uint, error) {
@@ -17,10 +18,8 @@ func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.
 
 	for _, h := range hs {
 		h := h
-		cs := h.Start
-		e := h.End
-		cs = time.Date(cs.Year(), cs.Month(), cs.Day(), 0, 0, 0, 0, cs.Location())
-		e = time.Date(e.Year(), e.Month(), e.Day()+1, 0, 0, 0, 0, e.Location())
+		cs := utils.DayStart(h.Start)
+		e := utils.DayEnd(h.End)
 
 		useHolidays += uint(float64(e.Unix()-cs.Unix()) / 60 / 60 / 24)
 	}
