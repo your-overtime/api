@@ -41,6 +41,10 @@ type EmployeeService interface {
 	GetTokens(employee Employee) ([]Token, error)
 }
 
+type WebhookService interface {
+	CreateWebhook(webhook WebhookInput, employee Employee) (*Webhook, error)
+	GetWebhooks(employee Employee) ([]Webhook, error)
+}
 type OvertimeService interface {
 	CalcOverview(e Employee, day time.Time) (*Overview, error)
 
@@ -48,14 +52,16 @@ type OvertimeService interface {
 	HolidayService
 	WorkDayService
 	EmployeeService
+	WebhookService
 }
 
 var (
-	ErrUserNotFound        = errors.New("User not found")
-	ErrInvalidCredentials  = errors.New("Login or password are wrong")
-	ErrBadRequest          = errors.New("Bad request")
-	ErrPermissionDenied    = errors.New("Permission denied")
-	ErrActivityIsRunning   = errors.New("A activity is currently running")
-	ErrNoActivityIsRunning = errors.New("No activity is currently running")
-	ErrDuplicateValue      = errors.New("Duplicate value")
+	ErrUserNotFound               = errors.New("User not found")
+	ErrInvalidCredentials         = errors.New("Login or password are wrong")
+	ErrBadRequest                 = errors.New("Bad request")
+	ErrPermissionDenied           = errors.New("Permission denied")
+	ErrActivityIsRunning          = errors.New("A activity is currently running")
+	ErrNoActivityIsRunning        = errors.New("No activity is currently running")
+	ErrDuplicateValue             = errors.New("Duplicate value")
+	ErrEmptyDescriptionNotAllowed = errors.New("empty description is not allowed")
 )

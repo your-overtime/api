@@ -10,7 +10,12 @@ import (
 )
 
 func (d *Db) SaveActivity(a *pkg.Activity) error {
-	return d.Conn.Save(a).Error
+	if len(a.Description) == 0 {
+		return pkg.ErrEmptyDescriptionNotAllowed
+	}
+
+	tx := d.Conn.Save(a)
+	return tx.Error
 }
 
 func (d *Db) GetRunningActivityByEmployeeID(eID uint) (*pkg.Activity, error) {

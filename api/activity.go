@@ -32,6 +32,8 @@ func (a *API) StartActivity(c *gin.Context) {
 	ac, err := a.os.StartActivity(desc, *e)
 	if err == pkg.ErrActivityIsRunning {
 		c.JSON(http.StatusConflict, err.Error())
+	} else if err == pkg.ErrEmptyDescriptionNotAllowed {
+		c.JSON(http.StatusBadRequest, err.Error())
 	} else if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -97,7 +99,9 @@ func (a *API) CreateActivity(c *gin.Context) {
 		Description: ia.Description,
 	}
 	ac, err := a.os.AddActivity(act, *e)
-	if err != nil {
+	if err == pkg.ErrEmptyDescriptionNotAllowed {
+		c.JSON(http.StatusBadRequest, err.Error())
+	} else if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
@@ -140,7 +144,9 @@ func (a *API) UpdateActivity(c *gin.Context) {
 		Description: ia.Description,
 	}
 	ac, err := a.os.UpdateActivity(act, *e)
-	if err != nil {
+	if err == pkg.ErrEmptyDescriptionNotAllowed {
+		c.JSON(http.StatusBadRequest, err.Error())
+	} else if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {

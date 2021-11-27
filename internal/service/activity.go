@@ -52,21 +52,27 @@ func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 	ca, _ := s.db.GetRunningActivityByEmployeeID(employee.ID)
 	now := time.Now()
 	if ca != nil {
-		ca.End = &now
-		if err := s.db.SaveActivity(ca); err != nil {
+		if _, err := s.StopRunningActivity(employee); err != nil {
 			return nil, err
 		}
 	}
-	a := pkg.Activity{
+	orig := pkg.Activity{
 		UserID:      employee.ID,
 		Start:       &now,
 		Description: desc,
 	}
-	err := s.db.SaveActivity(&a)
+
+	err := s.db.SaveActivity(&orig)
 	if err != nil {
 		return nil, err
 	}
-	return &a, nil
+	hooked, modified := s.startActivityHook(&orig)
+	log.Debug(hooked, modified)
+	if modified {
+		hooked.ID = orig.ID // ensure id is not changed
+		s.db.SaveActivity(hooked)
+	}
+	return hooked, nil
 }
 
 func (s *Service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
@@ -89,6 +95,7 @@ func (s *Service) StopRunningActivity(employee pkg.Employee) (*pkg.Activity, err
 	}
 	now := time.Now()
 	a.End = &now
+	a = s.endActivityHook(a)
 	err = s.db.SaveActivity(a)
 	if err != nil {
 		return nil, err

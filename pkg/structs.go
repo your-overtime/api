@@ -163,3 +163,28 @@ type Overview struct {
 	ActiveTimeThisYearInMinutes  int64
 	ActiveActivity               *Activity
 }
+
+type WebhookInput struct {
+	HeaderKey   string
+	HeaderValue string
+	TargetURL   string
+	ReadOnly    bool
+}
+
+type Webhook struct {
+	Model
+	WebhookInput
+	UserID uint
+}
+
+type WebhookBody struct {
+	Event   WebhookEvent
+	Payload interface{}
+}
+
+type WebhookEvent string
+
+const (
+	StartActivityEvent WebhookEvent = "start_activity"
+	EndActivityEvent   WebhookEvent = "end_activity"
+)

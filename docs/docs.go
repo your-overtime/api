@@ -705,6 +705,72 @@ var doc = `{
                 }
             }
         },
+        "/webhook": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "webhook"
+                ],
+                "summary": "Receives employees registered webhooks",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg.Webhook"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "webhook"
+                ],
+                "summary": "create a webhook",
+                "parameters": [
+                    {
+                        "description": "Webhook",
+                        "name": "webhook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Webhook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pkg.Webhook"
+                        }
+                    }
+                }
+            }
+        },
         "/workday": {
             "get": {
                 "security": [
@@ -1027,6 +1093,35 @@ var doc = `{
                     "type": "string"
                 },
                 "Token": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "UserID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pkg.Webhook": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "HeaderKey": {
+                    "type": "string"
+                },
+                "HeaderValue": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "ReadOnly": {
+                    "type": "boolean"
+                },
+                "TargetURL": {
                     "type": "string"
                 },
                 "UpdatedAt": {
