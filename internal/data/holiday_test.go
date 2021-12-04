@@ -4,30 +4,39 @@ import (
 	"testing"
 	"time"
 
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/tests"
 )
 
-func createHoliday(start string) pkg.Holiday {
+func createHoliday(start string) data.HolidayDB {
 	startTime, _ := time.Parse("2006-01-02", start)
-	return pkg.Holiday{
-		UserID:      1,
-		Start:       startTime,
-		End:         startTime,
-		Description: "Test",
-		Type:        pkg.HolidayTypeFree,
+	return data.HolidayDB{
+		Holiday: pkg.Holiday{
+			UserID: 1,
+			InputHoliday: pkg.InputHoliday{
+				Start:       startTime,
+				End:         startTime,
+				Description: "Test",
+				Type:        pkg.HolidayTypeFree,
+			},
+		},
 	}
 }
 
-func createHolidayWithEnd(start, end string) pkg.Holiday {
+func createHolidayWithEnd(start, end string) data.HolidayDB {
 	startTime, _ := time.Parse("2006-01-02", start)
 	endTime, _ := time.Parse("2006-01-02", end)
-	return pkg.Holiday{
-		UserID:      1,
-		Start:       startTime,
-		End:         endTime,
-		Description: "Test",
-		Type:        pkg.HolidayTypeFree,
+	return data.HolidayDB{
+		Holiday: pkg.Holiday{
+			UserID: 1,
+			InputHoliday: pkg.InputHoliday{
+				Start:       startTime,
+				End:         endTime,
+				Description: "Test",
+				Type:        pkg.HolidayTypeFree,
+			},
+		},
 	}
 }
 func TestSaveHoliday(t *testing.T) {

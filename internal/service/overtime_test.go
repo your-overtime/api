@@ -8,22 +8,20 @@ import (
 	"github.com/your-overtime/api/tests"
 )
 
-var e = pkg.Employee{
-	User: &pkg.User{
-		Name:     "Dieter",
-		Surname:  "Tester",
-		Login:    "dieter",
-		Password: "secret",
-	},
+var e = pkg.User{
+	Name:                     "Dieter",
+	Surname:                  "Tester",
+	Login:                    "dieter",
+	Password:                 "secret",
 	WeekWorkingTimeInMinutes: 1920,
 	NumWorkingDays:           5,
 }
 
-func setUp(t *testing.T) (pkg.OvertimeService, *pkg.Employee) {
+func setUp(t *testing.T) (pkg.OvertimeService, *pkg.User) {
 	db := tests.SetupDb(t)
 	s := service.Init(&db)
 
-	ePtr, err := s.SaveEmployee(e, "")
+	ePtr, err := s.SaveUser(e, "")
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
@@ -70,10 +68,12 @@ func TestOverviewDynamicWOrkinkdays(t *testing.T) {
 	start := tests.ParseDayTime("2021-01-09 07:04")
 	end := tests.ParseDayTime("2021-01-09 08:08")
 	_, err = s.AddActivity(pkg.Activity{
-		Start:       &start,
-		End:         &end,
-		Description: "Tests",
-		UserID:      ePtr.ID,
+		InputActivity: pkg.InputActivity{
+			Start:       &start,
+			End:         &end,
+			Description: "Tests",
+		},
+		UserID: ePtr.ID,
 	}, *ePtr)
 
 	if err != nil {
@@ -163,10 +163,12 @@ func TestOverviewStatic(t *testing.T) {
 	start := tests.ParseDayTime("2021-01-09 07:04")
 	end := tests.ParseDayTime("2021-01-09 08:08")
 	_, err = s.AddActivity(pkg.Activity{
-		Start:       &start,
-		End:         &end,
-		Description: "Tests",
-		UserID:      ePtr.ID,
+		InputActivity: pkg.InputActivity{
+			Start:       &start,
+			End:         &end,
+			Description: "Tests",
+		},
+		UserID: ePtr.ID,
 	}, *ePtr)
 
 	if err != nil {

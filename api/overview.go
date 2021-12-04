@@ -17,7 +17,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetOverview(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)

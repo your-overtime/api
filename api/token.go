@@ -18,7 +18,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetTokens(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -45,7 +45,7 @@ func (a *API) GetTokens(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateToken(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -76,7 +76,7 @@ func (a *API) CreateToken(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) DeleteToken(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)

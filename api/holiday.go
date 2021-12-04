@@ -22,7 +22,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -36,11 +36,13 @@ func (a *API) CreateHoliday(c *gin.Context) {
 		return
 	}
 	ho := pkg.Holiday{
-		UserID:      e.ID,
-		Start:       ih.Start,
-		End:         ih.End,
-		Type:        ih.Type,
-		Description: ih.Description,
+		UserID: e.ID,
+		InputHoliday: pkg.InputHoliday{
+			Start:       ih.Start,
+			End:         ih.End,
+			Type:        ih.Type,
+			Description: ih.Description,
+		},
 	}
 	h, err := a.os.AddHoliday(ho, *e)
 	if err != nil {
@@ -63,7 +65,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) UpdateHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -78,12 +80,14 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 		return
 	}
 	ho := pkg.Holiday{
-		Model:       pkg.Model{ID: uint(id)},
-		UserID:      e.ID,
-		Start:       ih.Start,
-		End:         ih.End,
-		Type:        ih.Type,
-		Description: ih.Description,
+		ID: uint(id),
+		InputHoliday: pkg.InputHoliday{
+			Start:       ih.Start,
+			End:         ih.End,
+			Type:        ih.Type,
+			Description: ih.Description,
+		},
+		UserID: e.ID,
 	}
 	h, err := a.os.AddHoliday(ho, *e)
 	if err != nil {
@@ -104,7 +108,7 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -131,7 +135,7 @@ func (a *API) GetHoliday(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetHolidays(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -180,7 +184,7 @@ func (a *API) GetHolidays(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) DeleteHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)

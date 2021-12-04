@@ -5,11 +5,12 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/pkg/utils"
 )
 
-func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.Employee) (uint, error) {
+func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.User) (uint, error) {
 	useHolidays := uint(0)
 	hs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, pkg.HolidayTypeFree, e.ID)
 	if err != nil {
@@ -27,7 +28,7 @@ func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.
 	return useHolidays, nil
 }
 
-func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.Employee) (int64, bool, error) {
+func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.User) (int64, bool, error) {
 	isLegal := false
 	holidays, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, e.ID)
 	if err != nil {
@@ -60,8 +61,8 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 	return freeTimeInMinutes, isLegal, nil
 }
 
-func (s *Service) AddHoliday(h pkg.Holiday, employee pkg.Employee) (*pkg.Holiday, error) {
-	err := s.db.SaveHoliday(&h)
+func (s *Service) AddHoliday(h pkg.Holiday, user pkg.User) (*pkg.Holiday, error) {
+	err := s.db.SaveHoliday(&data.HolidayDB{Holiday: h})
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -69,51 +70,60 @@ func (s *Service) AddHoliday(h pkg.Holiday, employee pkg.Employee) (*pkg.Holiday
 	return &h, nil
 }
 
-func (s *Service) GetHoliday(id uint, employee pkg.Employee) (*pkg.Holiday, error) {
+func (s *Service) GetHoliday(id uint, user pkg.User) (*pkg.Holiday, error) {
 	h, err := s.db.GetHoliday(id)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
 
-	if h.UserID != employee.ID {
+	if h.UserID != user.ID {
 		return nil, pkg.ErrPermissionDenied
 	}
 
-	return h, nil
+	return &h.Holiday, nil
 }
 
-func (s *Service) UpdateHoliday(activity pkg.Holiday, employee pkg.Employee) (*pkg.Holiday, error) {
+func (s *Service) UpdateHoliday(activity pkg.Holiday, user pkg.User) (*pkg.Holiday, error) {
 	// only needed in client
 	return nil, errors.New("not implemented")
 }
 
-func (s *Service) GetHolidays(start time.Time, end time.Time, employee pkg.Employee) ([]pkg.Holiday, error) {
-	h, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, employee.ID)
+func (s *Service) GetHolidays(start time.Time, end time.Time, user pkg.User) ([]pkg.Holiday, error) {
+	hDBs, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
 
-	return h, nil
+	return castHolidayDBToPkgArray(hDBs), nil
 }
 
-func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.HolidayType, employee pkg.Employee) ([]pkg.Holiday, error) {
-	h, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, hType, employee.ID)
+func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.HolidayType, user pkg.User) ([]pkg.Holiday, error) {
+	hDBs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, hType, user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
 
-	return h, nil
+	return castHolidayDBToPkgArray(hDBs), nil
 }
 
-func (s *Service) DelHoliday(id uint, employee pkg.Employee) error {
-	h, err := s.GetHoliday(id, employee)
+func (s *Service) DelHoliday(id uint, user pkg.User) error {
+	h, err := s.GetHoliday(id, user)
 	if err != nil {
 		log.Debug(err)
 		return err
 	}
 	tx := s.db.Conn.Delete(h)
 	return tx.Error
+}
+
+func castHolidayDBToPkgArray(hDBs []data.HolidayDB) []pkg.Holiday {
+	hs := make([]pkg.Holiday, len(hDBs))
+	for i := range hDBs {
+		hs[i] = hDBs[i].Holiday
+	}
+
+	return hs
 }

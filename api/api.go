@@ -35,7 +35,7 @@ func (a *API) adminAuth() gin.HandlerFunc {
 	}
 }
 
-func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
+func (a *API) getUserFromRequest(c *gin.Context) (*pkg.User, error) {
 	token := c.Request.FormValue("token")
 	if len(token) > 0 {
 		return a.os.FromToken(token)
@@ -108,10 +108,10 @@ func (a *API) createEndPoints() {
 	v1.POST("/webhook", a.CreateWebhook)
 	v1.GET("/webhook", a.GetWebhooks)
 
-	// employee
+	// user
 	authorizedV1 := v1.Group("/", a.adminAuth())
 	{
-		authorizedV1.POST("/employee", a.CreateEmployee)
+		authorizedV1.POST("/user", a.CreateUser)
 	}
 }
 

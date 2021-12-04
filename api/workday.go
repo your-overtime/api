@@ -20,7 +20,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetWorkDays(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -58,7 +58,7 @@ func (a *API) GetWorkDays(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateWorkDay(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -72,10 +72,12 @@ func (a *API) CreateWorkDay(c *gin.Context) {
 		return
 	}
 	wo := pkg.WorkDay{
-		UserID:     e.ID,
-		Day:        iw.Day,
-		Overtime:   iw.Overtime,
-		ActiveTime: iw.ActiveTime,
+		InputWorkDay: pkg.InputWorkDay{
+			UserID:     e.ID,
+			Day:        iw.Day,
+			Overtime:   iw.Overtime,
+			ActiveTime: iw.ActiveTime,
+		},
 	}
 	h, err := a.os.AddWorkDay(wo, *e)
 	if err != nil {

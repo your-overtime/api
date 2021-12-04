@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/tests"
 )
@@ -47,12 +48,12 @@ func TestGetActivty(t *testing.T) {
 	}
 }
 
-func TestGetRunningActivtyByEmployeeID(t *testing.T) {
+func TestGetRunningActivtyByUserID(t *testing.T) {
 	db := tests.SetupDb(t)
 	notRunning := createActivityWithEnd("2021-07-05 08:00", "2021-07-05 10:00")
 	db.SaveActivity(&notRunning)
 
-	running, err := db.GetRunningActivityByEmployeeID(1)
+	running, err := db.GetRunningActivityByUserID(1)
 	if err == nil {
 		t.Fatalf("expect %v error but got nil", pkg.ErrNoActivityIsRunning)
 	}
@@ -66,7 +67,7 @@ func TestGetRunningActivtyByEmployeeID(t *testing.T) {
 	isRunning := createActivity("2021-07-05 11:00")
 	db.SaveActivity(&isRunning)
 
-	running, err = db.GetRunningActivityByEmployeeID(1)
+	running, err = db.GetRunningActivityByUserID(1)
 	if err != nil {
 		t.Fatalf("expect nil error but got %v", err)
 	}
@@ -110,22 +111,30 @@ func TestGetActivtyBetweenStartAndEnd(t *testing.T) {
 	}
 }
 
-func createActivity(start string) pkg.Activity {
+func createActivity(start string) data.ActivityDB {
 	startTime, _ := time.Parse("2006-01-02 15:04", start)
-	return pkg.Activity{
-		Start:       &startTime,
-		Description: "testing",
-		UserID:      1,
+	return data.ActivityDB{
+		Activity: pkg.Activity{
+			InputActivity: pkg.InputActivity{
+				Start:       &startTime,
+				Description: "testing",
+			},
+			UserID: 1,
+		},
 	}
 }
 
-func createActivityWithEnd(start, end string) pkg.Activity {
+func createActivityWithEnd(start, end string) data.ActivityDB {
 	startTime, _ := time.Parse("2006-01-02 15:04", start)
 	endTime, _ := time.Parse("2006-01-02 15:04", end)
-	return pkg.Activity{
-		Start:       &startTime,
-		End:         &endTime,
-		Description: "testing",
-		UserID:      1,
+	return data.ActivityDB{
+		Activity: pkg.Activity{
+			InputActivity: pkg.InputActivity{
+				Start:       &startTime,
+				End:         &endTime,
+				Description: "testing",
+			},
+			UserID: 1,
+		},
 	}
 }

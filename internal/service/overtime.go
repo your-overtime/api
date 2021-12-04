@@ -19,7 +19,7 @@ func Init(db *data.Db) *Service {
 	}
 }
 
-func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *pkg.Employee) (int64, int64, error) {
+func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *pkg.User) (int64, int64, error) {
 	overtimeInMinutes := int64(0)
 	activeTimeInMinutes := int64(0)
 	now := time.Now()
@@ -70,13 +70,18 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 			dayOvertimeInMinutes = at
 		}
 		if !isNowDay {
-			err = s.db.SaveWorkDay(&pkg.WorkDay{
-				Day:        be,
-				Overtime:   dayOvertimeInMinutes,
-				ActiveTime: at,
-				UserID:     e.ID,
-				IsHoliday:  ft > 0,
-			})
+			err = s.db.SaveWorkDay(
+				&data.WorkDayDB{
+					WorkDay: pkg.WorkDay{
+						InputWorkDay: pkg.InputWorkDay{
+							Day:        be,
+							Overtime:   dayOvertimeInMinutes,
+							ActiveTime: at,
+							UserID:     e.ID,
+						},
+						IsHoliday: ft > 0,
+					},
+				})
 			if err != nil {
 				return 0, 0, err
 			}
@@ -89,7 +94,7 @@ func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time, e *p
 	return activeTimeInMinutes, overtimeInMinutes, nil
 }
 
-func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, error) {
+func (s *Service) CalcOverview(e pkg.User, day time.Time) (*pkg.Overview, error) {
 	yyyy, mm, dd := day.Date()
 	wd := day.Weekday()
 	wdNumber := weekDayToInt(wd)
@@ -139,9 +144,9 @@ func (s *Service) CalcOverview(e pkg.Employee, day time.Time) (*pkg.Overview, er
 		UsedHolidays:                 int(holidays),
 		HolidaysStillAvailable:       int(e.NumHolidays - holidays),
 	}
-	cra, err := s.db.GetRunningActivityByEmployeeID(e.ID)
+	cra, err := s.db.GetRunningActivityByUserID(e.ID)
 	if err == nil {
-		o.ActiveActivity = cra
+		o.ActiveActivity = &cra.Activity
 	}
 
 	return o, nil

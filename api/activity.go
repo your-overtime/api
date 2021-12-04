@@ -21,7 +21,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StartActivity(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -51,7 +51,7 @@ func (a *API) StartActivity(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StopActivity(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -79,7 +79,7 @@ func (a *API) StopActivity(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateActivity(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -93,10 +93,12 @@ func (a *API) CreateActivity(c *gin.Context) {
 		return
 	}
 	act := pkg.Activity{
-		UserID:      e.ID,
-		Start:       ia.Start,
-		End:         ia.End,
-		Description: ia.Description,
+		UserID: e.ID,
+		InputActivity: pkg.InputActivity{
+			Start:       ia.Start,
+			End:         ia.End,
+			Description: ia.Description,
+		},
 	}
 	ac, err := a.os.AddActivity(act, *e)
 	if err == pkg.ErrEmptyDescriptionNotAllowed {
@@ -122,7 +124,7 @@ func (a *API) CreateActivity(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) UpdateActivity(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -137,11 +139,12 @@ func (a *API) UpdateActivity(c *gin.Context) {
 		return
 	}
 	act := pkg.Activity{
-		Model:       pkg.Model{ID: uint(id)},
-		UserID:      e.ID,
-		Start:       ia.Start,
-		End:         ia.End,
-		Description: ia.Description,
+		ID: uint(id),
+		InputActivity: pkg.InputActivity{
+			Start:       ia.Start,
+			End:         ia.End,
+			Description: ia.Description,
+		},
 	}
 	ac, err := a.os.UpdateActivity(act, *e)
 	if err == pkg.ErrEmptyDescriptionNotAllowed {
@@ -164,7 +167,7 @@ func (a *API) UpdateActivity(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetActivity(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -191,7 +194,7 @@ func (a *API) GetActivity(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetActivities(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -228,7 +231,7 @@ func (a *API) GetActivities(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) DeleteActivity(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)

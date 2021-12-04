@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/your-overtime/api/internal/data"
-	"github.com/your-overtime/api/pkg"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -19,19 +18,19 @@ func SetupDb(t *testing.T) data.Db {
 	}
 	db := data.Db{Conn: conn}
 
-	if err := conn.AutoMigrate(&pkg.Holiday{}); err != nil {
+	if err := conn.AutoMigrate(&data.ActivityDB{}); err != nil {
 		t.Fatal(err)
 	}
-	if err := conn.AutoMigrate(&pkg.Activity{}); err != nil {
+	if err := conn.AutoMigrate(&data.HolidayDB{}); err != nil {
 		t.Fatal(err)
 	}
-	if err := conn.AutoMigrate(&pkg.WorkDay{}); err != nil {
+	if err := conn.AutoMigrate(&data.WorkDayDB{}); err != nil {
 		t.Fatal(err)
 	}
-	if err := conn.AutoMigrate(&pkg.Employee{}); err != nil {
+	if err := conn.AutoMigrate(&data.UserDB{}); err != nil {
 		t.Fatal(err)
 	}
-	if err := conn.AutoMigrate(&pkg.Token{}); err != nil {
+	if err := conn.AutoMigrate(&data.TokenDB{}); err != nil {
 		t.Fatal(err)
 	}
 	return db

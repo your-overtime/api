@@ -8,10 +8,11 @@ import (
 	"net/url"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 )
 
-func (s *Service) CreateWebhook(webhook pkg.WebhookInput, employee pkg.Employee) (*pkg.Webhook, error) {
+func (s *Service) CreateWebhook(webhook pkg.WebhookInput, user pkg.User) (*pkg.Webhook, error) {
 	_, err := url.ParseRequestURI(webhook.TargetURL)
 	if err != nil {
 		return nil, err
@@ -19,14 +20,24 @@ func (s *Service) CreateWebhook(webhook pkg.WebhookInput, employee pkg.Employee)
 
 	hook := pkg.Webhook{
 		WebhookInput: webhook,
-		UserID:       employee.ID,
+		UserID:       user.ID,
 	}
 
-	return s.db.SaveWebhook(hook)
+	hookDB, err := s.db.SaveWebhook(data.WebhookDB{Webhook: hook})
+	if err != nil {
+		return nil, err
+	}
+
+	return &hookDB.Webhook, nil
 }
 
-func (s *Service) GetWebhooks(employee pkg.Employee) ([]pkg.Webhook, error) {
-	return s.db.GetWebhooksByUserID(employee.ID)
+func (s *Service) GetWebhooks(user pkg.User) ([]pkg.Webhook, error) {
+	hookDBs, err := s.db.GetWebhooksByUserID(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return castWebhookDBToPkgArray(hookDBs), nil
 }
 
 //-- webhook handlers --//
@@ -107,4 +118,13 @@ func (s *Service) callHook(hook pkg.WebhookInput, eventName pkg.WebhookEvent, pa
 		return nil, err
 	}
 	return payload, nil
+}
+
+func castWebhookDBToPkgArray(in []data.WebhookDB) []pkg.Webhook {
+	con := make([]pkg.Webhook, len(in))
+	for i := range in {
+		con[i] = in[i].Webhook
+	}
+
+	return con
 }

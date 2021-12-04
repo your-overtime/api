@@ -8,7 +8,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/your-overtime/api/pkg"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -44,12 +43,12 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 	db.Conn = conn
 
 	// Migrate the schema
-	conn.AutoMigrate(&pkg.Activity{})
-	conn.AutoMigrate(&pkg.Employee{})
-	conn.AutoMigrate(&pkg.Token{})
-	conn.AutoMigrate(&pkg.Holiday{})
-	conn.AutoMigrate(&pkg.WorkDay{})
-	conn.AutoMigrate(&pkg.Webhook{})
-	db.MirgrateTokensToHashedTokens()
+	conn.AutoMigrate(&ActivityDB{})
+	conn.AutoMigrate(&UserDB{})
+	conn.AutoMigrate(&TokenDB{})
+	conn.AutoMigrate(&HolidayDB{})
+	conn.AutoMigrate(&WorkDayDB{})
+	conn.AutoMigrate(&WebhookDB{})
+
 	return &db, err
 }

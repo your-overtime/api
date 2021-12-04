@@ -13,12 +13,12 @@ import (
 // @Tags account
 // @Summary Retrieves account information
 // @Produce json
-// @Success 200 {object} pkg.Employee
+// @Success 200 {object} pkg.User
 // @Router /account [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetAccount(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -34,12 +34,12 @@ func (a *API) GetAccount(c *gin.Context) {
 // @Produce json
 // @Consume json
 // @Param account body map[string]interface{} true "input account fields"
-// @Success 200 {object} pkg.Employee
+// @Success 200 {object} pkg.User
 // @Router /account [patch]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) UpdateAccount(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	e, err := a.getUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)

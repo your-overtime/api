@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -18,10 +19,15 @@ func createSHA256Hash(v string) string {
 	)
 }
 
-func (s *Service) FromToken(token string) (*pkg.Employee, error) {
+func (s *Service) FromToken(token string) (*pkg.User, error) {
 	hashedToken := createSHA256Hash(token)
 
-	return s.db.GetEmployeeByToken(hashedToken)
+	uDB, err := s.db.GetUserByToken(hashedToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &uDB.User, nil
 }
 
 func comparePasswords(hashedPw string, plainPw string) bool {
@@ -36,51 +42,64 @@ func comparePasswords(hashedPw string, plainPw string) bool {
 	return true
 }
 
-func (s *Service) Login(login string, password string) (*pkg.Employee, error) {
-	e, err := s.db.GetEmployeeByLogin(login)
+func (s *Service) Login(login string, password string) (*pkg.User, error) {
+	e, err := s.db.GetUserByLogin(login)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
 
 	if comparePasswords(e.Password, password) {
-		return e, nil
+		return &e.User, nil
 	}
 
 	return nil, pkg.ErrInvalidCredentials
 }
 
-func (s *Service) SaveEmployee(employee pkg.Employee, adminToken string) (*pkg.Employee, error) {
-	err := s.db.SaveEmployee(&employee)
+func (s *Service) SaveUser(user pkg.User, adminToken string) (*pkg.User, error) {
+	var (
+		u   *data.UserDB
+		err error
+	)
+	if user.ID != 0 {
+		u, err = s.db.GetUser(user.ID)
+		u.User = user
+	} else {
+		u = &data.UserDB{
+			User: user,
+		}
+	}
+
+	err = s.db.SaveUser(u)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
-	return &employee, nil
+	return &u.User, nil
 }
 
-func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Employee) (*pkg.Employee, error) {
+func (s *Service) UpdateAccount(fields map[string]interface{}, user pkg.User) (*pkg.User, error) {
 	for f := range fields {
 		switch f {
 		case "Name":
-			employee.Name = fields[f].(string)
+			user.Name = fields[f].(string)
 		case "Surname":
-			employee.Surname = fields[f].(string)
+			user.Surname = fields[f].(string)
 		case "Password":
-			employee.Password = fields[f].(string)
+			user.Password = fields[f].(string)
 		case "Login":
-			employee.Login = fields[f].(string)
+			user.Login = fields[f].(string)
 		case "WeekWorkingTimeInMinutes":
-			employee.WeekWorkingTimeInMinutes = utils.SafeGetUInt(fields[f])
+			user.WeekWorkingTimeInMinutes = utils.SafeGetUInt(fields[f])
 		case "NumWorkingDays":
-			employee.NumWorkingDays = utils.SafeGetUInt(fields[f])
+			user.NumWorkingDays = utils.SafeGetUInt(fields[f])
 		case "NumHolidays":
-			employee.NumHolidays = utils.SafeGetUInt(fields[f])
+			user.NumHolidays = utils.SafeGetUInt(fields[f])
 		default:
 			return nil, pkg.ErrBadRequest
 		}
 	}
-	dbE, err := s.SaveEmployee(employee, "")
+	dbE, err := s.SaveUser(user, "")
 	if err != nil {
 		if err.(*mysql.MySQLError).Number == 1062 {
 			return nil, pkg.ErrDuplicateValue
@@ -91,26 +110,37 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, employee pkg.Empl
 	return dbE, nil
 }
 
-func (s *Service) DeleteEmployee(login string, adminToken string) error {
-	tx := s.db.Conn.Model(pkg.Employee{}).Delete("login = ?", login)
+func (s *Service) DeleteUser(login string, adminToken string) error {
+	tx := s.db.Conn.Model(data.UserDB{}).Delete("login = ?", login)
 	return tx.Error
 }
 
-func (s *Service) GetTokens(employee pkg.Employee) ([]pkg.Token, error) {
-	ts, err := s.db.GetTokens(employee)
+func (s *Service) GetTokens(user pkg.User) ([]pkg.Token, error) {
+	uDB, err := s.db.GetUser(user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
+	tsDB, err := s.db.GetTokens(*uDB)
+	if err != nil {
+		log.Debug(err)
+		return nil, err
+	}
+	ts := make([]pkg.Token, len(tsDB))
+	for i := 0; i < len(tsDB); i++ {
+		ts[i] = uDB.Tokens[i]
+	}
 	return ts, nil
 }
 
-func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.Token, error) {
+func (s *Service) CreateToken(it pkg.InputToken, user pkg.User) (*pkg.Token, error) {
 	// TODO add database method to create token?
 	token := pkg.Token{
-		UserID: employee.ID,
-		Name:   it.Name,
-		Token:  utils.RandString(40),
+		UserID: user.ID,
+		InputToken: pkg.InputToken{
+			Name: it.Name,
+		},
+		Token: utils.RandString(40),
 	}
 
 	tx := s.db.Conn.Create(&token)
@@ -121,7 +151,9 @@ func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.To
 
 	respToken := token
 	token.Token = createSHA256Hash(token.Token)
-	err := s.db.SaveToken(&token)
+	err := s.db.SaveToken(&data.TokenDB{
+		Token: token,
+	})
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -130,21 +162,21 @@ func (s *Service) CreateToken(it pkg.InputToken, employee pkg.Employee) (*pkg.To
 	return &respToken, nil
 }
 
-func (s *Service) DeleteToken(tokenID uint, employee pkg.Employee) error {
+func (s *Service) DeleteToken(tokenID uint, user pkg.User) error {
 	var t pkg.Token
 	tx := s.db.Conn.First(&t, tokenID)
 	if tx.Error != nil {
 		log.Debug(tx.Error)
 		return tx.Error
 	}
-	if t.UserID == employee.ID {
-		tx := s.db.Conn.Delete(&employee)
+	if t.UserID == user.ID {
+		tx := s.db.Conn.Delete(&user)
 		log.Debug(tx.Error)
 		return tx.Error
 	}
 	return pkg.ErrPermissionDenied
 }
 
-func (s *Service) GetAccount() (*pkg.Employee, error) {
+func (s *Service) GetAccount() (*pkg.User, error) {
 	return nil, errors.New("not implemented")
 }
