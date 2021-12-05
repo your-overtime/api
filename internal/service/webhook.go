@@ -12,7 +12,7 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (s *Service) CreateWebhook(webhook pkg.WebhookInput, user pkg.User) (*pkg.Webhook, error) {
+func (s *Service) CreateWebhook(webhook pkg.WebhookInput) (*pkg.Webhook, error) {
 	_, err := url.ParseRequestURI(webhook.TargetURL)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (s *Service) CreateWebhook(webhook pkg.WebhookInput, user pkg.User) (*pkg.W
 
 	hook := pkg.Webhook{
 		WebhookInput: webhook,
-		UserID:       user.ID,
+		UserID:       s.user.ID,
 	}
 
 	hookDB, err := s.db.SaveWebhook(data.WebhookDB{Webhook: hook})
@@ -31,8 +31,8 @@ func (s *Service) CreateWebhook(webhook pkg.WebhookInput, user pkg.User) (*pkg.W
 	return &hookDB.Webhook, nil
 }
 
-func (s *Service) GetWebhooks(user pkg.User) ([]pkg.Webhook, error) {
-	hookDBs, err := s.db.GetWebhooksByUserID(user.ID)
+func (s *Service) GetWebhooks() ([]pkg.Webhook, error) {
+	hookDBs, err := s.db.GetWebhooksByUserID(s.user.ID)
 	if err != nil {
 		return nil, err
 	}

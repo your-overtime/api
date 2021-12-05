@@ -10,9 +10,9 @@ import (
 	"github.com/your-overtime/api/pkg/utils"
 )
 
-func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.Time, e pkg.User) (uint, error) {
+func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.Time) (uint, error) {
 	useHolidays := uint(0)
-	hs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, pkg.HolidayTypeFree, e.ID)
+	hs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, pkg.HolidayTypeFree, s.user.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -28,9 +28,9 @@ func (s *Service) CountUsedHolidaysBetweenStartAndEnd(start time.Time, end time.
 	return useHolidays, nil
 }
 
-func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time, e pkg.User) (int64, bool, error) {
+func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end time.Time) (int64, bool, error) {
 	isLegal := false
-	holidays, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, e.ID)
+	holidays, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, s.user.ID)
 	if err != nil {
 		log.Debug(err)
 		return 0, isLegal, err
@@ -50,9 +50,9 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 			if a.Type == pkg.HolidayTypeLegalHoliday {
 				// Fix legal holidays
 				isLegal = true
-				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / 5)
+				dayFreeTimeInMinutes = int64(s.user.WeekWorkingTimeInMinutes / 5)
 			} else {
-				dayFreeTimeInMinutes = int64(e.WeekWorkingTimeInMinutes / e.NumWorkingDays)
+				dayFreeTimeInMinutes = int64(s.user.WeekWorkingTimeInMinutes / s.user.NumWorkingDays)
 			}
 			freeTimeInMinutes += dayFreeTimeInMinutes
 			st = st.AddDate(0, 0, 1)
@@ -61,7 +61,7 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 	return freeTimeInMinutes, isLegal, nil
 }
 
-func (s *Service) AddHoliday(h pkg.Holiday, user pkg.User) (*pkg.Holiday, error) {
+func (s *Service) AddHoliday(h pkg.Holiday) (*pkg.Holiday, error) {
 	err := s.db.SaveHoliday(&data.HolidayDB{Holiday: h})
 	if err != nil {
 		log.Debug(err)
@@ -70,27 +70,27 @@ func (s *Service) AddHoliday(h pkg.Holiday, user pkg.User) (*pkg.Holiday, error)
 	return &h, nil
 }
 
-func (s *Service) GetHoliday(id uint, user pkg.User) (*pkg.Holiday, error) {
+func (s *Service) GetHoliday(id uint) (*pkg.Holiday, error) {
 	h, err := s.db.GetHoliday(id)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
 
-	if h.UserID != user.ID {
+	if h.UserID != s.user.ID {
 		return nil, pkg.ErrPermissionDenied
 	}
 
 	return &h.Holiday, nil
 }
 
-func (s *Service) UpdateHoliday(activity pkg.Holiday, user pkg.User) (*pkg.Holiday, error) {
+func (s *Service) UpdateHoliday(activity pkg.Holiday) (*pkg.Holiday, error) {
 	// only needed in client
 	return nil, errors.New("not implemented")
 }
 
-func (s *Service) GetHolidays(start time.Time, end time.Time, user pkg.User) ([]pkg.Holiday, error) {
-	hDBs, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, user.ID)
+func (s *Service) GetHolidays(start time.Time, end time.Time) ([]pkg.Holiday, error) {
+	hDBs, err := s.db.GetHolidaysBetweenStartAndEnd(start, end, s.user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -99,8 +99,8 @@ func (s *Service) GetHolidays(start time.Time, end time.Time, user pkg.User) ([]
 	return castHolidayDBToPkgArray(hDBs), nil
 }
 
-func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.HolidayType, user pkg.User) ([]pkg.Holiday, error) {
-	hDBs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, hType, user.ID)
+func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.HolidayType) ([]pkg.Holiday, error) {
+	hDBs, err := s.db.GetHolidaysBetweenStartAndEndByType(start, end, hType, s.user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -109,8 +109,8 @@ func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.Ho
 	return castHolidayDBToPkgArray(hDBs), nil
 }
 
-func (s *Service) DelHoliday(id uint, user pkg.User) error {
-	h, err := s.GetHoliday(id, user)
+func (s *Service) DelHoliday(id uint) error {
+	h, err := s.GetHoliday(id)
 	if err != nil {
 		log.Debug(err)
 		return err

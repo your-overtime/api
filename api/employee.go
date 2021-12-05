@@ -25,7 +25,8 @@ func (a *API) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	e, err := a.os.SaveUser(ie.ToUser(), "")
+	os := a.mos.GetOrCreateInstanceForUser(&pkg.User{})
+	e, err := os.SaveUser(ie.ToUser(), "")
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)

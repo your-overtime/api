@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end time.Time, userID uint) (int64, error) {
-	activities, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, userID)
+func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end time.Time) (int64, error) {
+	activities, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, s.user.ID)
 	if err != nil {
 		log.Debug(err)
 		return 0, err
@@ -49,17 +49,17 @@ func weekDayToInt(wd time.Weekday) int {
 	}
 }
 
-func (s *Service) StartActivity(desc string, user pkg.User) (*pkg.Activity, error) {
-	ca, _ := s.db.GetRunningActivityByUserID(user.ID)
+func (s *Service) StartActivity(desc string) (*pkg.Activity, error) {
+	ca, _ := s.db.GetRunningActivityByUserID(s.user.ID)
 	now := time.Now()
 	if ca != nil {
-		if _, err := s.StopRunningActivity(user); err != nil {
+		if _, err := s.StopRunningActivity(); err != nil {
 			return nil, err
 		}
 	}
 	orig := data.ActivityDB{
 		Activity: pkg.Activity{
-			UserID: user.ID,
+			UserID: s.user.ID,
 			InputActivity: pkg.InputActivity{
 				Start:       &now,
 				Description: desc,
@@ -81,10 +81,10 @@ func (s *Service) StartActivity(desc string, user pkg.User) (*pkg.Activity, erro
 	return hooked, nil
 }
 
-func (s *Service) AddActivity(a pkg.Activity, user pkg.User) (*pkg.Activity, error) {
+func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
 	// handle activities without end as new started activities
 	if a.End == nil {
-		return s.StartActivity(a.Description, user)
+		return s.StartActivity(a.Description)
 	}
 
 	err := s.db.SaveActivity(&data.ActivityDB{
@@ -96,8 +96,8 @@ func (s *Service) AddActivity(a pkg.Activity, user pkg.User) (*pkg.Activity, err
 	return &a, nil
 }
 
-func (s *Service) StopRunningActivity(user pkg.User) (*pkg.Activity, error) {
-	a, err := s.db.GetRunningActivityByUserID(user.ID)
+func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
+	a, err := s.db.GetRunningActivityByUserID(s.user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -112,21 +112,21 @@ func (s *Service) StopRunningActivity(user pkg.User) (*pkg.Activity, error) {
 	return &a.Activity, nil
 }
 
-func (s *Service) GetActivity(id uint, user pkg.User) (*pkg.Activity, error) {
+func (s *Service) GetActivity(id uint) (*pkg.Activity, error) {
 	a, err := s.db.GetActivity(id)
 	if err != nil {
 		return nil, err
 	}
 
-	if a != nil && a.UserID != user.ID {
+	if a != nil && a.UserID != s.user.ID {
 		return nil, pkg.ErrPermissionDenied
 	}
 
 	return &a.Activity, nil
 }
 
-func (s *Service) GetActivities(start time.Time, end time.Time, user pkg.User) ([]pkg.Activity, error) {
-	asDB, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, user.ID)
+func (s *Service) GetActivities(start time.Time, end time.Time) ([]pkg.Activity, error) {
+	asDB, err := s.db.GetActivitiesBetweenStartAndEnd(start, end, s.user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (s *Service) GetActivities(start time.Time, end time.Time, user pkg.User) (
 	return as, nil
 }
 
-func (s *Service) UpdateActivity(a pkg.Activity, user pkg.User) (*pkg.Activity, error) {
+func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 	aDB, err := s.db.GetActivity(a.ID)
 	if err != nil {
 		return nil, err
@@ -162,8 +162,8 @@ func (s *Service) UpdateActivity(a pkg.Activity, user pkg.User) (*pkg.Activity, 
 	return &a, nil
 }
 
-func (s *Service) DelActivity(id uint, user pkg.User) error {
-	a, err := s.GetActivity(id, user)
+func (s *Service) DelActivity(id uint) error {
+	a, err := s.GetActivity(id)
 	if err != nil {
 		return err
 	}

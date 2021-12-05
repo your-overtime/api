@@ -2,7 +2,6 @@ package service
 
 import (
 	"crypto/sha256"
-	"errors"
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
@@ -19,7 +18,7 @@ func createSHA256Hash(v string) string {
 	)
 }
 
-func (s *Service) FromToken(token string) (*pkg.User, error) {
+func (s *MainService) FromToken(token string) (*pkg.User, error) {
 	hashedToken := createSHA256Hash(token)
 
 	uDB, err := s.db.GetUserByToken(hashedToken)
@@ -42,7 +41,7 @@ func comparePasswords(hashedPw string, plainPw string) bool {
 	return true
 }
 
-func (s *Service) Login(login string, password string) (*pkg.User, error) {
+func (s *MainService) Login(login string, password string) (*pkg.User, error) {
 	e, err := s.db.GetUserByLogin(login)
 	if err != nil {
 		log.Debug(err)
@@ -63,6 +62,9 @@ func (s *Service) SaveUser(user pkg.User, adminToken string) (*pkg.User, error) 
 	)
 	if user.ID != 0 {
 		u, err = s.db.GetUser(user.ID)
+		if err != nil {
+			return nil, err
+		}
 		u.User = user
 	} else {
 		u = &data.UserDB{
@@ -115,8 +117,8 @@ func (s *Service) DeleteUser(login string, adminToken string) error {
 	return tx.Error
 }
 
-func (s *Service) GetTokens(user pkg.User) ([]pkg.Token, error) {
-	uDB, err := s.db.GetUser(user.ID)
+func (s *Service) GetTokens() ([]pkg.Token, error) {
+	uDB, err := s.db.GetUser(s.user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -133,10 +135,10 @@ func (s *Service) GetTokens(user pkg.User) ([]pkg.Token, error) {
 	return ts, nil
 }
 
-func (s *Service) CreateToken(it pkg.InputToken, user pkg.User) (*pkg.Token, error) {
+func (s *Service) CreateToken(it pkg.InputToken) (*pkg.Token, error) {
 	// TODO add database method to create token?
 	token := pkg.Token{
-		UserID: user.ID,
+		UserID: s.user.ID,
 		InputToken: pkg.InputToken{
 			Name: it.Name,
 		},
@@ -162,15 +164,15 @@ func (s *Service) CreateToken(it pkg.InputToken, user pkg.User) (*pkg.Token, err
 	return &respToken, nil
 }
 
-func (s *Service) DeleteToken(tokenID uint, user pkg.User) error {
+func (s *Service) DeleteToken(tokenID uint) error {
 	var t pkg.Token
 	tx := s.db.Conn.First(&t, tokenID)
 	if tx.Error != nil {
 		log.Debug(tx.Error)
 		return tx.Error
 	}
-	if t.UserID == user.ID {
-		tx := s.db.Conn.Delete(&user)
+	if t.UserID == s.user.ID {
+		tx := s.db.Conn.Delete(&t)
 		log.Debug(tx.Error)
 		return tx.Error
 	}
@@ -178,5 +180,5 @@ func (s *Service) DeleteToken(tokenID uint, user pkg.User) error {
 }
 
 func (s *Service) GetAccount() (*pkg.User, error) {
-	return nil, errors.New("not implemented")
+	return s.user, nil
 }

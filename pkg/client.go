@@ -65,7 +65,7 @@ func InitOvertimeClient(host string, authHeader string) OvertimeService {
 	}
 }
 
-func (c *client) CalcOverview(e User, d time.Time) (*Overview, error) {
+func (c *client) CalcOverview(d time.Time) (*Overview, error) {
 	resp, err := c.doRequest("GET", "overview", nil)
 	if err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func (c *client) CalcOverview(e User, d time.Time) (*Overview, error) {
 	return &o, nil
 }
 
-func (c *client) StartActivity(desc string, user User) (*Activity, error) {
+func (c *client) StartActivity(desc string) (*Activity, error) {
 	resp, err := c.doRequest("POST", "activity/"+desc, nil)
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ func (c *client) StartActivity(desc string, user User) (*Activity, error) {
 	return &a, nil
 }
 
-func (c *client) AddActivity(activity Activity, user User) (*Activity, error) {
+func (c *client) AddActivity(activity Activity) (*Activity, error) {
 	resp, err := c.doRequest("POST", "activity", activity)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (c *client) AddActivity(activity Activity, user User) (*Activity, error) {
 	return &a, nil
 }
 
-func (c *client) UpdateActivity(activity Activity, user User) (*Activity, error) {
+func (c *client) UpdateActivity(activity Activity) (*Activity, error) {
 	resp, err := c.doRequest("PUT", fmt.Sprintf("activity/%d", activity.ID), activity)
 	if err != nil {
 		return nil, err
@@ -117,7 +117,7 @@ func (c *client) UpdateActivity(activity Activity, user User) (*Activity, error)
 	return &a, nil
 }
 
-func (c *client) StopRunningActivity(user User) (*Activity, error) {
+func (c *client) StopRunningActivity() (*Activity, error) {
 	resp, err := c.doRequest("DELETE", "activity", nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func (c *client) StopRunningActivity(user User) (*Activity, error) {
 	return &a, nil
 }
 
-func (c *client) GetActivity(id uint, user User) (*Activity, error) {
+func (c *client) GetActivity(id uint) (*Activity, error) {
 	resp, err := c.doRequest("GET", fmt.Sprintf("activity/%d", id), nil)
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func timeFormatForQuery(t time.Time) string {
 	return url.QueryEscape(t.Format(time.RFC3339))
 }
 
-func (c *client) GetActivities(start time.Time, end time.Time, user User) ([]Activity, error) {
+func (c *client) GetActivities(start time.Time, end time.Time) ([]Activity, error) {
 	resp, err := c.doRequest("GET", fmt.Sprintf("activity?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
 	if err != nil {
 		return nil, err
@@ -160,12 +160,12 @@ func (c *client) GetActivities(start time.Time, end time.Time, user User) ([]Act
 	return a, nil
 }
 
-func (c *client) DelActivity(id uint, user User) error {
+func (c *client) DelActivity(id uint) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("activity/%d", id), nil)
 	return err
 }
 
-func (c *client) AddHoliday(holiday Holiday, user User) (*Holiday, error) {
+func (c *client) AddHoliday(holiday Holiday) (*Holiday, error) {
 	resp, err := c.doRequest("POST", "holiday", holiday)
 	if err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ func (c *client) AddHoliday(holiday Holiday, user User) (*Holiday, error) {
 	return &h, nil
 }
 
-func (c *client) UpdateHoliday(holiday Holiday, user User) (*Holiday, error) {
+func (c *client) UpdateHoliday(holiday Holiday) (*Holiday, error) {
 	resp, err := c.doRequest("PUT", fmt.Sprintf("holiday/%d", holiday.ID), holiday)
 	if err != nil {
 		return nil, err
@@ -191,7 +191,7 @@ func (c *client) UpdateHoliday(holiday Holiday, user User) (*Holiday, error) {
 	return &h, nil
 }
 
-func (c *client) GetHoliday(id uint, user User) (*Holiday, error) {
+func (c *client) GetHoliday(id uint) (*Holiday, error) {
 	resp, err := c.doRequest("GET", fmt.Sprintf("holiday/%d", id), nil)
 	if err != nil {
 		return nil, err
@@ -204,7 +204,7 @@ func (c *client) GetHoliday(id uint, user User) (*Holiday, error) {
 	return &h, nil
 }
 
-func (c *client) GetHolidays(start time.Time, end time.Time, user User) ([]Holiday, error) {
+func (c *client) GetHolidays(start time.Time, end time.Time) ([]Holiday, error) {
 	resp, err := c.doRequest("GET", fmt.Sprintf("holiday?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
 	if err != nil {
 		return nil, err
@@ -217,7 +217,7 @@ func (c *client) GetHolidays(start time.Time, end time.Time, user User) ([]Holid
 	return h, nil
 }
 
-func (c *client) GetHolidaysByType(start time.Time, end time.Time, hType HolidayType, user User) ([]Holiday, error) {
+func (c *client) GetHolidaysByType(start time.Time, end time.Time, hType HolidayType) ([]Holiday, error) {
 	resp, err := c.doRequest("GET", fmt.Sprintf("holiday?start=%s&end=%s&type=%s", timeFormatForQuery(start), timeFormatForQuery(end), hType), nil)
 	if err != nil {
 		return nil, err
@@ -230,7 +230,7 @@ func (c *client) GetHolidaysByType(start time.Time, end time.Time, hType Holiday
 	return h, nil
 }
 
-func (c *client) AddWorkDay(workday WorkDay, user User) (*WorkDay, error) {
+func (c *client) AddWorkDay(workday WorkDay) (*WorkDay, error) {
 	resp, err := c.doRequest("POST", "workday", workday)
 	if err != nil {
 		return nil, err
@@ -243,7 +243,7 @@ func (c *client) AddWorkDay(workday WorkDay, user User) (*WorkDay, error) {
 	return &w, nil
 }
 
-func (c *client) GetWorkDays(start time.Time, end time.Time, user User) ([]WorkDay, error) {
+func (c *client) GetWorkDays(start time.Time, end time.Time) ([]WorkDay, error) {
 	resp, err := c.doRequest("GET", fmt.Sprintf("workday?start=%s&end=%s", timeFormatForQuery(start), timeFormatForQuery(end)), nil)
 	if err != nil {
 		return nil, err
@@ -256,7 +256,7 @@ func (c *client) GetWorkDays(start time.Time, end time.Time, user User) ([]WorkD
 	return ws, nil
 }
 
-func (c *client) DelHoliday(id uint, user User) error {
+func (c *client) DelHoliday(id uint) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("holiday/%d", id), nil)
 	return err
 }
@@ -305,7 +305,7 @@ func (c *client) DeleteUser(login string, adminToken string) error {
 	return err
 }
 
-func (c *client) CreateToken(token InputToken, user User) (*Token, error) {
+func (c *client) CreateToken(token InputToken) (*Token, error) {
 	resp, err := c.doRequest("POST", "token", token)
 	if err != nil {
 		return nil, err
@@ -318,12 +318,12 @@ func (c *client) CreateToken(token InputToken, user User) (*Token, error) {
 	return &t, nil
 }
 
-func (c *client) DeleteToken(tokenID uint, user User) error {
+func (c *client) DeleteToken(tokenID uint) error {
 	_, err := c.doRequest("DELETE", fmt.Sprintf("token/%d", tokenID), nil)
 	return err
 }
 
-func (c *client) GetTokens(user User) ([]Token, error) {
+func (c *client) GetTokens() ([]Token, error) {
 	resp, err := c.doRequest("GET", "token", nil)
 	if err != nil {
 		return nil, err
@@ -336,7 +336,7 @@ func (c *client) GetTokens(user User) ([]Token, error) {
 	return ts, nil
 }
 
-func (c *client) CreateWebhook(webhook WebhookInput, user User) (*Webhook, error) {
+func (c *client) CreateWebhook(webhook WebhookInput) (*Webhook, error) {
 	resp, err := c.doRequest("POST", "webhook", webhook)
 	if err != nil {
 		return nil, err
@@ -348,7 +348,7 @@ func (c *client) CreateWebhook(webhook WebhookInput, user User) (*Webhook, error
 	return &hook, nil
 }
 
-func (c *client) GetWebhooks(user User) ([]Webhook, error) {
+func (c *client) GetWebhooks() ([]Webhook, error) {
 	resp, err := c.doRequest("GET", "webhook", nil)
 	if err != nil {
 		return nil, err

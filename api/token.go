@@ -18,14 +18,14 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetTokens(c *gin.Context) {
-	e, err := a.getUserFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 
-	ts, err := a.os.GetTokens(*e)
+	ts, err := os.GetTokens()
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -45,7 +45,7 @@ func (a *API) GetTokens(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateToken(c *gin.Context) {
-	e, err := a.getUserFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -57,7 +57,7 @@ func (a *API) CreateToken(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	t, err := a.os.CreateToken(it, *e)
+	t, err := os.CreateToken(it)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -76,14 +76,14 @@ func (a *API) CreateToken(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) DeleteToken(c *gin.Context) {
-	e, err := a.getUserFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	err = a.os.DeleteToken(uint(id), *e)
+	err = os.DeleteToken(uint(id))
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)

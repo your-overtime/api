@@ -8,8 +8,8 @@ import (
 	"github.com/your-overtime/api/pkg"
 )
 
-func (s *Service) GetWorkDays(start time.Time, end time.Time, user pkg.User) ([]pkg.WorkDay, error) {
-	wdDBs, err := s.db.GetWorkDaysBetweenStartAndEnd(start, end, user.ID)
+func (s *Service) GetWorkDays(start time.Time, end time.Time) ([]pkg.WorkDay, error) {
+	wdDBs, err := s.db.GetWorkDaysBetweenStartAndEnd(start, end, s.user.ID)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -23,7 +23,7 @@ func (s *Service) GetWorkDays(start time.Time, end time.Time, user pkg.User) ([]
 	return wds, nil
 }
 
-func (s *Service) AddWorkDay(w pkg.WorkDay, user pkg.User) (*pkg.WorkDay, error) {
+func (s *Service) AddWorkDay(w pkg.WorkDay) (*pkg.WorkDay, error) {
 	err := s.db.SaveWorkDay(&data.WorkDayDB{WorkDay: w})
 	if err != nil {
 		log.Debug(err)
