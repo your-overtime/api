@@ -31,7 +31,7 @@ func setUp(t *testing.T) (pkg.OvertimeService, *pkg.Employee) {
 	return s, ePtr
 }
 
-func TestOverviewDynamicWOrkinkdays(t *testing.T) {
+func TestOverviewDynamicWorkinkdays(t *testing.T) {
 	s, ePtr := setUp(t)
 	o, err := s.CalcOverview(*ePtr, tests.ParseDayTime("2021-01-08 23:59"))
 	if err != nil {
@@ -54,13 +54,13 @@ func TestOverviewDynamicWOrkinkdays(t *testing.T) {
 		t.Error("expect -1152 but got ", o.OvertimeThisWeekInMinutes)
 	}
 
-	// 7 full workdays without activity => -1920
-	if o.OvertimeThisMonthInMinutes != -1920 {
-		t.Error("expect -1920 but got ", o.OvertimeThisMonthInMinutes)
+	// 6 full workdays without activity => 384 * 6 = -2304
+	if o.OvertimeThisMonthInMinutes != -2304 {
+		t.Error("expect -2304 but got ", o.OvertimeThisMonthInMinutes)
 	}
 
-	if o.OvertimeThisYearInMinutes != -1920 {
-		t.Error("expect -1920 but got ", o.OvertimeThisYearInMinutes)
+	if o.OvertimeThisYearInMinutes != -2304 {
+		t.Error("expect -2304 but got ", o.OvertimeThisYearInMinutes)
 	}
 
 	if o.ActiveActivity != nil {
@@ -102,16 +102,16 @@ func TestOverviewDynamicWOrkinkdays(t *testing.T) {
 		t.Error("expect 64 but got ", o.ActiveTimeThisWeekInMinutes)
 	}
 
-	if o.OvertimeThisMonthInMinutes != -2240 {
-		t.Error("expect -2250 but got ", o.OvertimeThisMonthInMinutes)
+	if o.OvertimeThisMonthInMinutes != -2624 {
+		t.Error("expect -2624 but got ", o.OvertimeThisMonthInMinutes)
 	}
 
 	if o.ActiveTimeThisMonthInMinutes != 64 {
 		t.Error("expect 64 but got ", o.ActiveTimeThisMonthInMinutes)
 	}
 
-	if o.OvertimeThisYearInMinutes != -2240 {
-		t.Error("expect -2240 but got ", o.OvertimeThisYearInMinutes)
+	if o.OvertimeThisYearInMinutes != -2624 {
+		t.Error("expect -2624 but got ", o.OvertimeThisYearInMinutes)
 	}
 
 	if o.ActiveTimeThisYearInMinutes != 64 {

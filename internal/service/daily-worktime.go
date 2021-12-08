@@ -49,10 +49,15 @@ func (s *Service) DynamicCalculation(employee pkg.Employee, day time.Time) (uint
 		return 0, err
 	}
 
+	log.Debugln(existingWDs, " ", employee.NumWorkingDays, " ", 7-weekDayToInt(day.Weekday()), " ", int(employee.NumWorkingDays)+int(existingWDs))
+
 	if existingWDs >= employee.NumWorkingDays ||
-		(dayActiveTimeInMinutes == 0 && 7-weekDayToInt(day.Weekday())-int(employee.NumWorkingDays)+int(existingWDs) >= 0) {
+		(dayActiveTimeInMinutes == 0 && 7-weekDayToInt(day.Weekday())-int(employee.NumWorkingDays)-int(existingWDs) >= 0) {
+		log.Errorln(existingWDs >= employee.NumWorkingDays, " ", (dayActiveTimeInMinutes == 0 && 7-weekDayToInt(day.Weekday())-int(employee.NumWorkingDays)+int(existingWDs) >= 0))
 		return 0, nil
 	}
+
+	log.Errorln(dayWorkTimeInMinutes)
 
 	return dayWorkTimeInMinutes, nil
 }
