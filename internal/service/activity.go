@@ -65,13 +65,8 @@ func (s *Service) StartActivity(desc string, employee pkg.Employee) (*pkg.Activi
 	if err != nil {
 		return nil, err
 	}
-	hooked, modified := s.startActivityHook(&orig)
-	log.Debug(hooked, modified)
-	if modified {
-		hooked.ID = orig.ID // ensure id is not changed
-		s.db.SaveActivity(hooked)
-	}
-	return hooked, nil
+
+	return s.startActivityHook(&orig), nil
 }
 
 func (s *Service) AddActivity(a pkg.Activity, employee pkg.Employee) (*pkg.Activity, error) {
