@@ -31,15 +31,14 @@ func (s *Service) GetWebhooks(employee pkg.Employee) ([]pkg.Webhook, error) {
 
 //-- webhook handlers --//
 
-func (s *Service) startActivityHook(a *pkg.Activity) (*pkg.Activity, bool) {
+func (s *Service) startActivityHook(a *pkg.Activity) *pkg.Activity {
 
-	modified, errs, mayBeModified := s.hookHandler(a.UserID, pkg.StartActivityEvent, a)
+	_, errs, _ := s.hookHandler(a.UserID, pkg.StartActivityEvent, a)
 	if errs != nil {
 		log.Debug(errs)
-		return a, false
 	}
 
-	return modified.(*pkg.Activity), mayBeModified
+	return a
 }
 
 func (s *Service) endActivityHook(a *pkg.Activity) *pkg.Activity {
@@ -47,7 +46,8 @@ func (s *Service) endActivityHook(a *pkg.Activity) *pkg.Activity {
 	if errs != nil {
 		return a
 	}
-	return modifed.(*pkg.Activity)
+	a.EventualDuration = modifed.(*pkg.Activity).EventualDuration
+	return a
 }
 
 func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, payload interface{}) (interface{}, []error, bool) {

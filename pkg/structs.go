@@ -78,10 +78,12 @@ func (e *Employee) WorkingDaysAsArray() []string {
 
 type Activity struct {
 	Model
-	Start       *time.Time
-	End         *time.Time
-	Description string
-	UserID      uint
+	Start            *time.Time
+	End              *time.Time
+	ActualDuration   time.Duration
+	EventualDuration time.Duration
+	Description      string
+	UserID           uint
 }
 
 type InputActivity struct {
