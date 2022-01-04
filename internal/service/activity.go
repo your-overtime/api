@@ -22,7 +22,7 @@ func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 		if a.End == nil {
 			diff = end.Sub(*a.Start)
 		} else {
-			diff = a.End.Sub(*a.Start)
+			diff = a.EventualDuration
 		}
 
 		activityTimeInMinutes += int64(diff.Minutes())
@@ -71,20 +71,16 @@ func (s *Service) StartActivity(desc string) (*pkg.Activity, error) {
 	if err != nil {
 		return nil, err
 	}
-	hooked, modified := s.startActivityHook(&orig.Activity)
-	log.Debug(hooked, modified)
-	if modified {
-		hooked.ID = orig.ID // ensure id is not changed
-		orig.Activity = *hooked
-		s.db.SaveActivity(&orig)
-	}
-	return hooked, nil
+
+	return s.startActivityHook(&orig.Activity), nil
 }
 
 func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
 	// handle activities without end as new started activities
 	if a.End == nil {
 		return s.StartActivity(a.Description)
+	} else {
+		s.calculateDuration(&a)
 	}
 
 	err := s.db.SaveActivity(&data.ActivityDB{
@@ -103,8 +99,9 @@ func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
 	}
 	now := time.Now()
 	a.End = &now
-	ac := s.endActivityHook(&a.Activity)
-	a.Activity = *ac
+	s.calculateDuration(&a.Activity)
+	hooked := s.endActivityHook(&a.Activity)
+	a.EventualDuration = hooked.EventualDuration
 	err = s.db.SaveActivity(a)
 	if err != nil {
 		return nil, err
@@ -148,7 +145,9 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 	aDB.Activity = a
 
 	err = s.db.SaveActivity(aDB)
-	if err != nil {
+	s.calculateDuration(&aDB.Activity)
+
+	if err := s.db.SaveActivity(aDB); err != nil {
 		return nil, err
 	}
 	// delete WorkingDay of the passing day to force recalculation
@@ -169,4 +168,14 @@ func (s *Service) DelActivity(id uint) error {
 	}
 	tx := s.db.Conn.Delete(a)
 	return tx.Error
+}
+
+func (s *Service) calculateDuration(a *pkg.Activity) {
+	if a.End != nil {
+		actualDuration := a.End.Sub(*a.Start)
+		a.ActualDuration = actualDuration
+		if a.EventualDuration == 0 {
+			a.EventualDuration = actualDuration
+		}
+	}
 }

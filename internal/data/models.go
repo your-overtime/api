@@ -18,9 +18,17 @@ type UserDB struct {
 	pkg.User        `gorm:"embedded"`
 }
 
+func (UserDB) TableName() string {
+	return "employees"
+}
+
 type TokenDB struct {
 	ModelExtensions `gorm:"embedded"`
 	pkg.Token       `gorm:"embedded"`
+}
+
+func (TokenDB) TableName() string {
+	return "tokens"
 }
 
 type ActivityDB struct {
@@ -28,9 +36,17 @@ type ActivityDB struct {
 	pkg.Activity    `gorm:"embedded"`
 }
 
+func (ActivityDB) TableName() string {
+	return "activities"
+}
+
 type HolidayDB struct {
 	ModelExtensions `gorm:"embedded"`
 	pkg.Holiday     `gorm:"embedded"`
+}
+
+func (HolidayDB) TableName() string {
+	return "holidays"
 }
 
 type WorkDayDB struct {
@@ -38,7 +54,15 @@ type WorkDayDB struct {
 	pkg.WorkDay     `gorm:"embedded"`
 }
 
+func (WorkDayDB) TableName() string {
+	return "work_days"
+}
+
 type WebhookDB struct {
 	ModelExtensions `gorm:"embedded"`
 	pkg.Webhook     `gorm:"embedded"`
+}
+
+func (WebhookDB) TableName() string {
+	return "webhooks"
 }
