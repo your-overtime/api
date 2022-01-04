@@ -1,11 +1,15 @@
 basePath: /api/v1
 definitions:
-  pkg.Activity:
+  Activity:
     properties:
+      ActualDuration:
+        type: integer
       Description:
         type: string
       End:
         type: string
+      EventualDuration:
+        type: integer
       ID:
         type: integer
       Start:
@@ -13,7 +17,7 @@ definitions:
       UserID:
         type: integer
     type: object
-  pkg.Holiday:
+  Holiday:
     properties:
       Description:
         type: string
@@ -28,7 +32,7 @@ definitions:
       UserID:
         type: integer
     type: object
-  pkg.InputActivity:
+  InputActivity:
     properties:
       Description:
         type: string
@@ -37,7 +41,7 @@ definitions:
       Start:
         type: string
     type: object
-  pkg.InputHoliday:
+  InputHoliday:
     properties:
       Description:
         type: string
@@ -48,12 +52,12 @@ definitions:
       Type:
         type: string
     type: object
-  pkg.InputToken:
+  InputToken:
     properties:
       Name:
         type: string
     type: object
-  pkg.InputUser:
+  InputUser:
     properties:
       Login:
         type: string
@@ -72,7 +76,7 @@ definitions:
       WorkingDays:
         type: string
     type: object
-  pkg.InputWorkDay:
+  InputWorkDay:
     properties:
       ActiveTime:
         type: integer
@@ -83,10 +87,10 @@ definitions:
       UserID:
         type: integer
     type: object
-  pkg.Overview:
+  Overtime:
     properties:
       ActiveActivity:
-        $ref: '#/definitions/pkg.Activity'
+        $ref: '#/definitions/Activity'
       ActiveTimeThisDayInMinutes:
         type: integer
       ActiveTimeThisMonthInMinutes:
@@ -112,7 +116,7 @@ definitions:
       WeekNumber:
         type: integer
     type: object
-  pkg.Token:
+  Token:
     properties:
       ID:
         type: integer
@@ -123,7 +127,7 @@ definitions:
       UserID:
         type: integer
     type: object
-  pkg.User:
+  User:
     properties:
       ID:
         type: integer
@@ -139,14 +143,14 @@ definitions:
         type: string
       Tokens:
         items:
-          $ref: '#/definitions/pkg.Token'
+          $ref: '#/definitions/Token'
         type: array
       WeekWorkingTimeInMinutes:
         type: integer
       WorkingDays:
         type: string
     type: object
-  pkg.Webhook:
+  Webhook:
     properties:
       HeaderKey:
         type: string
@@ -161,7 +165,7 @@ definitions:
       UserID:
         type: integer
     type: object
-  pkg.WorkDay:
+  WorkDay:
     properties:
       ActiveTime:
         type: integer
@@ -189,7 +193,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.User'
+            $ref: '#/definitions/User'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -211,7 +215,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.User'
+            $ref: '#/definitions/User'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -226,7 +230,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -252,7 +256,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pkg.Activity'
+              $ref: '#/definitions/Activity'
             type: array
       security:
       - BasicAuth: []
@@ -267,14 +271,14 @@ paths:
         name: activity
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputActivity'
+          $ref: '#/definitions/InputActivity'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -295,7 +299,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -316,7 +320,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -336,7 +340,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -350,7 +354,7 @@ paths:
         name: activity
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputActivity'
+          $ref: '#/definitions/InputActivity'
       - description: Activity id
         in: path
         name: id
@@ -362,7 +366,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Activity'
+            $ref: '#/definitions/Activity'
       security:
       - BasicAuth ApiKeyAuth: []
       - BasicAuth: []
@@ -390,7 +394,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pkg.Holiday'
+              $ref: '#/definitions/Holiday'
             type: array
       security:
       - BasicAuth: []
@@ -405,14 +409,14 @@ paths:
         name: holiday
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputHoliday'
+          $ref: '#/definitions/InputHoliday'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Holiday'
+            $ref: '#/definitions/Holiday'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -433,7 +437,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Holiday'
+            $ref: '#/definitions/Holiday'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -453,7 +457,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Holiday'
+            $ref: '#/definitions/Holiday'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -467,7 +471,7 @@ paths:
         name: holiday
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputHoliday'
+          $ref: '#/definitions/InputHoliday'
       - description: Holiday id
         in: path
         name: id
@@ -479,7 +483,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Holiday'
+            $ref: '#/definitions/Holiday'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -494,7 +498,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Overview'
+            $ref: '#/definitions/Overtime'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -510,7 +514,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pkg.Token'
+              $ref: '#/definitions/Token'
             type: array
       security:
       - BasicAuth: []
@@ -525,14 +529,14 @@ paths:
         name: token
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputToken'
+          $ref: '#/definitions/InputToken'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Token'
+            $ref: '#/definitions/Token'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -553,7 +557,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.Token'
+            $ref: '#/definitions/Token'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -568,14 +572,14 @@ paths:
         name: bottles
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputUser'
+          $ref: '#/definitions/InputUser'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.User'
+            $ref: '#/definitions/User'
       security:
       - AdminAuth: []
       summary: creates a user
@@ -590,7 +594,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pkg.Webhook'
+              $ref: '#/definitions/Webhook'
             type: array
       security:
       - BasicAuth: []
@@ -605,14 +609,14 @@ paths:
         name: webhook
         required: true
         schema:
-          $ref: '#/definitions/pkg.Webhook'
+          $ref: '#/definitions/Webhook'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/pkg.Webhook'
+            $ref: '#/definitions/Webhook'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -639,7 +643,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pkg.WorkDay'
+              $ref: '#/definitions/WorkDay'
             type: array
       security:
       - BasicAuth: []
@@ -654,14 +658,14 @@ paths:
         name: workday
         required: true
         schema:
-          $ref: '#/definitions/pkg.InputWorkDay'
+          $ref: '#/definitions/InputWorkDay'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg.WorkDay'
+            $ref: '#/definitions/WorkDay'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []

@@ -44,7 +44,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.User"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -81,7 +81,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.User"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -126,7 +126,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Activity"
+                                "$ref": "#/definitions/Activity"
                             }
                         }
                     }
@@ -155,7 +155,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputActivity"
+                            "$ref": "#/definitions/InputActivity"
                         }
                     }
                 ],
@@ -163,7 +163,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -188,7 +188,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -224,7 +224,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -260,7 +260,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -291,7 +291,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputActivity"
+                            "$ref": "#/definitions/InputActivity"
                         }
                     },
                     {
@@ -306,7 +306,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -340,7 +340,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -385,7 +385,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Holiday"
+                                "$ref": "#/definitions/Holiday"
                             }
                         }
                     }
@@ -414,7 +414,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputHoliday"
+                            "$ref": "#/definitions/InputHoliday"
                         }
                     }
                 ],
@@ -422,7 +422,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -458,7 +458,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -486,7 +486,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputHoliday"
+                            "$ref": "#/definitions/InputHoliday"
                         }
                     },
                     {
@@ -501,7 +501,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -535,7 +535,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -562,7 +562,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Overview"
+                            "$ref": "#/definitions/Overtime"
                         }
                     }
                 }
@@ -591,7 +591,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Token"
+                                "$ref": "#/definitions/Token"
                             }
                         }
                     }
@@ -620,7 +620,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputToken"
+                            "$ref": "#/definitions/InputToken"
                         }
                     }
                 ],
@@ -628,7 +628,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Token"
+                            "$ref": "#/definitions/Token"
                         }
                     }
                 }
@@ -664,7 +664,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Token"
+                            "$ref": "#/definitions/Token"
                         }
                     }
                 }
@@ -691,7 +691,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputUser"
+                            "$ref": "#/definitions/InputUser"
                         }
                     }
                 ],
@@ -699,7 +699,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.User"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -728,7 +728,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Webhook"
+                                "$ref": "#/definitions/Webhook"
                             }
                         }
                     }
@@ -757,7 +757,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.Webhook"
+                            "$ref": "#/definitions/Webhook"
                         }
                     }
                 ],
@@ -765,7 +765,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Webhook"
+                            "$ref": "#/definitions/Webhook"
                         }
                     }
                 }
@@ -810,7 +810,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.WorkDay"
+                                "$ref": "#/definitions/WorkDay"
                             }
                         }
                     }
@@ -839,7 +839,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputWorkDay"
+                            "$ref": "#/definitions/InputWorkDay"
                         }
                     }
                 ],
@@ -847,7 +847,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.WorkDay"
+                            "$ref": "#/definitions/WorkDay"
                         }
                     }
                 }
@@ -855,14 +855,20 @@ var doc = `{
         }
     },
     "definitions": {
-        "pkg.Activity": {
+        "Activity": {
             "type": "object",
             "properties": {
+                "ActualDuration": {
+                    "type": "integer"
+                },
                 "Description": {
                     "type": "string"
                 },
                 "End": {
                     "type": "string"
+                },
+                "EventualDuration": {
+                    "type": "integer"
                 },
                 "ID": {
                     "type": "integer"
@@ -875,7 +881,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.Holiday": {
+        "Holiday": {
             "type": "object",
             "properties": {
                 "Description": {
@@ -898,7 +904,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.InputActivity": {
+        "InputActivity": {
             "type": "object",
             "properties": {
                 "Description": {
@@ -912,7 +918,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.InputHoliday": {
+        "InputHoliday": {
             "type": "object",
             "properties": {
                 "Description": {
@@ -929,7 +935,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.InputToken": {
+        "InputToken": {
             "type": "object",
             "properties": {
                 "Name": {
@@ -937,7 +943,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.InputUser": {
+        "InputUser": {
             "type": "object",
             "properties": {
                 "Login": {
@@ -966,7 +972,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.InputWorkDay": {
+        "InputWorkDay": {
             "type": "object",
             "properties": {
                 "ActiveTime": {
@@ -983,11 +989,11 @@ var doc = `{
                 }
             }
         },
-        "pkg.Overview": {
+        "Overtime": {
             "type": "object",
             "properties": {
                 "ActiveActivity": {
-                    "$ref": "#/definitions/pkg.Activity"
+                    "$ref": "#/definitions/Activity"
                 },
                 "ActiveTimeThisDayInMinutes": {
                     "type": "integer"
@@ -1027,7 +1033,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.Token": {
+        "Token": {
             "type": "object",
             "properties": {
                 "ID": {
@@ -1044,7 +1050,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.User": {
+        "User": {
             "type": "object",
             "properties": {
                 "ID": {
@@ -1068,7 +1074,7 @@ var doc = `{
                 "Tokens": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pkg.Token"
+                        "$ref": "#/definitions/Token"
                     }
                 },
                 "WeekWorkingTimeInMinutes": {
@@ -1079,7 +1085,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.Webhook": {
+        "Webhook": {
             "type": "object",
             "properties": {
                 "HeaderKey": {
@@ -1102,7 +1108,7 @@ var doc = `{
                 }
             }
         },
-        "pkg.WorkDay": {
+        "WorkDay": {
             "type": "object",
             "properties": {
                 "ActiveTime": {

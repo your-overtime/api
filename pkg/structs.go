@@ -15,7 +15,7 @@ type InputUser struct {
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
 	NumHolidays              uint
-}
+} // @Name InputUser
 
 func (u *InputUser) ToUser() User {
 	return User{
@@ -41,18 +41,18 @@ type User struct {
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
 	NumHolidays              uint
-}
+} // @Name User
 
 type InputToken struct {
 	Name string
-}
+} // @Name InputToken
 
 type Token struct {
 	ID uint `gorm:"primaryKey"`
 	InputToken
 	UserID uint
 	Token  string
-}
+} // @Name Token
 
 func (e *User) WorkingDaysAsArray() []string {
 	if len(e.WorkingDays) > 0 {
@@ -67,13 +67,13 @@ type Activity struct {
 	ActualDuration   time.Duration
 	EventualDuration time.Duration
 	UserID           uint
-}
+} // @Name Activity
 
 type InputActivity struct {
 	Start       *time.Time
 	End         *time.Time
 	Description string
-}
+} // @Name InputActivity
 
 type HolidayType string
 
@@ -105,27 +105,27 @@ type Holiday struct {
 	ID uint `gorm:"primaryKey"`
 	InputHoliday
 	UserID uint
-}
+} // @Name Holiday
 
 type InputHoliday struct {
 	Start       time.Time
 	End         time.Time
 	Description string
 	Type        HolidayType
-}
+} // @Name InputHoliday
 
 type WorkDay struct {
 	ID uint `gorm:"primaryKey"`
 	InputWorkDay
 	IsHoliday bool
-}
+} // @Name WorkDay
 
 type InputWorkDay struct {
 	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 	Overtime   int64
 	ActiveTime int64
 	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
-}
+} // @Name InputWorkDay
 
 type Overview struct {
 	Date                         time.Time
@@ -141,20 +141,20 @@ type Overview struct {
 	OvertimeThisYearInMinutes    int64
 	ActiveTimeThisYearInMinutes  int64
 	ActiveActivity               *Activity
-}
+} // @Name Overtime
 
 type WebhookInput struct {
 	HeaderKey   string
 	HeaderValue string
 	TargetURL   string
 	ReadOnly    bool
-}
+} // @Name WebhookInput
 
 type Webhook struct {
 	ID uint `gorm:"primaryKey"`
 	WebhookInput
 	UserID uint
-}
+} // @Name Webhook
 
 type WebhookBody struct {
 	Event   WebhookEvent

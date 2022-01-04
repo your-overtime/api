@@ -28,7 +28,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.User"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -65,7 +65,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.User"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -110,7 +110,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Activity"
+                                "$ref": "#/definitions/Activity"
                             }
                         }
                     }
@@ -139,7 +139,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputActivity"
+                            "$ref": "#/definitions/InputActivity"
                         }
                     }
                 ],
@@ -147,7 +147,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -172,7 +172,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -208,7 +208,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -244,7 +244,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -275,7 +275,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputActivity"
+                            "$ref": "#/definitions/InputActivity"
                         }
                     },
                     {
@@ -290,7 +290,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -324,7 +324,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -369,7 +369,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Holiday"
+                                "$ref": "#/definitions/Holiday"
                             }
                         }
                     }
@@ -398,7 +398,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputHoliday"
+                            "$ref": "#/definitions/InputHoliday"
                         }
                     }
                 ],
@@ -406,7 +406,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -442,7 +442,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -470,7 +470,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputHoliday"
+                            "$ref": "#/definitions/InputHoliday"
                         }
                     },
                     {
@@ -485,7 +485,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -519,7 +519,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -546,7 +546,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Overview"
+                            "$ref": "#/definitions/Overtime"
                         }
                     }
                 }
@@ -575,7 +575,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Token"
+                                "$ref": "#/definitions/Token"
                             }
                         }
                     }
@@ -604,7 +604,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputToken"
+                            "$ref": "#/definitions/InputToken"
                         }
                     }
                 ],
@@ -612,7 +612,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Token"
+                            "$ref": "#/definitions/Token"
                         }
                     }
                 }
@@ -648,7 +648,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Token"
+                            "$ref": "#/definitions/Token"
                         }
                     }
                 }
@@ -675,7 +675,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputUser"
+                            "$ref": "#/definitions/InputUser"
                         }
                     }
                 ],
@@ -683,7 +683,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.User"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -712,7 +712,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Webhook"
+                                "$ref": "#/definitions/Webhook"
                             }
                         }
                     }
@@ -741,7 +741,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.Webhook"
+                            "$ref": "#/definitions/Webhook"
                         }
                     }
                 ],
@@ -749,7 +749,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Webhook"
+                            "$ref": "#/definitions/Webhook"
                         }
                     }
                 }
@@ -794,7 +794,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.WorkDay"
+                                "$ref": "#/definitions/WorkDay"
                             }
                         }
                     }
@@ -823,7 +823,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputWorkDay"
+                            "$ref": "#/definitions/InputWorkDay"
                         }
                     }
                 ],
@@ -831,7 +831,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.WorkDay"
+                            "$ref": "#/definitions/WorkDay"
                         }
                     }
                 }
@@ -839,14 +839,20 @@
         }
     },
     "definitions": {
-        "pkg.Activity": {
+        "Activity": {
             "type": "object",
             "properties": {
+                "ActualDuration": {
+                    "type": "integer"
+                },
                 "Description": {
                     "type": "string"
                 },
                 "End": {
                     "type": "string"
+                },
+                "EventualDuration": {
+                    "type": "integer"
                 },
                 "ID": {
                     "type": "integer"
@@ -859,7 +865,7 @@
                 }
             }
         },
-        "pkg.Holiday": {
+        "Holiday": {
             "type": "object",
             "properties": {
                 "Description": {
@@ -882,7 +888,7 @@
                 }
             }
         },
-        "pkg.InputActivity": {
+        "InputActivity": {
             "type": "object",
             "properties": {
                 "Description": {
@@ -896,7 +902,7 @@
                 }
             }
         },
-        "pkg.InputHoliday": {
+        "InputHoliday": {
             "type": "object",
             "properties": {
                 "Description": {
@@ -913,7 +919,7 @@
                 }
             }
         },
-        "pkg.InputToken": {
+        "InputToken": {
             "type": "object",
             "properties": {
                 "Name": {
@@ -921,7 +927,7 @@
                 }
             }
         },
-        "pkg.InputUser": {
+        "InputUser": {
             "type": "object",
             "properties": {
                 "Login": {
@@ -950,7 +956,7 @@
                 }
             }
         },
-        "pkg.InputWorkDay": {
+        "InputWorkDay": {
             "type": "object",
             "properties": {
                 "ActiveTime": {
@@ -967,11 +973,11 @@
                 }
             }
         },
-        "pkg.Overview": {
+        "Overtime": {
             "type": "object",
             "properties": {
                 "ActiveActivity": {
-                    "$ref": "#/definitions/pkg.Activity"
+                    "$ref": "#/definitions/Activity"
                 },
                 "ActiveTimeThisDayInMinutes": {
                     "type": "integer"
@@ -1011,7 +1017,7 @@
                 }
             }
         },
-        "pkg.Token": {
+        "Token": {
             "type": "object",
             "properties": {
                 "ID": {
@@ -1028,7 +1034,7 @@
                 }
             }
         },
-        "pkg.User": {
+        "User": {
             "type": "object",
             "properties": {
                 "ID": {
@@ -1052,7 +1058,7 @@
                 "Tokens": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/pkg.Token"
+                        "$ref": "#/definitions/Token"
                     }
                 },
                 "WeekWorkingTimeInMinutes": {
@@ -1063,7 +1069,7 @@
                 }
             }
         },
-        "pkg.Webhook": {
+        "Webhook": {
             "type": "object",
             "properties": {
                 "HeaderKey": {
@@ -1086,7 +1092,7 @@
                 }
             }
         },
-        "pkg.WorkDay": {
+        "WorkDay": {
             "type": "object",
             "properties": {
                 "ActiveTime": {
