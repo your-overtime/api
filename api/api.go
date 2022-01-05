@@ -41,7 +41,7 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 	)
 	if len(token) > 0 {
 		user, err = a.mos.FromToken(token)
-	} else if err != nil {
+	} else {
 		authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
 		if len(authHeaderSlice) == 2 {
 			switch strings.ToLower(authHeaderSlice[0]) {
@@ -57,7 +57,6 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 					return nil, pkg.ErrUserNotFound
 				}
 				user, err = a.mos.Login(basicAuth[0], basicAuth[1])
-				break
 			default:
 				user, err = a.mos.FromToken(authHeaderSlice[1])
 			}
