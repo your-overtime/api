@@ -7,13 +7,17 @@ definitions:
       Description:
         type: string
       End:
+        format: date-time
         type: string
+        x-nullable: true
       EventualDuration:
         type: integer
       ID:
         type: integer
       Start:
+        format: date-time
         type: string
+        x-nullable: true
       UserID:
         type: integer
     type: object
@@ -22,10 +26,12 @@ definitions:
       Description:
         type: string
       End:
+        format: date-time
         type: string
       ID:
         type: integer
       Start:
+        format: date-time
         type: string
       Type:
         type: string
@@ -37,17 +43,23 @@ definitions:
       Description:
         type: string
       End:
+        format: date-time
         type: string
+        x-nullable: true
       Start:
+        format: date-time
         type: string
+        x-nullable: true
     type: object
   InputHoliday:
     properties:
       Description:
         type: string
       End:
+        format: date-time
         type: string
       Start:
+        format: date-time
         type: string
       Type:
         type: string
@@ -81,6 +93,7 @@ definitions:
       ActiveTime:
         type: integer
       Day:
+        format: date-time
         type: string
       Overtime:
         type: integer
@@ -100,6 +113,7 @@ definitions:
       ActiveTimeThisYearInMinutes:
         type: integer
       Date:
+        format: date-time
         type: string
       HolidaysStillAvailable:
         type: integer
@@ -170,6 +184,7 @@ definitions:
       ActiveTime:
         type: integer
       Day:
+        format: date-time
         type: string
       ID:
         type: integer

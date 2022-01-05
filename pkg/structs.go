@@ -70,8 +70,8 @@ type Activity struct {
 } // @Name Activity
 
 type InputActivity struct {
-	Start       *time.Time
-	End         *time.Time
+	Start       *time.Time `format:"date-time" extensions:"x-nullable"`
+	End         *time.Time `format:"date-time" extensions:"x-nullable"`
 	Description string
 } // @Name InputActivity
 
@@ -108,8 +108,8 @@ type Holiday struct {
 } // @Name Holiday
 
 type InputHoliday struct {
-	Start       time.Time
-	End         time.Time
+	Start       time.Time `format:"date-time"`
+	End         time.Time `format:"date-time"`
 	Description string
 	Type        HolidayType
 } // @Name InputHoliday
@@ -121,14 +121,14 @@ type WorkDay struct {
 } // @Name WorkDay
 
 type InputWorkDay struct {
-	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
+	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null" format:"date-time"`
 	Overtime   int64
 	ActiveTime int64
 	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
 } // @Name InputWorkDay
 
 type Overview struct {
-	Date                         time.Time
+	Date                         time.Time `format:"date-time"`
 	WeekNumber                   int
 	UsedHolidays                 int
 	HolidaysStillAvailable       int
@@ -140,7 +140,7 @@ type Overview struct {
 	ActiveTimeThisMonthInMinutes int64
 	OvertimeThisYearInMinutes    int64
 	ActiveTimeThisYearInMinutes  int64
-	ActiveActivity               *Activity
+	ActiveActivity               *Activity `extensions:"x-nullable"`
 } // @Name Overtime
 
 type WebhookInput struct {

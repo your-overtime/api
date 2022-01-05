@@ -865,7 +865,9 @@ var doc = `{
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
                 },
                 "EventualDuration": {
                     "type": "integer"
@@ -874,7 +876,9 @@ var doc = `{
                     "type": "integer"
                 },
                 "Start": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
                 },
                 "UserID": {
                     "type": "integer"
@@ -888,13 +892,15 @@ var doc = `{
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "ID": {
                     "type": "integer"
                 },
                 "Start": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "Type": {
                     "type": "string"
@@ -911,10 +917,14 @@ var doc = `{
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
                 },
                 "Start": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
                 }
             }
         },
@@ -925,10 +935,12 @@ var doc = `{
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "Start": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "Type": {
                     "type": "string"
@@ -979,7 +991,8 @@ var doc = `{
                     "type": "integer"
                 },
                 "Day": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "Overtime": {
                     "type": "integer"
@@ -1008,7 +1021,8 @@ var doc = `{
                     "type": "integer"
                 },
                 "Date": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "HolidaysStillAvailable": {
                     "type": "integer"
@@ -1115,7 +1129,8 @@ var doc = `{
                     "type": "integer"
                 },
                 "Day": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "ID": {
                     "type": "integer"
