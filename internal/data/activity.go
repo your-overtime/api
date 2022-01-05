@@ -62,10 +62,10 @@ func (d *Db) MigrateActivityDuration() error {
 		return err
 	}
 	for _, a := range activities {
-		if a.ActualDuration == 0 && a.End != nil {
-			a.ActualDuration = a.End.Sub(*a.Start)
-			if a.EventualDuration == 0 {
-				a.EventualDuration = a.ActualDuration
+		if a.ActualDurationInMinutes == 0 && a.End != nil {
+			a.ActualDurationInMinutes = uint(a.End.Sub(*a.Start).Minutes())
+			if a.EventualDurationInMinutes == 0 {
+				a.EventualDurationInMinutes = a.ActualDurationInMinutes
 			}
 			if err := d.Conn.Save(&a).Error; err != nil {
 				return err

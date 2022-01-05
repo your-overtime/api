@@ -13,7 +13,7 @@ import (
 // @Tags token
 // @Summary Retrieves tokens
 // @Produce json
-// @Success 201 {object} []pkg.Token
+// @Success 200 {object} []pkg.Token
 // @Router /token [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -30,7 +30,7 @@ func (a *API) GetTokens(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusCreated, ts)
+		c.JSON(http.StatusOK, ts)
 	}
 }
 

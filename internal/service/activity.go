@@ -18,14 +18,15 @@ func (s *Service) SumActivityBetweenStartAndEndInMinutes(start time.Time, end ti
 	}
 	activityTimeInMinutes := int64(0)
 	for _, a := range activities {
-		var diff time.Duration
+		// var diff time.Duration
 		if a.End == nil {
-			diff = end.Sub(*a.Start)
+
+			diff := end.Sub(*a.Start)
+			activityTimeInMinutes += int64(diff.Minutes())
 		} else {
-			diff = a.EventualDuration
+			activityTimeInMinutes += int64(a.EventualDurationInMinutes)
 		}
 
-		activityTimeInMinutes += int64(diff.Minutes())
 	}
 	return activityTimeInMinutes, nil
 }
@@ -71,8 +72,9 @@ func (s *Service) StartActivity(desc string) (*pkg.Activity, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.startActivityHook(&orig.Activity)
 
-	return s.startActivityHook(&orig.Activity), nil
+	return &orig.Activity, nil
 }
 
 func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
@@ -100,8 +102,7 @@ func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
 	now := time.Now()
 	a.End = &now
 	s.calculateDuration(&a.Activity)
-	hooked := s.endActivityHook(&a.Activity)
-	a.EventualDuration = hooked.EventualDuration
+	s.endActivityHook(&a.Activity)
 	err = s.db.SaveActivity(a)
 	if err != nil {
 		return nil, err
@@ -142,14 +143,15 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 		return nil, err
 	}
 
-	aDB.Activity = a
-
-	err = s.db.SaveActivity(aDB)
-	s.calculateDuration(&aDB.Activity)
-
+	aDB.InputActivity = a.InputActivity
+	if a.End != nil {
+		s.calculateDuration(&aDB.Activity)
+		s.endActivityHook(&aDB.Activity)
+	}
 	if err := s.db.SaveActivity(aDB); err != nil {
 		return nil, err
 	}
+
 	// delete WorkingDay of the passing day to force recalculation
 	now := time.Now()
 	if !(a.Start.Year() == now.Year() && a.Start.Month() == now.Month() && a.Start.Day() == now.Day()) {
@@ -158,7 +160,7 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 			return nil, err
 		}
 	}
-	return &a, nil
+	return &aDB.Activity, nil
 }
 
 func (s *Service) DelActivity(id uint) error {
@@ -172,10 +174,10 @@ func (s *Service) DelActivity(id uint) error {
 
 func (s *Service) calculateDuration(a *pkg.Activity) {
 	if a.End != nil {
-		actualDuration := a.End.Sub(*a.Start)
-		a.ActualDuration = actualDuration
-		if a.EventualDuration == 0 {
-			a.EventualDuration = actualDuration
+		actualDuration := utils.DurationInMinutes(a.End.Sub(*a.Start))
+		a.ActualDurationInMinutes = actualDuration
+		if a.EventualDurationInMinutes == 0 {
+			a.EventualDurationInMinutes = actualDuration
 		}
 	}
 }

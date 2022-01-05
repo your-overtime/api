@@ -64,9 +64,9 @@ func (e *User) WorkingDaysAsArray() []string {
 type Activity struct {
 	ID uint `gorm:"primaryKey"`
 	InputActivity
-	ActualDuration   time.Duration
-	EventualDuration time.Duration
-	UserID           uint
+	ActualDurationInMinutes   uint
+	EventualDurationInMinutes uint
+	UserID                    uint
 } // @Name Activity
 
 type InputActivity struct {

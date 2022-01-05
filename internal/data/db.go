@@ -50,5 +50,7 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 	conn.AutoMigrate(&WorkDayDB{})
 	conn.AutoMigrate(&WebhookDB{})
 
+	(&db).MigrateActivityDuration()
+
 	return &db, err
 }

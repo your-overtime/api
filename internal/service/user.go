@@ -130,36 +130,30 @@ func (s *Service) GetTokens() ([]pkg.Token, error) {
 	}
 	ts := make([]pkg.Token, len(tsDB))
 	for i := 0; i < len(tsDB); i++ {
-		ts[i] = uDB.Tokens[i]
+		ts[i] = tsDB[i].Token
 	}
 	return ts, nil
 }
 
 func (s *Service) CreateToken(it pkg.InputToken) (*pkg.Token, error) {
 	// TODO add database method to create token?
+	rawToken := utils.RandString(40)
 	token := pkg.Token{
 		UserID: s.user.ID,
 		InputToken: pkg.InputToken{
 			Name: it.Name,
 		},
-		Token: utils.RandString(40),
+		Token: createSHA256Hash(rawToken),
 	}
-
-	tx := s.db.Conn.Create(&token)
+	dbToken := data.TokenDB{Token: token}
+	tx := s.db.Conn.Create(&dbToken)
 	if tx.Error != nil {
 		log.Debug(tx.Error)
 		return nil, tx.Error
 	}
 
-	respToken := token
-	token.Token = createSHA256Hash(token.Token)
-	err := s.db.SaveToken(&data.TokenDB{
-		Token: token,
-	})
-	if err != nil {
-		log.Debug(err)
-		return nil, err
-	}
+	respToken := dbToken.Token
+	respToken.Token = rawToken
 
 	return &respToken, nil
 }

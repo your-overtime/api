@@ -586,8 +586,8 @@ var doc = `{
                 ],
                 "summary": "Retrieves tokens",
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {

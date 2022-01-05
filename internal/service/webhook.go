@@ -42,39 +42,37 @@ func (s *Service) GetWebhooks() ([]pkg.Webhook, error) {
 
 //-- webhook handlers --//
 
-func (s *Service) startActivityHook(a *pkg.Activity) *pkg.Activity {
+func (s *Service) startActivityHook(a *pkg.Activity) {
 
-	_, errs, _ := s.hookHandler(a.UserID, pkg.StartActivityEvent, a)
+	errs, _ := s.hookHandler(a.UserID, pkg.StartActivityEvent, a, &pkg.Activity{})
 	if errs != nil {
 		log.Debug(errs)
 	}
-
-	return a
 }
 
-func (s *Service) endActivityHook(a *pkg.Activity) *pkg.Activity {
-	modifed, errs, _ := s.hookHandler(a.UserID, pkg.EndActivityEvent, a)
+func (s *Service) endActivityHook(a *pkg.Activity) {
+	var modifed = pkg.Activity{}
+	errs, _ := s.hookHandler(a.UserID, pkg.EndActivityEvent, a, &modifed)
 	if errs != nil {
-		return a
+		return
 	}
-	a.EventualDuration = modifed.(*pkg.Activity).EventualDuration
-	return a
+	a.EventualDurationInMinutes = modifed.EventualDurationInMinutes
 }
 
-func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, payload interface{}) (interface{}, []error, bool) {
+func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, in interface{}, out interface{}) ([]error, bool) {
 	hooks, err := s.db.GetWebhooksByUserID(userID)
 	if err != nil {
-		return nil, []error{err}, false
+		return []error{err}, false
 	}
 	mayBeModified := false
 	modifyErrors := []error{}
 	for _, hook := range hooks {
 		if hook.ReadOnly {
-			go s.callHook(hook.WebhookInput, eventName, payload)
+			go s.callHook(hook.WebhookInput, eventName, in, out)
 		} else {
-			resp, err := s.callHook(hook.WebhookInput, eventName, payload)
+			err := s.callHook(hook.WebhookInput, eventName, in, out)
 			if err == nil {
-				payload = resp
+				// payload = resp
 				mayBeModified = true
 			} else {
 				modifyErrors = append(modifyErrors, err)
@@ -84,20 +82,20 @@ func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, payload i
 	if len(modifyErrors) == 0 {
 		modifyErrors = nil
 	}
-	return payload, modifyErrors, mayBeModified
+	return modifyErrors, mayBeModified
 }
 
-func (s *Service) callHook(hook pkg.WebhookInput, eventName pkg.WebhookEvent, payload interface{}) (interface{}, error) {
+func (s *Service) callHook(hook pkg.WebhookInput, eventName pkg.WebhookEvent, in interface{}, out interface{}) error {
 	body, err := json.Marshal(pkg.WebhookBody{
 		Event:   eventName,
-		Payload: payload,
+		Payload: in,
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 	req, err := http.NewRequest("POST", hook.TargetURL, bytes.NewBuffer(body))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if len(hook.HeaderKey) > 0 && len(hook.HeaderValue) > 0 {
@@ -105,19 +103,21 @@ func (s *Service) callHook(hook pkg.WebhookInput, eventName pkg.WebhookEvent, pa
 	}
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if resp.StatusCode == 304 {
-		return payload, nil
+		out = in
+		return nil
 	}
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("webhook response %d", resp.StatusCode)
+		return fmt.Errorf("webhook response %d", resp.StatusCode)
 	}
 	defer resp.Body.Close()
-	if err := json.NewDecoder(resp.Body).Decode(payload); err != nil {
-		return nil, err
+	if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
+		return err
 	}
-	return payload, nil
+
+	return nil
 }
 
 func castWebhookDBToPkgArray(in []data.WebhookDB) []pkg.Webhook {
