@@ -13,7 +13,7 @@ import (
 // @Tags token
 // @Summary Retrieves tokens
 // @Produce json
-// @Success 200 {object} []pkg.Token
+// @Success 201 {object} []pkg.Token
 // @Router /token [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -40,7 +40,7 @@ func (a *API) GetTokens(c *gin.Context) {
 // @Produce json
 // @Consume json
 // @Param token body pkg.InputToken true "Input token"
-// @Success 200 {object} pkg.Token
+// @Success 201 {object} pkg.Token
 // @Router /token [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth

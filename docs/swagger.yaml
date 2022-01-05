@@ -104,6 +104,7 @@ definitions:
     properties:
       ActiveActivity:
         $ref: '#/definitions/Activity'
+        x-nullable: true
       ActiveTimeThisDayInMinutes:
         type: integer
       ActiveTimeThisMonthInMinutes:
@@ -525,8 +526,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             items:
               $ref: '#/definitions/Token'
@@ -548,8 +549,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/Token'
       security:
@@ -591,8 +592,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/User'
       security:

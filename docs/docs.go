@@ -586,8 +586,8 @@ var doc = `{
                 ],
                 "summary": "Retrieves tokens",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -625,8 +625,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Token"
                         }
@@ -696,8 +696,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/User"
                         }
@@ -1006,6 +1006,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "ActiveActivity": {
+                    "x-nullable": true,
                     "$ref": "#/definitions/Activity"
                 },
                 "ActiveTimeThisDayInMinutes": {

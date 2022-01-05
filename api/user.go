@@ -14,7 +14,7 @@ import (
 // @Produce json
 // @Consume json
 // @Param bottles body pkg.InputUser true "Input user"
-// @Success 200 {object} pkg.User
+// @Success 201 {object} pkg.User
 // @Router /user [post]
 // @Security AdminAuth
 func (a *API) CreateUser(c *gin.Context) {

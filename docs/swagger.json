@@ -570,8 +570,8 @@
                 ],
                 "summary": "Retrieves tokens",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -609,8 +609,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Token"
                         }
@@ -680,8 +680,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/User"
                         }
@@ -990,6 +990,7 @@
             "type": "object",
             "properties": {
                 "ActiveActivity": {
+                    "x-nullable": true,
                     "$ref": "#/definitions/Activity"
                 },
                 "ActiveTimeThisDayInMinutes": {
