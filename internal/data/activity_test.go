@@ -39,7 +39,7 @@ func TestGetActivty(t *testing.T) {
 	expected := createActivity("2021-07-02 08:56")
 	db.SaveActivity(&expected)
 
-	actual, err := db.GetActivity(1)
+	actual, err := db.GetActivity(1, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
