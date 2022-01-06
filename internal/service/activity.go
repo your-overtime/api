@@ -111,7 +111,7 @@ func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
 }
 
 func (s *Service) GetActivity(id uint) (*pkg.Activity, error) {
-	a, err := s.db.GetActivity(id)
+	a, err := s.db.GetActivity(id, s.user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func (s *Service) GetActivities(start time.Time, end time.Time) ([]pkg.Activity,
 }
 
 func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
-	aDB, err := s.db.GetActivity(a.ID)
+	aDB, err := s.db.GetActivity(a.ID, s.user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -164,12 +164,11 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 }
 
 func (s *Service) DelActivity(id uint) error {
-	a, err := s.GetActivity(id)
+	a, err := s.db.GetActivity(id, s.user.ID)
 	if err != nil {
 		return err
 	}
-	tx := s.db.Conn.Delete(a)
-	return tx.Error
+	return s.db.Conn.Delete(a).Error
 }
 
 func (s *Service) calculateDuration(a *pkg.Activity) {

@@ -30,9 +30,9 @@ func (d *Db) GetRunningActivityByUserID(eID uint) (*ActivityDB, error) {
 	return &a, nil
 }
 
-func (d *Db) GetActivity(id uint) (*ActivityDB, error) {
+func (d *Db) GetActivity(id uint, userID uint) (*ActivityDB, error) {
 	a := ActivityDB{}
-	tx := d.Conn.First(&a, id)
+	tx := d.Conn.Where("id =? and user_id = ?", id, userID).First(&a)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
