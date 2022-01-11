@@ -20,7 +20,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetWorkDays(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -38,7 +38,7 @@ func (a *API) GetWorkDays(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	wds, err := a.os.GetWorkDays(start, end, *e)
+	wds, err := os.GetWorkDays(start, end)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -58,7 +58,7 @@ func (a *API) GetWorkDays(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateWorkDay(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -71,13 +71,16 @@ func (a *API) CreateWorkDay(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+	user, _ := os.GetAccount()
 	wo := pkg.WorkDay{
-		UserID:     e.ID,
-		Day:        iw.Day,
-		Overtime:   iw.Overtime,
-		ActiveTime: iw.ActiveTime,
+		InputWorkDay: pkg.InputWorkDay{
+			UserID:     user.ID,
+			Day:        iw.Day,
+			Overtime:   iw.Overtime,
+			ActiveTime: iw.ActiveTime,
+		},
 	}
-	h, err := a.os.AddWorkDay(wo, *e)
+	h, err := os.AddWorkDay(wo)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)

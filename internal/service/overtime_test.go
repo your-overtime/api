@@ -1,39 +1,42 @@
 package service_test
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/internal/service"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/tests"
 )
 
-var e = pkg.Employee{
-	User: &pkg.User{
-		Name:     "Dieter",
-		Surname:  "Tester",
-		Login:    "dieter",
-		Password: "secret",
-	},
+var e = pkg.User{
+	Name:                     "Dieter",
+	Surname:                  "Tester",
+	Login:                    "dieter",
+	Password:                 "secret",
 	WeekWorkingTimeInMinutes: 1920,
 	NumWorkingDays:           5,
 }
 
-func setUp(t *testing.T) (pkg.OvertimeService, *pkg.Employee) {
+func setUp(t *testing.T) (pkg.OvertimeService, *pkg.User) {
 	db := tests.SetupDb(t)
-	s := service.Init(&db)
+	err := db.SaveUser(&data.UserDB{User: e})
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+	s := service.Init(&db).GetOrCreateInstanceForUser(&e)
 
-	ePtr, err := s.SaveEmployee(e, "")
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
 
-	return s, ePtr
+	return s, &e
 }
 
-func TestOverviewDynamicWOrkinkdays(t *testing.T) {
+func TestOverviewDynamicWorkinkdays(t *testing.T) {
 	s, ePtr := setUp(t)
-	o, err := s.CalcOverview(*ePtr, tests.ParseDayTime("2021-01-08 23:59"))
+	o, err := s.CalcOverview(tests.ParseDayTime("2021-01-08 23:59"))
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
@@ -70,17 +73,19 @@ func TestOverviewDynamicWOrkinkdays(t *testing.T) {
 	start := tests.ParseDayTime("2021-01-09 07:04")
 	end := tests.ParseDayTime("2021-01-09 08:08")
 	_, err = s.AddActivity(pkg.Activity{
-		Start:       &start,
-		End:         &end,
-		Description: "Tests",
-		UserID:      ePtr.ID,
-	}, *ePtr)
+		InputActivity: pkg.InputActivity{
+			Start:       &start,
+			End:         &end,
+			Description: "Tests",
+		},
+		UserID: ePtr.ID,
+	})
 
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
 
-	o, err = s.CalcOverview(*ePtr, tests.ParseDayTime("2021-01-09 23:59"))
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-09 23:59"))
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
@@ -126,7 +131,11 @@ func TestOverviewDynamicWOrkinkdays(t *testing.T) {
 func TestOverviewStatic(t *testing.T) {
 	s, ePtr := setUp(t)
 	ePtr.WorkingDays = "Monday,Tuesday,Wednesday,Thursday,Friday"
-	o, err := s.CalcOverview(*ePtr, tests.ParseDayTime("2021-01-08 23:59"))
+
+	fmt.Println(e)
+	fmt.Println(*ePtr)
+	fmt.Println(s.GetAccount())
+	o, err := s.CalcOverview(tests.ParseDayTime("2021-01-08 23:59"))
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
@@ -163,17 +172,19 @@ func TestOverviewStatic(t *testing.T) {
 	start := tests.ParseDayTime("2021-01-09 07:04")
 	end := tests.ParseDayTime("2021-01-09 08:08")
 	_, err = s.AddActivity(pkg.Activity{
-		Start:       &start,
-		End:         &end,
-		Description: "Tests",
-		UserID:      ePtr.ID,
-	}, *ePtr)
+		InputActivity: pkg.InputActivity{
+			Start:       &start,
+			End:         &end,
+			Description: "Tests",
+		},
+		UserID: ePtr.ID,
+	})
 
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
 
-	o, err = s.CalcOverview(*ePtr, tests.ParseDayTime("2021-01-09 23:59"))
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-09 23:59"))
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}

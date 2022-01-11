@@ -3,6 +3,7 @@ package data_test
 import (
 	"testing"
 
+	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/tests"
 )
@@ -18,11 +19,15 @@ func TestGetWorkDay(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error to be nil but got %v", err)
 	}
-	wd := pkg.WorkDay{
-		Day:        tests.ParseDay("2021-07-05"),
-		Overtime:   12,
-		ActiveTime: 120,
-		UserID:     1,
+	wd := data.WorkDayDB{
+		WorkDay: pkg.WorkDay{
+			InputWorkDay: pkg.InputWorkDay{
+				Day:        tests.ParseDay("2021-07-05"),
+				Overtime:   12,
+				ActiveTime: 120,
+				UserID:     1,
+			},
+		},
 	}
 	db.Conn.Create(&wd)
 
@@ -40,11 +45,15 @@ func TestGetWorkDay(t *testing.T) {
 
 func TestDeleteWorkDay(t *testing.T) {
 	db := tests.SetupDb(t)
-	wd := pkg.WorkDay{
-		Day:        tests.ParseDay("2021-07-05"),
-		Overtime:   12,
-		ActiveTime: 120,
-		UserID:     1,
+	wd := data.WorkDayDB{
+		WorkDay: pkg.WorkDay{
+			InputWorkDay: pkg.InputWorkDay{
+				Day:        tests.ParseDay("2021-07-05"),
+				Overtime:   12,
+				ActiveTime: 120,
+				UserID:     1,
+			},
+		},
 	}
 	db.Conn.Create(&wd)
 	doesNotExist := db.DeleteWorkDay(tests.ParseDay("2021-07-04"), 1)
@@ -60,11 +69,15 @@ func TestDeleteWorkDay(t *testing.T) {
 
 func TestGetWorkDaysBetweenStartAndEnd(t *testing.T) {
 	db := tests.SetupDb(t)
-	wd := pkg.WorkDay{
-		Day:        tests.ParseDay("2021-07-05"),
-		Overtime:   12,
-		ActiveTime: 120,
-		UserID:     1,
+	wd := data.WorkDayDB{
+		WorkDay: pkg.WorkDay{
+			InputWorkDay: pkg.InputWorkDay{
+				Day:        tests.ParseDay("2021-07-05"),
+				Overtime:   12,
+				ActiveTime: 120,
+				UserID:     1,
+			},
+		},
 	}
 	db.Conn.Create(&wd)
 

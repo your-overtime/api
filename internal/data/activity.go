@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *Db) SaveActivity(a *pkg.Activity) error {
+func (d *Db) SaveActivity(a *ActivityDB) error {
 	if len(a.Description) == 0 {
 		return pkg.ErrEmptyDescriptionNotAllowed
 	}
@@ -18,8 +18,8 @@ func (d *Db) SaveActivity(a *pkg.Activity) error {
 	return tx.Error
 }
 
-func (d *Db) GetRunningActivityByEmployeeID(eID uint) (*pkg.Activity, error) {
-	a := pkg.Activity{}
+func (d *Db) GetRunningActivityByUserID(eID uint) (*ActivityDB, error) {
+	a := ActivityDB{}
 	tx := d.Conn.Where("user_id = ? and end is null", eID).First(&a)
 	if tx.Error != nil {
 		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
@@ -30,18 +30,18 @@ func (d *Db) GetRunningActivityByEmployeeID(eID uint) (*pkg.Activity, error) {
 	return &a, nil
 }
 
-func (d *Db) GetActivity(id uint) (*pkg.Activity, error) {
-	a := pkg.Activity{}
-	tx := d.Conn.First(&a, id)
+func (d *Db) GetActivity(id uint, userID uint) (*ActivityDB, error) {
+	a := ActivityDB{}
+	tx := d.Conn.Where("id =? and user_id = ?", id, userID).First(&a)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 	return &a, nil
 }
 
-func (d *Db) GetActivitiesBetweenStartAndEnd(start time.Time, end time.Time, employeeID uint) ([]pkg.Activity, error) {
-	activities := []pkg.Activity{}
-	tx := d.Conn.Where("user_id = ?", employeeID).
+func (d *Db) GetActivitiesBetweenStartAndEnd(start time.Time, end time.Time, userID uint) ([]ActivityDB, error) {
+	activities := []ActivityDB{}
+	tx := d.Conn.Where("user_id = ?", userID).
 		Where(
 			d.Conn.Where("end IS NULL AND start >= ? AND start <= ?", start, end).Or(
 				d.Conn.Where("end IS NOT NULL").
@@ -62,10 +62,10 @@ func (d *Db) MigrateActivityDuration() error {
 		return err
 	}
 	for _, a := range activities {
-		if a.ActualDuration == 0 && a.End != nil {
-			a.ActualDuration = a.End.Sub(*a.Start)
-			if a.EventualDuration == 0 {
-				a.EventualDuration = a.ActualDuration
+		if a.ActualDurationInMinutes == 0 && a.End != nil {
+			a.ActualDurationInMinutes = uint(a.End.Sub(*a.Start).Minutes())
+			if a.EventualDurationInMinutes == 0 {
+				a.EventualDurationInMinutes = a.ActualDurationInMinutes
 			}
 			if err := d.Conn.Save(&a).Error; err != nil {
 				return err

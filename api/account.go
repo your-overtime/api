@@ -13,18 +13,24 @@ import (
 // @Tags account
 // @Summary Retrieves account information
 // @Produce json
-// @Success 200 {object} pkg.Employee
+// @Success 200 {object} pkg.User
 // @Router /account [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetAccount(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	} else {
-		c.JSON(http.StatusOK, e)
+		user, err := os.GetAccount()
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		c.JSON(http.StatusOK, user)
 	}
 }
 
@@ -34,12 +40,12 @@ func (a *API) GetAccount(c *gin.Context) {
 // @Produce json
 // @Consume json
 // @Param account body map[string]interface{} true "input account fields"
-// @Success 200 {object} pkg.Employee
+// @Success 200 {object} pkg.User
 // @Router /account [patch]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) UpdateAccount(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -51,7 +57,8 @@ func (a *API) UpdateAccount(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	e, err = a.os.UpdateAccount(payload, *e)
+	user, _ := os.GetAccount()
+	u, err := os.UpdateAccount(payload, *user)
 	if err != nil {
 		log.Debug(err)
 		if errors.Is(err, pkg.ErrDuplicateValue) {
@@ -60,6 +67,6 @@ func (a *API) UpdateAccount(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, err)
 		}
 	} else {
-		c.JSON(http.StatusOK, e)
+		c.JSON(http.StatusOK, u)
 	}
 }

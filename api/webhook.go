@@ -19,7 +19,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateWebhook(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -30,7 +30,7 @@ func (a *API) CreateWebhook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	saved, err := a.os.CreateWebhook(hook, *e)
+	saved, err := os.CreateWebhook(hook)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -41,7 +41,7 @@ func (a *API) CreateWebhook(c *gin.Context) {
 
 // GetWebhooks godoc
 // @Tags webhook
-// @Summary Receives employees registered webhooks
+// @Summary Receives users registered webhooks
 // @Produce json
 // @Consume json
 // @Success 200 {object} []pkg.Webhook
@@ -49,12 +49,12 @@ func (a *API) CreateWebhook(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetWebhooks(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
-	hooks, err := a.os.GetWebhooks(*e)
+	hooks, err := os.GetWebhooks()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return

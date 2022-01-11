@@ -22,7 +22,7 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -35,14 +35,17 @@ func (a *API) CreateHoliday(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+	user, _ := os.GetAccount()
 	ho := pkg.Holiday{
-		UserID:      e.ID,
-		Start:       ih.Start,
-		End:         ih.End,
-		Type:        ih.Type,
-		Description: ih.Description,
+		UserID: user.ID,
+		InputHoliday: pkg.InputHoliday{
+			Start:       ih.Start,
+			End:         ih.End,
+			Type:        ih.Type,
+			Description: ih.Description,
+		},
 	}
-	h, err := a.os.AddHoliday(ho, *e)
+	h, err := os.AddHoliday(ho)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -63,7 +66,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) UpdateHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -77,15 +80,18 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+	user, _ := os.GetAccount()
 	ho := pkg.Holiday{
-		Model:       pkg.Model{ID: uint(id)},
-		UserID:      e.ID,
-		Start:       ih.Start,
-		End:         ih.End,
-		Type:        ih.Type,
-		Description: ih.Description,
+		ID: uint(id),
+		InputHoliday: pkg.InputHoliday{
+			Start:       ih.Start,
+			End:         ih.End,
+			Type:        ih.Type,
+			Description: ih.Description,
+		},
+		UserID: user.ID,
 	}
-	h, err := a.os.AddHoliday(ho, *e)
+	h, err := os.AddHoliday(ho)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -104,14 +110,14 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	h, err := a.os.GetHoliday(uint(id), *e)
+	h, err := os.GetHoliday(uint(id))
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -131,7 +137,7 @@ func (a *API) GetHoliday(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetHolidays(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
@@ -158,9 +164,9 @@ func (a *API) GetHolidays(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}
-		h, err = a.os.GetHolidaysByType(start, end, hType, *e)
+		h, err = os.GetHolidaysByType(start, end, hType)
 	} else {
-		h, err = a.os.GetHolidays(start, end, *e)
+		h, err = os.GetHolidays(start, end)
 	}
 	if err != nil {
 		log.Debug(err)
@@ -180,14 +186,15 @@ func (a *API) GetHolidays(c *gin.Context) {
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) DeleteHoliday(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
+
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	err = a.os.DelHoliday(uint(id), *e)
+	err = os.DelHoliday(uint(id))
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)

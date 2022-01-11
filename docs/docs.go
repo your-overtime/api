@@ -44,7 +44,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Employee"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -81,7 +81,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Employee"
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -126,7 +126,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Activity"
+                                "$ref": "#/definitions/Activity"
                             }
                         }
                     }
@@ -155,7 +155,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputActivity"
+                            "$ref": "#/definitions/InputActivity"
                         }
                     }
                 ],
@@ -163,7 +163,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -188,7 +188,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -224,7 +224,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -260,7 +260,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -291,7 +291,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputActivity"
+                            "$ref": "#/definitions/InputActivity"
                         }
                     },
                     {
@@ -306,7 +306,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -340,42 +340,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Activity"
-                        }
-                    }
-                }
-            }
-        },
-        "/employee": {
-            "post": {
-                "security": [
-                    {
-                        "AdminAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "employee"
-                ],
-                "summary": "creates a employee",
-                "parameters": [
-                    {
-                        "description": "Input employee",
-                        "name": "bottles",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pkg.InputEmployee"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/pkg.Employee"
+                            "$ref": "#/definitions/Activity"
                         }
                     }
                 }
@@ -420,7 +385,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Holiday"
+                                "$ref": "#/definitions/Holiday"
                             }
                         }
                     }
@@ -449,7 +414,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputHoliday"
+                            "$ref": "#/definitions/InputHoliday"
                         }
                     }
                 ],
@@ -457,7 +422,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -493,7 +458,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -521,7 +486,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputHoliday"
+                            "$ref": "#/definitions/InputHoliday"
                         }
                     },
                     {
@@ -536,7 +501,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -570,7 +535,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Holiday"
+                            "$ref": "#/definitions/Holiday"
                         }
                     }
                 }
@@ -597,7 +562,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Overview"
+                            "$ref": "#/definitions/Overtime"
                         }
                     }
                 }
@@ -626,7 +591,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Token"
+                                "$ref": "#/definitions/Token"
                             }
                         }
                     }
@@ -655,15 +620,15 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputToken"
+                            "$ref": "#/definitions/InputToken"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Token"
+                            "$ref": "#/definitions/Token"
                         }
                     }
                 }
@@ -699,7 +664,42 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Token"
+                            "$ref": "#/definitions/Token"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "creates a user",
+                "parameters": [
+                    {
+                        "description": "Input user",
+                        "name": "bottles",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/InputUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/User"
                         }
                     }
                 }
@@ -721,14 +721,14 @@ var doc = `{
                 "tags": [
                     "webhook"
                 ],
-                "summary": "Receives employees registered webhooks",
+                "summary": "Receives users registered webhooks",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.Webhook"
+                                "$ref": "#/definitions/Webhook"
                             }
                         }
                     }
@@ -757,7 +757,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.Webhook"
+                            "$ref": "#/definitions/Webhook"
                         }
                     }
                 ],
@@ -765,7 +765,7 @@ var doc = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pkg.Webhook"
+                            "$ref": "#/definitions/Webhook"
                         }
                     }
                 }
@@ -810,7 +810,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg.WorkDay"
+                                "$ref": "#/definitions/WorkDay"
                             }
                         }
                     }
@@ -839,7 +839,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg.InputWorkDay"
+                            "$ref": "#/definitions/InputWorkDay"
                         }
                     }
                 ],
@@ -847,7 +847,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg.WorkDay"
+                            "$ref": "#/definitions/WorkDay"
                         }
                     }
                 }
@@ -855,117 +855,107 @@ var doc = `{
         }
     },
     "definitions": {
-        "pkg.Activity": {
+        "Activity": {
             "type": "object",
             "properties": {
-                "CreatedAt": {
-                    "type": "string"
+                "ActualDuration": {
+                    "type": "integer"
                 },
                 "Description": {
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
+                },
+                "EventualDuration": {
+                    "type": "integer"
                 },
                 "ID": {
                     "type": "integer"
                 },
                 "Start": {
-                    "type": "string"
-                },
-                "UpdatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
                 },
                 "UserID": {
                     "type": "integer"
                 }
             }
         },
-        "pkg.Employee": {
+        "Holiday": {
             "type": "object",
             "properties": {
-                "CreatedAt": {
-                    "type": "string"
-                },
-                "ID": {
-                    "type": "integer"
-                },
-                "Login": {
-                    "type": "string"
-                },
-                "Name": {
-                    "type": "string"
-                },
-                "NumHolidays": {
-                    "type": "integer"
-                },
-                "NumWorkingDays": {
-                    "type": "integer"
-                },
-                "Surname": {
-                    "type": "string"
-                },
-                "Tokens": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pkg.Token"
-                    }
-                },
-                "UpdatedAt": {
-                    "type": "string"
-                },
-                "WeekWorkingTimeInMinutes": {
-                    "type": "integer"
-                },
-                "WorkingDays": {
-                    "type": "string"
-                }
-            }
-        },
-        "pkg.Holiday": {
-            "type": "object",
-            "properties": {
-                "CreatedAt": {
-                    "type": "string"
-                },
                 "Description": {
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "ID": {
                     "type": "integer"
                 },
                 "Start": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "Type": {
                     "type": "string"
                 },
-                "UpdatedAt": {
-                    "type": "string"
-                },
                 "UserID": {
                     "type": "integer"
                 }
             }
         },
-        "pkg.InputActivity": {
+        "InputActivity": {
             "type": "object",
             "properties": {
                 "Description": {
                     "type": "string"
                 },
                 "End": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
                 },
                 "Start": {
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": true
+                }
+            }
+        },
+        "InputHoliday": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "End": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "Start": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "Type": {
                     "type": "string"
                 }
             }
         },
-        "pkg.InputEmployee": {
+        "InputToken": {
+            "type": "object",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                }
+            }
+        },
+        "InputUser": {
             "type": "object",
             "properties": {
                 "Login": {
@@ -994,39 +984,15 @@ var doc = `{
                 }
             }
         },
-        "pkg.InputHoliday": {
-            "type": "object",
-            "properties": {
-                "Description": {
-                    "type": "string"
-                },
-                "End": {
-                    "type": "string"
-                },
-                "Start": {
-                    "type": "string"
-                },
-                "Type": {
-                    "type": "string"
-                }
-            }
-        },
-        "pkg.InputToken": {
-            "type": "object",
-            "properties": {
-                "Name": {
-                    "type": "string"
-                }
-            }
-        },
-        "pkg.InputWorkDay": {
+        "InputWorkDay": {
             "type": "object",
             "properties": {
                 "ActiveTime": {
                     "type": "integer"
                 },
                 "Day": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "Overtime": {
                     "type": "integer"
@@ -1036,11 +1002,12 @@ var doc = `{
                 }
             }
         },
-        "pkg.Overview": {
+        "Overtime": {
             "type": "object",
             "properties": {
                 "ActiveActivity": {
-                    "$ref": "#/definitions/pkg.Activity"
+                    "x-nullable": true,
+                    "$ref": "#/definitions/Activity"
                 },
                 "ActiveTimeThisDayInMinutes": {
                     "type": "integer"
@@ -1055,7 +1022,8 @@ var doc = `{
                     "type": "integer"
                 },
                 "Date": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "HolidaysStillAvailable": {
                     "type": "integer"
@@ -1080,12 +1048,9 @@ var doc = `{
                 }
             }
         },
-        "pkg.Token": {
+        "Token": {
             "type": "object",
             "properties": {
-                "CreatedAt": {
-                    "type": "string"
-                },
                 "ID": {
                     "type": "integer"
                 },
@@ -1095,20 +1060,49 @@ var doc = `{
                 "Token": {
                     "type": "string"
                 },
-                "UpdatedAt": {
-                    "type": "string"
-                },
                 "UserID": {
                     "type": "integer"
                 }
             }
         },
-        "pkg.Webhook": {
+        "User": {
             "type": "object",
             "properties": {
-                "CreatedAt": {
+                "ID": {
+                    "type": "integer"
+                },
+                "Login": {
                     "type": "string"
                 },
+                "Name": {
+                    "type": "string"
+                },
+                "NumHolidays": {
+                    "type": "integer"
+                },
+                "NumWorkingDays": {
+                    "type": "integer"
+                },
+                "Surname": {
+                    "type": "string"
+                },
+                "Tokens": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Token"
+                    }
+                },
+                "WeekWorkingTimeInMinutes": {
+                    "type": "integer"
+                },
+                "WorkingDays": {
+                    "type": "string"
+                }
+            }
+        },
+        "Webhook": {
+            "type": "object",
+            "properties": {
                 "HeaderKey": {
                     "type": "string"
                 },
@@ -1124,25 +1118,20 @@ var doc = `{
                 "TargetURL": {
                     "type": "string"
                 },
-                "UpdatedAt": {
-                    "type": "string"
-                },
                 "UserID": {
                     "type": "integer"
                 }
             }
         },
-        "pkg.WorkDay": {
+        "WorkDay": {
             "type": "object",
             "properties": {
                 "ActiveTime": {
                     "type": "integer"
                 },
-                "CreatedAt": {
-                    "type": "string"
-                },
                 "Day": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "ID": {
                     "type": "integer"
@@ -1152,9 +1141,6 @@ var doc = `{
                 },
                 "Overtime": {
                     "type": "integer"
-                },
-                "UpdatedAt": {
-                    "type": "string"
                 },
                 "UserID": {
                     "type": "integer"

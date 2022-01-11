@@ -4,18 +4,9 @@ import (
 	"errors"
 	"strings"
 	"time"
-
-	"gorm.io/gorm"
 )
 
-type Model struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
-}
-
-type InputEmployee struct {
+type InputUser struct {
 	Name                     string
 	Surname                  string
 	Login                    string
@@ -24,52 +15,46 @@ type InputEmployee struct {
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
 	NumHolidays              uint
-}
+} // @Name InputUser
 
-func (u *InputEmployee) ToEmployee() Employee {
-	return Employee{
-		User: &User{
-			Name:     u.Name,
-			Surname:  u.Surname,
-			Login:    u.Login,
-			Password: u.Password,
-		},
+func (u *InputUser) ToUser() User {
+	return User{
+		Name:                     u.Name,
+		Surname:                  u.Surname,
+		Login:                    u.Login,
+		Password:                 u.Password,
+		WorkingDays:              u.WorkingDays,
 		WeekWorkingTimeInMinutes: u.WeekWorkingTimeInMinutes,
 		NumWorkingDays:           u.NumWorkingDays,
 		NumHolidays:              u.NumHolidays,
-		WorkingDays:              u.WorkingDays,
 	}
 }
 
 type User struct {
-	Model
-	Name     string
-	Surname  string
-	Login    string `gorm:"unique"`
-	Password string `json:"-"`
-	Tokens   []Token
-}
-
-type InputToken struct {
-	Name string
-}
-
-type Token struct {
-	Model
-	Name   string
-	UserID uint
-	Token  string
-}
-
-type Employee struct {
-	*User                    `gorm:"embedded"`
+	ID                       uint `gorm:"primaryKey"`
+	Tokens                   []Token
+	Password                 string `json:"-"`
+	Name                     string
+	Surname                  string
+	Login                    string `gorm:"unique"`
+	WorkingDays              string
 	WeekWorkingTimeInMinutes uint
 	NumWorkingDays           uint
 	NumHolidays              uint
-	WorkingDays              string
-}
+} // @Name User
 
-func (e *Employee) WorkingDaysAsArray() []string {
+type InputToken struct {
+	Name string
+} // @Name InputToken
+
+type Token struct {
+	ID uint `gorm:"primaryKey"`
+	InputToken
+	UserID uint
+	Token  string
+} // @Name Token
+
+func (e *User) WorkingDaysAsArray() []string {
 	if len(e.WorkingDays) > 0 {
 		return strings.Split(e.WorkingDays, ",")
 	}
@@ -77,20 +62,18 @@ func (e *Employee) WorkingDaysAsArray() []string {
 }
 
 type Activity struct {
-	Model
-	Start            *time.Time
-	End              *time.Time
-	ActualDuration   time.Duration
-	EventualDuration time.Duration
-	Description      string
-	UserID           uint
-}
+	ID uint `gorm:"primaryKey"`
+	InputActivity
+	ActualDurationInMinutes   uint
+	EventualDurationInMinutes uint
+	UserID                    uint
+} // @Name Activity
 
 type InputActivity struct {
-	Start       *time.Time
-	End         *time.Time
+	Start       *time.Time `format:"date-time" extensions:"x-nullable"`
+	End         *time.Time `format:"date-time" extensions:"x-nullable"`
 	Description string
-}
+} // @Name InputActivity
 
 type HolidayType string
 
@@ -119,39 +102,33 @@ func StrToHolidayType(str string) (HolidayType, error) {
 }
 
 type Holiday struct {
-	Model
-	Start       time.Time
-	End         time.Time
-	Description string
-	Type        HolidayType
-	UserID      uint
-}
+	ID uint `gorm:"primaryKey"`
+	InputHoliday
+	UserID uint
+} // @Name Holiday
 
 type InputHoliday struct {
-	Start       time.Time
-	End         time.Time
+	Start       time.Time `format:"date-time"`
+	End         time.Time `format:"date-time"`
 	Description string
 	Type        HolidayType
-}
+} // @Name InputHoliday
 
 type WorkDay struct {
-	Model
-	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
-	Overtime   int64
-	ActiveTime int64
-	IsHoliday  bool
-	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
-}
+	ID uint `gorm:"primaryKey"`
+	InputWorkDay
+	IsHoliday bool
+} // @Name WorkDay
 
 type InputWorkDay struct {
-	Day        time.Time
+	Day        time.Time `gorm:"UNIQUE_INDEX:compositeindex;index;not null" format:"date-time"`
 	Overtime   int64
 	ActiveTime int64
-	UserID     uint
-}
+	UserID     uint `gorm:"UNIQUE_INDEX:compositeindex;index;not null"`
+} // @Name InputWorkDay
 
 type Overview struct {
-	Date                         time.Time
+	Date                         time.Time `format:"date-time"`
 	WeekNumber                   int
 	UsedHolidays                 int
 	HolidaysStillAvailable       int
@@ -163,21 +140,21 @@ type Overview struct {
 	ActiveTimeThisMonthInMinutes int64
 	OvertimeThisYearInMinutes    int64
 	ActiveTimeThisYearInMinutes  int64
-	ActiveActivity               *Activity
-}
+	ActiveActivity               *Activity `extensions:"x-nullable"`
+} // @Name Overtime
 
 type WebhookInput struct {
 	HeaderKey   string
 	HeaderValue string
 	TargetURL   string
 	ReadOnly    bool
-}
+} // @Name WebhookInput
 
 type Webhook struct {
-	Model
+	ID uint `gorm:"primaryKey"`
 	WebhookInput
 	UserID uint
-}
+} // @Name Webhook
 
 type WebhookBody struct {
 	Event   WebhookEvent

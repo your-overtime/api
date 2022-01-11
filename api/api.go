@@ -3,14 +3,12 @@ package api
 import (
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
-	"github.com/your-overtime/api/internal/service"
 	"github.com/your-overtime/api/pkg"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -19,7 +17,7 @@ import (
 
 // API struct
 type API struct {
-	os         *service.Service
+	mos        pkg.MainOvertimeService
 	router     *gin.Engine
 	host       string
 	adminToken string
@@ -35,31 +33,39 @@ func (a *API) adminAuth() gin.HandlerFunc {
 	}
 }
 
-func (a *API) getEmployeeFromRequest(c *gin.Context) (*pkg.Employee, error) {
+func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.OvertimeService, error) {
 	token := c.Request.FormValue("token")
+	var (
+		user *pkg.User
+		err  error
+	)
 	if len(token) > 0 {
-		return a.os.FromToken(token)
-	}
-	authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
-	fmt.Println(authHeaderSlice)
-	if len(authHeaderSlice) == 2 {
-		switch strings.ToLower(authHeaderSlice[0]) {
-		case "basic":
-			payload, err := base64.StdEncoding.DecodeString(authHeaderSlice[1])
-			if err != nil {
-				log.Debug(err)
-				return nil, pkg.ErrUserNotFound
+		user, err = a.mos.FromToken(token)
+	} else {
+		authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
+		if len(authHeaderSlice) == 2 {
+			switch strings.ToLower(authHeaderSlice[0]) {
+			case "basic":
+				payload, err := base64.StdEncoding.DecodeString(authHeaderSlice[1])
+				if err != nil {
+					log.Debug(err)
+					return nil, pkg.ErrUserNotFound
+				}
+				basicAuth := strings.Split(string(payload), ":")
+				if len(basicAuth) != 2 {
+					log.Debug(pkg.ErrUserNotFound, " ", basicAuth, " ", authHeaderSlice)
+					return nil, pkg.ErrUserNotFound
+				}
+				user, err = a.mos.Login(basicAuth[0], basicAuth[1])
+			default:
+				user, err = a.mos.FromToken(authHeaderSlice[1])
 			}
-			basicAuth := strings.Split(string(payload), ":")
-			if len(basicAuth) != 2 {
-				log.Debug(pkg.ErrUserNotFound, " ", basicAuth, " ", authHeaderSlice)
-				return nil, pkg.ErrUserNotFound
-			}
-			return a.os.Login(basicAuth[0], basicAuth[1])
-		default:
-			return a.os.FromToken(authHeaderSlice[1])
-		}
 
+		}
+	}
+
+	if user != nil && err == nil {
+		return a.mos.GetOrCreateInstanceForUser(user), nil
 	}
 
 	return nil, pkg.ErrUserNotFound
@@ -108,18 +114,18 @@ func (a *API) createEndPoints() {
 	v1.POST("/webhook", a.CreateWebhook)
 	v1.GET("/webhook", a.GetWebhooks)
 
-	// employee
+	// user
 	authorizedV1 := v1.Group("/", a.adminAuth())
 	{
-		authorizedV1.POST("/employee", a.CreateEmployee)
+		authorizedV1.POST("/user", a.CreateUser)
 	}
 }
 
 // Init API server
-func Init(os *service.Service, adminToken string) *API {
+func Init(mos pkg.MainOvertimeService, adminToken string) *API {
 	return &API{
 		router:     gin.Default(),
-		os:         os,
+		mos:        mos,
 		adminToken: adminToken,
 	}
 }

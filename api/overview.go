@@ -17,13 +17,13 @@ import (
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetOverview(c *gin.Context) {
-	e, err := a.getEmployeeFromRequest(c)
+	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
-	overview, err := a.os.CalcOverview(*e, time.Now())
+	overview, err := os.CalcOverview(time.Now())
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
