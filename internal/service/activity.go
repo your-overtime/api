@@ -51,8 +51,11 @@ func weekDayToInt(wd time.Weekday) int {
 }
 
 func (s *Service) StartActivity(desc string) (*pkg.Activity, error) {
+	return s.StartActivityWithTime(desc, time.Now())
+}
+
+func (s *Service) StartActivityWithTime(desc string, now time.Time) (*pkg.Activity, error) {
 	ca, _ := s.db.GetRunningActivityByUserID(s.user.ID)
-	now := time.Now()
 	if ca != nil {
 		if _, err := s.StopRunningActivity(); err != nil {
 			return nil, err
@@ -82,7 +85,7 @@ func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
 	if a.End == nil {
 		return s.StartActivity(a.Description)
 	} else {
-		s.calculateDuration(&a)
+		s.CalculateDuration(&a)
 	}
 
 	err := s.db.SaveActivity(&data.ActivityDB{
@@ -95,13 +98,16 @@ func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
 }
 
 func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
+	return s.StopRunningActivityWithTime(time.Now())
+}
+
+func (s *Service) StopRunningActivityWithTime(now time.Time) (*pkg.Activity, error) {
 	a, err := s.db.GetRunningActivityByUserID(s.user.ID)
 	if err != nil {
 		return nil, err
 	}
-	now := time.Now()
 	a.End = &now
-	s.calculateDuration(&a.Activity)
+	s.CalculateDuration(&a.Activity)
 	s.endActivityHook(&a.Activity)
 	err = s.db.SaveActivity(a)
 	if err != nil {
@@ -145,7 +151,7 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 
 	aDB.InputActivity = a.InputActivity
 	if a.End != nil {
-		s.calculateDuration(&aDB.Activity)
+		s.CalculateDuration(&aDB.Activity)
 		s.endActivityHook(&aDB.Activity)
 	}
 	if err := s.db.SaveActivity(aDB); err != nil {
@@ -171,7 +177,7 @@ func (s *Service) DelActivity(id uint) error {
 	return s.db.Conn.Delete(a).Error
 }
 
-func (s *Service) calculateDuration(a *pkg.Activity) {
+func (s *Service) CalculateDuration(a *pkg.Activity) {
 	if a.End != nil {
 		actualDuration := utils.DurationInMinutes(a.End.Sub(*a.Start))
 		a.ActualDurationInMinutes = actualDuration

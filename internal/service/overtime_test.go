@@ -19,7 +19,7 @@ var e = pkg.User{
 	NumWorkingDays:           5,
 }
 
-func setUp(t *testing.T) (pkg.OvertimeService, *pkg.User) {
+func setUp(t *testing.T) (*service.Service, *pkg.User) {
 	db := tests.SetupDb(t)
 	err := db.SaveUser(&data.UserDB{User: e})
 	if err != nil {
@@ -27,11 +27,12 @@ func setUp(t *testing.T) (pkg.OvertimeService, *pkg.User) {
 	}
 	s := service.Init(&db).GetOrCreateInstanceForUser(&e)
 
-	if err != nil {
-		t.Fatal("expect no error but got ", err)
+	actualService, ok := s.(*service.Service)
+	if !ok {
+		t.Fatal("wrong service implementation")
 	}
 
-	return s, &e
+	return actualService, &e
 }
 
 func TestOverviewDynamicWorkinkdays(t *testing.T) {
