@@ -1,7 +1,6 @@
 package service_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/your-overtime/api/internal/data"
@@ -127,15 +126,96 @@ func TestOverviewDynamicWorkinkdays(t *testing.T) {
 	if o.ActiveActivity != nil {
 		t.Error("expect nil but got ", o.ActiveActivity)
 	}
+
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-12 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+
+	if o.OvertimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.OvertimeThisDayInMinutes)
+	}
+
+	if o.ActiveTimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisDayInMinutes)
+	}
+
+	start = tests.ParseDayTime("2021-01-13 07:04")
+	end = tests.ParseDayTime("2021-01-13 10:08")
+	_, err = s.AddActivity(pkg.Activity{
+		InputActivity: pkg.InputActivity{
+			Start:       &start,
+			End:         &end,
+			Description: "Tests",
+		},
+		UserID: ePtr.ID,
+	})
+
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-13 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+
+	if o.OvertimeThisDayInMinutes != -200 {
+		t.Error("expect -200 but got ", o.OvertimeThisDayInMinutes)
+	}
+
+	if o.ActiveTimeThisDayInMinutes != 184 {
+		t.Error("expect 184 but got ", o.ActiveTimeThisDayInMinutes)
+	}
+
+	// 384 - 184 = -200
+	if o.OvertimeThisWeekInMinutes != -200 {
+		t.Error("expect -1472 but got ", o.OvertimeThisWeekInMinutes)
+	}
+
+	if o.ActiveTimeThisWeekInMinutes != 184 {
+		t.Error("expect 64 but got ", o.ActiveTimeThisWeekInMinutes)
+	}
+
+	if o.OvertimeThisMonthInMinutes != -2824 {
+		t.Error("expect -2824 but got ", o.OvertimeThisMonthInMinutes)
+	}
+
+	if o.ActiveTimeThisMonthInMinutes != 248 {
+		t.Error("expect 248 but got ", o.ActiveTimeThisMonthInMinutes)
+	}
+
+	if o.OvertimeThisYearInMinutes != -2824 {
+		t.Error("expect -2824 but got ", o.OvertimeThisYearInMinutes)
+	}
+
+	if o.ActiveTimeThisYearInMinutes != 248 {
+		t.Error("expect 248 but got ", o.ActiveTimeThisYearInMinutes)
+	}
+
+	if o.ActiveActivity != nil {
+		t.Error("expect nil but got ", o.ActiveActivity)
+	}
+
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-16 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+
+	// this day must be a working day, otherwise it would not be possible to work the 5 working days
+	if o.OvertimeThisDayInMinutes != -384 {
+		t.Error("expect -384 but got ", o.OvertimeThisDayInMinutes)
+	}
+
+	if o.ActiveTimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisDayInMinutes)
+	}
 }
 
 func TestOverviewStatic(t *testing.T) {
 	s, ePtr := setUp(t)
 	ePtr.WorkingDays = "Monday,Tuesday,Wednesday,Thursday,Friday"
 
-	fmt.Println(e)
-	fmt.Println(*ePtr)
-	fmt.Println(s.GetAccount())
 	o, err := s.CalcOverview(tests.ParseDayTime("2021-01-08 23:59"))
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
