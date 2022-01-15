@@ -130,8 +130,8 @@ func (a *API) GetHoliday(c *gin.Context) {
 // @Tags holiday
 // @Summary Get a activities by start and end
 // @Produce json
-// @Param start query string true "Start date"
-// @Param end query string true "End date"
+// @Param start query string true "Start date" format date-time
+// @Param end query string true "End date" format date-time
 // @Success 200 {object} []pkg.Holiday
 // @Router /holiday [get]
 // @Security BasicAuth

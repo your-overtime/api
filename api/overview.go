@@ -14,7 +14,7 @@ import (
 // @Produce json
 // @Success 200 {object} pkg.Overview
 // @Router /overview [get]
-// @Param date query string false "Calculation date"
+// @Param date query string false "Calculation date" format date-time
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetOverview(c *gin.Context) {
