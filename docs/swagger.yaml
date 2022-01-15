@@ -2,7 +2,7 @@ basePath: /api/v1
 definitions:
   Activity:
     properties:
-      ActualDuration:
+      ActualDurationInMinutes:
         type: integer
       Description:
         type: string
@@ -10,7 +10,7 @@ definitions:
         format: date-time
         type: string
         x-nullable: true
-      EventualDuration:
+      EventualDurationInMinutes:
         type: integer
       ID:
         type: integer
@@ -508,6 +508,11 @@ paths:
       - holiday
   /overview:
     get:
+      parameters:
+      - description: Calculation date
+        in: query
+        name: date
+        type: string
       produces:
       - application/json
       responses:

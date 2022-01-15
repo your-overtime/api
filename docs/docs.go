@@ -558,6 +558,14 @@ var doc = `{
                     "overview"
                 ],
                 "summary": "Retrieves overview of your overtime",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Calculation date",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -858,7 +866,7 @@ var doc = `{
         "Activity": {
             "type": "object",
             "properties": {
-                "ActualDuration": {
+                "ActualDurationInMinutes": {
                     "type": "integer"
                 },
                 "Description": {
@@ -869,7 +877,7 @@ var doc = `{
                     "format": "date-time",
                     "x-nullable": true
                 },
-                "EventualDuration": {
+                "EventualDurationInMinutes": {
                     "type": "integer"
                 },
                 "ID": {
