@@ -25,7 +25,7 @@ func setUp(t *testing.T) (*service.Service, *pkg.User) {
 	if err != nil {
 		t.Fatal("expect no error but got ", err)
 	}
-	s := service.Init(&db).GetOrCreateInstanceForUser(&e)
+	s := service.Init(db).GetOrCreateInstanceForUser(&e)
 
 	actualService, ok := s.(*service.Service)
 	if !ok {

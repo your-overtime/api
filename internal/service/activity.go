@@ -87,14 +87,15 @@ func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
 	} else {
 		s.CalculateDuration(&a)
 	}
-
-	err := s.db.SaveActivity(&data.ActivityDB{
+	dba := &data.ActivityDB{
 		Activity: a,
-	})
+	}
+	err := s.db.SaveActivity(dba)
 	if err != nil {
 		return nil, err
 	}
-	return &a, nil
+
+	return &dba.Activity, nil
 }
 
 func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
@@ -108,7 +109,6 @@ func (s *Service) StopRunningActivityWithTime(now time.Time) (*pkg.Activity, err
 	}
 	a.End = &now
 	s.CalculateDuration(&a.Activity)
-	s.endActivityHook(&a.Activity)
 	err = s.db.SaveActivity(a)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,6 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 	aDB.InputActivity = a.InputActivity
 	if a.End != nil {
 		s.CalculateDuration(&aDB.Activity)
-		s.endActivityHook(&aDB.Activity)
 	}
 	if err := s.db.SaveActivity(aDB); err != nil {
 		return nil, err
@@ -181,8 +180,7 @@ func (s *Service) CalculateDuration(a *pkg.Activity) {
 	if a.End != nil {
 		actualDuration := utils.DurationInMinutes(a.End.Sub(*a.Start))
 		a.ActualDurationInMinutes = actualDuration
-		if a.EventualDurationInMinutes == 0 {
-			a.EventualDurationInMinutes = actualDuration
-		}
+		a.EventualDurationInMinutes = actualDuration
+		s.endActivityHook(a)
 	}
 }

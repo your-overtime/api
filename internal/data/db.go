@@ -19,8 +19,6 @@ type Db struct {
 
 // Init function return Db
 func Init(user string, pw string, host string, name string) (*Db, error) {
-	db := Db{}
-
 	tz := os.Getenv("TZ")
 	if len(tz) == 0 {
 		tz = time.Now().Location().String()
@@ -34,8 +32,12 @@ func Init(user string, pw string, host string, name string) (*Db, error) {
 		url.QueryEscape(name),
 		url.QueryEscape(tz),
 	)
+	return InitWithDialector(mysql.Open(dsn))
+}
 
-	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func InitWithDialector(dialector gorm.Dialector) (*Db, error) {
+	db := Db{}
+	conn, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
 		log.Debug(err)
 		return nil, err
