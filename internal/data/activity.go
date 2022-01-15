@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +14,9 @@ func (d *Db) SaveActivity(a *ActivityDB) error {
 	if len(a.Description) == 0 {
 		return pkg.ErrEmptyDescriptionNotAllowed
 	}
-
+	if a.End != nil && a.End.Before(*a.Start) {
+		return pkg.ErrStartMustBeBeforeEnd
+	}
 	tx := d.Conn.Save(a)
 	return tx.Error
 }
@@ -63,10 +66,9 @@ func (d *Db) MigrateActivityDuration() error {
 	}
 	for _, a := range activities {
 		if a.ActualDurationInMinutes == 0 && a.End != nil {
-			a.ActualDurationInMinutes = uint(a.End.Sub(*a.Start).Minutes())
-			if a.EventualDurationInMinutes == 0 {
-				a.EventualDurationInMinutes = a.ActualDurationInMinutes
-			}
+			actualDuration := utils.DurationInMinutes(a.End.Sub(*a.Start))
+			a.ActualDurationInMinutes = actualDuration
+			a.EventualDurationInMinutes = a.ActualDurationInMinutes
 			if err := d.Conn.Save(&a).Error; err != nil {
 				return err
 			}

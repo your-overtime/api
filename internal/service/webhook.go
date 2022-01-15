@@ -51,12 +51,15 @@ func (s *Service) startActivityHook(a *pkg.Activity) {
 }
 
 func (s *Service) endActivityHook(a *pkg.Activity) {
+
 	var modifed = pkg.Activity{}
-	errs, _ := s.hookHandler(a.UserID, pkg.EndActivityEvent, a, &modifed)
+	errs, wasModified := s.hookHandler(a.UserID, pkg.EndActivityEvent, a, &modifed)
 	if errs != nil {
 		return
 	}
-	a.EventualDurationInMinutes = modifed.EventualDurationInMinutes
+	if wasModified {
+		a.EventualDurationInMinutes = modifed.EventualDurationInMinutes
+	}
 }
 
 func (s *Service) hookHandler(userID uint, eventName pkg.WebhookEvent, in interface{}, out interface{}) ([]error, bool) {

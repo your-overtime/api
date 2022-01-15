@@ -8,29 +8,12 @@ import (
 
 	"github.com/your-overtime/api/internal/data"
 	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-func SetupDb(t *testing.T) data.Db {
-	conn, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	db := data.Db{Conn: conn}
+func SetupDb(t *testing.T) *data.Db {
 
-	if err := conn.AutoMigrate(&data.ActivityDB{}); err != nil {
-		t.Fatal(err)
-	}
-	if err := conn.AutoMigrate(&data.HolidayDB{}); err != nil {
-		t.Fatal(err)
-	}
-	if err := conn.AutoMigrate(&data.WorkDayDB{}); err != nil {
-		t.Fatal(err)
-	}
-	if err := conn.AutoMigrate(&data.UserDB{}); err != nil {
-		t.Fatal(err)
-	}
-	if err := conn.AutoMigrate(&data.TokenDB{}); err != nil {
+	db, err := data.InitWithDialector(sqlite.Open("file::memory:"))
+	if err != nil {
 		t.Fatal(err)
 	}
 	return db

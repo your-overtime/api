@@ -72,4 +72,5 @@ var (
 	ErrNoActivityIsRunning        = errors.New("No activity is currently running")
 	ErrDuplicateValue             = errors.New("Duplicate value")
 	ErrEmptyDescriptionNotAllowed = errors.New("empty description is not allowed")
+	ErrStartMustBeBeforeEnd       = errors.New("start time must be before end time")
 )
