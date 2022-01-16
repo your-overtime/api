@@ -14,8 +14,8 @@ import (
 // @Summary Retrieves workdays
 // @Produce json
 // @Success 200 {object} []pkg.WorkDay
-// @Param start query string  true "Start date" format date-time
-// @Param end query string  true "End date" format date-time
+// @Param start query string true "Start date" format date-time
+// @Param end query string true "End date" format date-time
 // @Router /workday [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
