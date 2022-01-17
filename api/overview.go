@@ -14,6 +14,7 @@ import (
 // @Produce json
 // @Success 200 {object} pkg.Overview
 // @Router /overview [get]
+// @Param date query string false "Calculation date" format date-time
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) GetOverview(c *gin.Context) {
@@ -23,7 +24,21 @@ func (a *API) GetOverview(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
-	overview, err := os.CalcOverview(time.Now())
+
+	strDate := c.Query("date")
+	var date time.Time
+	if len(strDate) == 0 {
+		date = time.Now()
+	} else {
+		date, err = time.Parse(time.RFC3339, strDate)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+	}
+
+	overview, err := os.CalcOverview(date)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
