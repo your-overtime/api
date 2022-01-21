@@ -29,6 +29,33 @@ func TestStartStopActivityDuration(t *testing.T) {
 	}
 }
 
+func TestStopRunningActivityWhenNewStarting(t *testing.T) {
+	service, _ := setUp(t)
+	_, err := service.StartActivity("Valid")
+	if err != nil {
+		t.Fatal("expected error to be nil but got", err)
+	}
+	o, err := service.CalcOverview(time.Now())
+	if err != nil {
+		t.Fatal("expected error to be nil but got", err)
+	}
+	if o.ActiveActivity == nil {
+		t.Error("expected active activity not to be nil")
+	}
+	_, err = service.StartActivity("")
+	if err == nil || err != pkg.ErrEmptyDescriptionNotAllowed {
+		t.Errorf("expected error not be %s not got %v", pkg.ErrEmptyDescriptionNotAllowed, err)
+	}
+
+	o, err = service.CalcOverview(time.Now())
+	if err != nil {
+		t.Fatal("expected error to be nil but got", err)
+	}
+	if o.ActiveActivity == nil {
+		t.Error("expected active activity not to be nil")
+	}
+}
+
 func TestCreateActivity(t *testing.T) {
 	service, _ := setUp(t)
 	start := time.Date(2022, 1, 1, 8, 0, 0, 0, time.UTC)

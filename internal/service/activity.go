@@ -56,11 +56,7 @@ func (s *Service) StartActivity(desc string) (*pkg.Activity, error) {
 
 func (s *Service) StartActivityWithTime(desc string, now time.Time) (*pkg.Activity, error) {
 	ca, _ := s.db.GetRunningActivityByUserID(s.user.ID)
-	if ca != nil {
-		if _, err := s.StopRunningActivity(); err != nil {
-			return nil, err
-		}
-	}
+
 	orig := data.ActivityDB{
 		Activity: pkg.Activity{
 			UserID: s.user.ID,
@@ -74,6 +70,12 @@ func (s *Service) StartActivityWithTime(desc string, now time.Time) (*pkg.Activi
 	err := s.db.SaveActivity(&orig)
 	if err != nil {
 		return nil, err
+	}
+
+	if ca != nil {
+		if _, err := s.StopRunningActivity(); err != nil {
+			return nil, err
+		}
 	}
 	s.startActivityHook(&orig.Activity)
 
