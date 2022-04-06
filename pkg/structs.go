@@ -44,15 +44,15 @@ type User struct {
 } // @Name User
 
 type InputToken struct {
-	Name string
+	Name     string
+	Readonly bool
 } // @Name InputToken
 
 type Token struct {
 	ID uint `gorm:"primaryKey"`
 	InputToken
-	UserID   uint
-	Token    string
-	Readonly bool
+	UserID uint
+	Token  string
 } // @Name Token
 
 func (e *User) WorkingDaysAsArray() []string {

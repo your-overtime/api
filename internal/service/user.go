@@ -156,7 +156,8 @@ func (s *Service) CreateToken(it pkg.InputToken) (*pkg.Token, error) {
 	token := pkg.Token{
 		UserID: s.user.ID,
 		InputToken: pkg.InputToken{
-			Name: it.Name,
+			Name:     it.Name,
+			Readonly: it.Readonly,
 		},
 		Token: createSHA256Hash(rawToken),
 	}
