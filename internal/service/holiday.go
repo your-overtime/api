@@ -62,6 +62,9 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 }
 
 func (s *Service) AddHoliday(h pkg.Holiday) (*pkg.Holiday, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	err := s.db.SaveHoliday(&data.HolidayDB{Holiday: h})
 	if err != nil {
 		log.Debug(err)
@@ -110,6 +113,9 @@ func (s *Service) GetHolidaysByType(start time.Time, end time.Time, hType pkg.Ho
 }
 
 func (s *Service) DelHoliday(id uint) error {
+	if s.readonly {
+		return pkg.ErrReadOnlyAccess
+	}
 	h, err := s.GetHoliday(id)
 	if err != nil {
 		log.Debug(err)

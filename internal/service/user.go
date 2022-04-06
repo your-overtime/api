@@ -18,6 +18,15 @@ func createSHA256Hash(v string) string {
 	)
 }
 
+func (s *MainService) IsReadonlyToken(token string) bool {
+	hashedToken := createSHA256Hash(token)
+	dbToken, err := s.db.GetTokenByToken(hashedToken)
+	if err != nil {
+		return true
+	}
+	return dbToken.Readonly
+}
+
 func (s *MainService) FromToken(token string) (*pkg.User, error) {
 	hashedToken := createSHA256Hash(token)
 
@@ -81,6 +90,9 @@ func (s *Service) SaveUser(user pkg.User, adminToken string) (*pkg.User, error) 
 }
 
 func (s *Service) UpdateAccount(fields map[string]interface{}, user pkg.User) (*pkg.User, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	for f := range fields {
 		switch f {
 		case "Name":
@@ -136,6 +148,9 @@ func (s *Service) GetTokens() ([]pkg.Token, error) {
 }
 
 func (s *Service) CreateToken(it pkg.InputToken) (*pkg.Token, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	// TODO add database method to create token?
 	rawToken := utils.RandString(40)
 	token := pkg.Token{
@@ -159,6 +174,9 @@ func (s *Service) CreateToken(it pkg.InputToken) (*pkg.Token, error) {
 }
 
 func (s *Service) DeleteToken(tokenID uint) error {
+	if s.readonly {
+		return pkg.ErrReadOnlyAccess
+	}
 	var t pkg.Token
 	tx := s.db.Conn.First(&t, tokenID)
 	if tx.Error != nil {

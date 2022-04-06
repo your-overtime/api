@@ -15,8 +15,9 @@ type MainService struct {
 }
 
 type Service struct {
-	user *pkg.User
-	db   *data.Db
+	user     *pkg.User
+	db       *data.Db
+	readonly bool
 }
 
 func Init(db *data.Db) *MainService {
@@ -39,6 +40,14 @@ func (s *MainService) GetOrCreateInstanceForUser(user *pkg.User) pkg.OvertimeSer
 	s.instances[user.ID] = &userInstance
 
 	return &userInstance
+}
+
+func (s *MainService) GetOrCreateReadonlyInstanceForUser(user *pkg.User) pkg.OvertimeService {
+	return &Service{
+		user:     user,
+		db:       s.db,
+		readonly: true,
+	}
 }
 
 func (s *Service) calcOvertimeAndActivetime(start time.Time, end time.Time) (int64, int64, error) {

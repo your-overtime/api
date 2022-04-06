@@ -50,8 +50,9 @@ type InputToken struct {
 type Token struct {
 	ID uint `gorm:"primaryKey"`
 	InputToken
-	UserID uint
-	Token  string
+	UserID   uint
+	Token    string
+	Readonly bool
 } // @Name Token
 
 func (e *User) WorkingDaysAsArray() []string {

@@ -55,6 +55,9 @@ func (s *Service) StartActivity(desc string) (*pkg.Activity, error) {
 }
 
 func (s *Service) StartActivityWithTime(desc string, now time.Time) (*pkg.Activity, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	ca, _ := s.db.GetRunningActivityByUserID(s.user.ID)
 
 	orig := data.ActivityDB{
@@ -83,6 +86,9 @@ func (s *Service) StartActivityWithTime(desc string, now time.Time) (*pkg.Activi
 }
 
 func (s *Service) AddActivity(a pkg.Activity) (*pkg.Activity, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	// handle activities without end as new started activities
 	if a.End == nil {
 		return s.StartActivity(a.Description)
@@ -105,6 +111,12 @@ func (s *Service) StopRunningActivity() (*pkg.Activity, error) {
 }
 
 func (s *Service) StopRunningActivityWithTime(now time.Time) (*pkg.Activity, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	a, err := s.db.GetRunningActivityByUserID(s.user.ID)
 	if err != nil {
 		return nil, err
@@ -146,6 +158,9 @@ func (s *Service) GetActivities(start time.Time, end time.Time) ([]pkg.Activity,
 }
 
 func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	aDB, err := s.db.GetActivity(a.ID, s.user.ID)
 	if err != nil {
 		return nil, err
@@ -171,6 +186,9 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 }
 
 func (s *Service) DelActivity(id uint) error {
+	if s.readonly {
+		return pkg.ErrReadOnlyAccess
+	}
 	a, err := s.db.GetActivity(id, s.user.ID)
 	if err != nil {
 		return err
