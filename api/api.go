@@ -19,7 +19,6 @@ import (
 type API struct {
 	mos        pkg.MainOvertimeService
 	router     *gin.Engine
-	host       string
 	adminToken string
 }
 
@@ -46,9 +45,9 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 		if len(authHeaderSlice) == 2 {
 			switch strings.ToLower(authHeaderSlice[0]) {
 			case "basic":
-				payload, err := base64.StdEncoding.DecodeString(authHeaderSlice[1])
-				if err != nil {
-					log.Debug(err)
+				payload, payloadErr := base64.StdEncoding.DecodeString(authHeaderSlice[1])
+				if payloadErr != nil {
+					log.Debug(payloadErr)
 					return nil, pkg.ErrUserNotFound
 				}
 				basicAuth := strings.Split(string(payload), ":")
