@@ -58,8 +58,9 @@ type OvertimeService interface {
 
 type MainOvertimeService interface {
 	GetOrCreateInstanceForUser(user *User) OvertimeService
-
+	GetOrCreateReadonlyInstanceForUser(user *User) OvertimeService
 	FromToken(token string) (*User, error)
+	IsReadonlyToken(token string) bool
 	Login(login string, password string) (*User, error)
 }
 
@@ -73,4 +74,5 @@ var (
 	ErrDuplicateValue             = errors.New("Duplicate value")
 	ErrEmptyDescriptionNotAllowed = errors.New("empty description is not allowed")
 	ErrStartMustBeBeforeEnd       = errors.New("start time must be before end time")
+	ErrReadOnlyAccess             = errors.New("Readonly access")
 )

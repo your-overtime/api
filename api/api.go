@@ -19,7 +19,6 @@ import (
 type API struct {
 	mos        pkg.MainOvertimeService
 	router     *gin.Engine
-	host       string
 	adminToken string
 }
 
@@ -39,16 +38,18 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 		user *pkg.User
 		err  error
 	)
+	readonly := true
 	if len(token) > 0 {
 		user, err = a.mos.FromToken(token)
+		readonly = a.mos.IsReadonlyToken(token)
 	} else {
 		authHeaderSlice := strings.Split(c.Request.Header.Get("Authorization"), " ")
 		if len(authHeaderSlice) == 2 {
 			switch strings.ToLower(authHeaderSlice[0]) {
 			case "basic":
-				payload, err := base64.StdEncoding.DecodeString(authHeaderSlice[1])
-				if err != nil {
-					log.Debug(err)
+				payload, payloadErr := base64.StdEncoding.DecodeString(authHeaderSlice[1])
+				if payloadErr != nil {
+					log.Debug(payloadErr)
 					return nil, pkg.ErrUserNotFound
 				}
 				basicAuth := strings.Split(string(payload), ":")
@@ -57,14 +58,19 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 					return nil, pkg.ErrUserNotFound
 				}
 				user, err = a.mos.Login(basicAuth[0], basicAuth[1])
+				readonly = false
 			default:
 				user, err = a.mos.FromToken(authHeaderSlice[1])
+				readonly = a.mos.IsReadonlyToken(authHeaderSlice[1])
 			}
 
 		}
 	}
 
 	if user != nil && err == nil {
+		if readonly {
+			return a.mos.GetOrCreateReadonlyInstanceForUser(user), nil
+		}
 		return a.mos.GetOrCreateInstanceForUser(user), nil
 	}
 
@@ -119,6 +125,9 @@ func (a *API) createEndPoints() {
 	{
 		authorizedV1.POST("/user", a.CreateUser)
 	}
+
+	// ical / caldav
+	v1.GET("/activities.ics", a.ICalActivities)
 }
 
 // Init API server

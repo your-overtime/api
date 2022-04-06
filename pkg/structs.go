@@ -44,7 +44,8 @@ type User struct {
 } // @Name User
 
 type InputToken struct {
-	Name string
+	Name     string
+	Readonly bool
 } // @Name InputToken
 
 type Token struct {

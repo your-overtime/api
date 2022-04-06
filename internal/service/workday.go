@@ -24,6 +24,9 @@ func (s *Service) GetWorkDays(start time.Time, end time.Time) ([]pkg.WorkDay, er
 }
 
 func (s *Service) AddWorkDay(w pkg.WorkDay) (*pkg.WorkDay, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	err := s.db.SaveWorkDay(&data.WorkDayDB{WorkDay: w})
 	if err != nil {
 		log.Debug(err)

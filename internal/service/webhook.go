@@ -13,6 +13,9 @@ import (
 )
 
 func (s *Service) CreateWebhook(webhook pkg.WebhookInput) (*pkg.Webhook, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
 	_, err := url.ParseRequestURI(webhook.TargetURL)
 	if err != nil {
 		return nil, err
