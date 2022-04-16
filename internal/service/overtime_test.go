@@ -6,6 +6,7 @@ import (
 	"github.com/your-overtime/api/internal/data"
 	"github.com/your-overtime/api/internal/service"
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 	"github.com/your-overtime/api/tests"
 )
 
@@ -301,6 +302,196 @@ func TestOverviewStatic(t *testing.T) {
 
 	if o.ActiveTimeThisYearInMinutes != 64 {
 		t.Error("expect 64 but got ", o.ActiveTimeThisYearInMinutes)
+	}
+
+	if o.ActiveActivity != nil {
+		t.Error("expect nil but got ", o.ActiveActivity)
+	}
+}
+
+func TestOverviewStaticWithHolidays(t *testing.T) {
+	s, ePtr := setUp(t)
+	ePtr.WorkingDays = "Monday,Tuesday,Wednesday,Thursday,Friday"
+
+	o, err := s.CalcOverview(tests.ParseDayTime("2021-01-07 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+
+	if o.ActiveTimeThisDayInMinutes != 0 ||
+		o.ActiveTimeThisWeekInMinutes != 0 ||
+		o.ActiveTimeThisMonthInMinutes != 0 ||
+		o.ActiveTimeThisYearInMinutes != 0 {
+		t.Error("expect that active time is 0")
+	}
+
+	if o.OvertimeThisDayInMinutes != -384 {
+		t.Error("expect -384 but got ", o.OvertimeThisDayInMinutes)
+	}
+
+	// 384 * 5 = 1920
+	if o.OvertimeThisWeekInMinutes != -1536 {
+		t.Error("expect -1536 but got ", o.OvertimeThisWeekInMinutes)
+	}
+
+	// 6 workingdays = 6 * 384 = 2304
+	if o.OvertimeThisMonthInMinutes != -1920 {
+		t.Error("expect -1920 but got ", o.OvertimeThisMonthInMinutes)
+	}
+
+	if o.OvertimeThisYearInMinutes != -1920 {
+		t.Error("expect -1920 but got ", o.OvertimeThisYearInMinutes)
+	}
+
+	if o.ActiveActivity != nil {
+		t.Error("expect nil but got ", o.ActiveActivity)
+	}
+
+	s.AddHoliday(pkg.Holiday{
+		InputHoliday: pkg.InputHoliday{
+			Start:       utils.DayStart(tests.ParseDay("2021-01-08")),
+			End:         utils.DayEnd(tests.ParseDay("2021-01-08")),
+			Description: "Free",
+			Type:        pkg.HolidayTypeFree,
+		},
+	})
+
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-08 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+	// the 2021-01-09 is a Saturday and not in "Monday,Tuesday,Wednesday,Thursday,Friday"
+	if o.OvertimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.OvertimeThisDayInMinutes)
+	}
+
+	if o.ActiveTimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisDayInMinutes)
+	}
+
+	// 384 * 5 - 64 = 1856
+	if o.OvertimeThisWeekInMinutes != -1536 {
+		t.Error("expect -1536 but got ", o.OvertimeThisWeekInMinutes)
+	}
+
+	if o.ActiveTimeThisWeekInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisWeekInMinutes)
+	}
+
+	if o.OvertimeThisMonthInMinutes != -1920 {
+		t.Error("expect -1920 but got ", o.OvertimeThisMonthInMinutes)
+	}
+
+	if o.ActiveTimeThisMonthInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisMonthInMinutes)
+	}
+
+	if o.OvertimeThisYearInMinutes != -1920 {
+		t.Error("expect -1929 but got ", o.OvertimeThisYearInMinutes)
+	}
+
+	if o.ActiveTimeThisYearInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisYearInMinutes)
+	}
+
+	if o.ActiveActivity != nil {
+		t.Error("expect nil but got ", o.ActiveActivity)
+	}
+
+	s.AddHoliday(pkg.Holiday{
+		InputHoliday: pkg.InputHoliday{
+			Start:       utils.DayStart(tests.ParseDay("2021-01-13")),
+			End:         utils.DayEnd(tests.ParseDay("2021-01-14")),
+			Description: "Free",
+			Type:        pkg.HolidayTypeFree,
+		},
+	})
+
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-13 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+	// the 2021-01-09 is a Saturday and not in "Monday,Tuesday,Wednesday,Thursday,Friday"
+	if o.OvertimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.OvertimeThisDayInMinutes)
+	}
+	if o.ActiveTimeThisDayInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisDayInMinutes)
+	}
+
+	if o.OvertimeThisWeekInMinutes != -768 {
+		t.Error("expect −768 but got ", o.OvertimeThisWeekInMinutes)
+	}
+
+	if o.ActiveTimeThisWeekInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisWeekInMinutes)
+	}
+
+	// 2 * -384 = −768 - 1920 = −2688
+	if o.OvertimeThisMonthInMinutes != -2688 {
+		t.Error("expect -1920 but got ", o.OvertimeThisMonthInMinutes)
+	}
+
+	if o.ActiveTimeThisMonthInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisMonthInMinutes)
+	}
+
+	if o.OvertimeThisYearInMinutes != -2688 {
+		t.Error("expect -1929 but got ", o.OvertimeThisYearInMinutes)
+	}
+
+	if o.ActiveTimeThisYearInMinutes != 0 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisYearInMinutes)
+	}
+
+	if o.ActiveActivity != nil {
+		t.Error("expect nil but got ", o.ActiveActivity)
+	}
+
+	start := tests.ParseDayTime("2021-01-14 12:59")
+	end := tests.ParseDayTime("2021-01-14 14:59")
+	s.AddActivity(pkg.Activity{InputActivity: pkg.InputActivity{
+		Start:       &start,
+		End:         &end,
+		Description: "Working",
+	}})
+
+	o, err = s.CalcOverview(tests.ParseDayTime("2021-01-14 23:59"))
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+	// the 2021-01-09 is a Saturday and not in "Monday,Tuesday,Wednesday,Thursday,Friday"
+	if o.OvertimeThisDayInMinutes != 120 {
+		t.Error("expect 0 but got ", o.OvertimeThisDayInMinutes)
+	}
+
+	if o.ActiveTimeThisDayInMinutes != 120 {
+		t.Error("expect 0 but got ", o.ActiveTimeThisDayInMinutes)
+	}
+
+	if o.OvertimeThisWeekInMinutes != -648 {
+		t.Error("expect −648 but got ", o.OvertimeThisWeekInMinutes)
+	}
+
+	if o.ActiveTimeThisWeekInMinutes != 120 {
+		t.Error("expect 120 but got ", o.ActiveTimeThisWeekInMinutes)
+	}
+
+	// 2 * -384 = −768 - 1920 + 120 = −2568
+	if o.OvertimeThisMonthInMinutes != -2568 {
+		t.Error("expect -2568 but got ", o.OvertimeThisMonthInMinutes)
+	}
+
+	if o.ActiveTimeThisMonthInMinutes != 120 {
+		t.Error("expect 120 but got ", o.ActiveTimeThisMonthInMinutes)
+	}
+
+	if o.OvertimeThisYearInMinutes != -2568 {
+		t.Error("expect -2568 but got ", o.OvertimeThisYearInMinutes)
+	}
+
+	if o.ActiveTimeThisYearInMinutes != 120 {
+		t.Error("expect 120 but got ", o.ActiveTimeThisYearInMinutes)
 	}
 
 	if o.ActiveActivity != nil {

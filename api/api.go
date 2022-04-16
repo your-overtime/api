@@ -18,7 +18,7 @@ import (
 // API struct
 type API struct {
 	mos        pkg.MainOvertimeService
-	router     *gin.Engine
+	Router     *gin.Engine
 	adminToken string
 }
 
@@ -77,8 +77,8 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 	return nil, pkg.ErrUserNotFound
 }
 
-func (a *API) createEndPoints() {
-	api := a.router.Group("/api")
+func (a *API) CreateEndpoints() {
+	api := a.Router.Group("/api")
 
 	v1 := api.Group("/v1")
 
@@ -133,13 +133,13 @@ func (a *API) createEndPoints() {
 // Init API server
 func Init(mos pkg.MainOvertimeService, adminToken string) *API {
 	return &API{
-		router:     gin.Default(),
+		Router:     gin.Default(),
 		mos:        mos,
 		adminToken: adminToken,
 	}
 }
 
 func (a API) Start(host string) {
-	a.createEndPoints()
-	panic(a.router.Run(host))
+	a.CreateEndpoints()
+	panic(a.Router.Run(host))
 }

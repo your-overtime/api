@@ -38,12 +38,12 @@ func (s *Service) SumHolidaysBetweenStartAndEndInMinutes(start time.Time, end ti
 	freeTimeInMinutes := int64(0)
 	for _, a := range holidays {
 		st := a.Start
-		if a.Start.Unix() < start.Unix() {
+		if a.Start.Unix() <= start.Unix() {
 			st = start
 		}
 
 		for {
-			if st.Unix() > end.Unix() || st.Unix() > a.End.Unix() {
+			if st.Unix() >= end.Unix() || st.Unix() >= a.End.Unix() {
 				break
 			}
 			dayFreeTimeInMinutes := int64(0)
@@ -65,11 +65,15 @@ func (s *Service) AddHoliday(h pkg.Holiday) (*pkg.Holiday, error) {
 	if s.readonly {
 		return nil, pkg.ErrReadOnlyAccess
 	}
-	err := s.db.SaveHoliday(&data.HolidayDB{Holiday: h})
+
+	dH := data.HolidayDB{Holiday: h}
+	err := s.db.SaveHoliday(&dH)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
 	}
+	h.ID = dH.ID
+
 	return &h, nil
 }
 
