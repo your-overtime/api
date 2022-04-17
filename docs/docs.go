@@ -87,6 +87,49 @@ var doc = `{
                 }
             }
         },
+        "/activities.ics": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activities.ics"
+                ],
+                "summary": "Get a activities by start and end",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "activities"
+                        }
+                    }
+                }
+            }
+        },
         "/activity": {
             "get": {
                 "security": [
@@ -541,6 +584,49 @@ var doc = `{
                 }
             }
         },
+        "/holidays.ics": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holidays.ics"
+                ],
+                "summary": "Get a holidays by start and end",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "holidays"
+                        }
+                    }
+                }
+            }
+        },
         "/overview": {
             "get": {
                 "security": [
@@ -960,6 +1046,9 @@ var doc = `{
             "properties": {
                 "Name": {
                     "type": "string"
+                },
+                "Readonly": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1064,6 +1153,9 @@ var doc = `{
                 },
                 "Name": {
                     "type": "string"
+                },
+                "Readonly": {
+                    "type": "boolean"
                 },
                 "Token": {
                     "type": "string"
