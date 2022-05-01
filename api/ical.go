@@ -13,7 +13,7 @@ import (
 // ICalActivities godoc
 // @Tags activities.ics
 // @Summary Get a activities by start and end
-// @Produce json
+// @Produce text/calendar
 // @Param start query string true "Start date" format date-time deafault 01.01 of the current year
 // @Param end query string true "End date" format date-time default now
 // @Success 200 activities as ical
@@ -83,7 +83,7 @@ func (a *API) ICalActivities(c *gin.Context) {
 // ICalHolidays godoc
 // @Tags holidays.ics
 // @Summary Get a holidays by start and end
-// @Produce json
+// @Produce text/calendar
 // @Param start query string true "Start date" format date-time deafault 01.01 of the current year
 // @Param end query string true "End date" format date-time default now
 // @Success 200 holidays as ical

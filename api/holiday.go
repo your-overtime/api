@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/pkg/utils"
 )
 
 // CreateHoliday godoc
@@ -39,8 +40,8 @@ func (a *API) CreateHoliday(c *gin.Context) {
 	ho := pkg.Holiday{
 		UserID: user.ID,
 		InputHoliday: pkg.InputHoliday{
-			Start:       ih.Start,
-			End:         ih.End,
+			Start:       utils.DayStart(ih.Start),
+			End:         utils.DayEnd(ih.End),
 			Type:        ih.Type,
 			Description: ih.Description,
 		},
@@ -84,8 +85,8 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 	ho := pkg.Holiday{
 		ID: uint(id),
 		InputHoliday: pkg.InputHoliday{
-			Start:       ih.Start,
-			End:         ih.End,
+			Start:       utils.DayStart(ih.Start),
+			End:         utils.DayEnd(ih.End),
 			Type:        ih.Type,
 			Description: ih.Description,
 		},
@@ -155,7 +156,7 @@ func (a *API) GetHolidays(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	h := []pkg.Holiday{}
+	var h []pkg.Holiday
 	typeStr := c.Query("type")
 	if len(typeStr) > 0 {
 		hType, err := pkg.StrToHolidayType(typeStr)

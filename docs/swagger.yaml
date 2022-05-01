@@ -256,7 +256,7 @@ paths:
         required: true
         type: string
       produces:
-      - application/json
+      - text/calendar
       responses:
         "200":
           description: OK
@@ -550,7 +550,7 @@ paths:
         required: true
         type: string
       produces:
-      - application/json
+      - text/calendar
       responses:
         "200":
           description: OK

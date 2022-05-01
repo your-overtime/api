@@ -82,7 +82,7 @@
                     }
                 ],
                 "produces": [
-                    "application/json"
+                    "text/calendar"
                 ],
                 "tags": [
                     "activities.ics"
@@ -579,7 +579,7 @@
                     }
                 ],
                 "produces": [
-                    "application/json"
+                    "text/calendar"
                 ],
                 "tags": [
                     "holidays.ics"

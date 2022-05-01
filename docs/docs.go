@@ -98,7 +98,7 @@ var doc = `{
                     }
                 ],
                 "produces": [
-                    "application/json"
+                    "text/calendar"
                 ],
                 "tags": [
                     "activities.ics"
@@ -595,7 +595,7 @@ var doc = `{
                     }
                 ],
                 "produces": [
-                    "application/json"
+                    "text/calendar"
                 ],
                 "tags": [
                     "holidays.ics"
