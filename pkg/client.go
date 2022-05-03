@@ -66,7 +66,7 @@ func InitOvertimeClient(host string, authHeader string) OvertimeService {
 }
 
 func (c *client) CalcOverview(d time.Time) (*Overview, error) {
-	resp, err := c.doRequest("GET", "overview", nil)
+	resp, err := c.doRequest("GET", "overview?date="+timeFormatForQuery(d), nil)
 	if err != nil {
 		return nil, err
 	}
