@@ -68,6 +68,8 @@ definitions:
     properties:
       Name:
         type: string
+      Readonly:
+        type: boolean
     type: object
   InputUser:
     properties:
@@ -137,6 +139,8 @@ definitions:
         type: integer
       Name:
         type: string
+      Readonly:
+        type: boolean
       Token:
         type: string
       UserID:
@@ -238,6 +242,32 @@ paths:
       summary: updates a account
       tags:
       - account
+  /activities.ics:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - text/calendar
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: activities
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activities by start and end
+      tags:
+      - activities.ics
   /activity:
     delete:
       produces:
@@ -506,6 +536,32 @@ paths:
       summary: Updates a holiday
       tags:
       - holiday
+  /holidays.ics:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - text/calendar
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: holidays
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a holidays by start and end
+      tags:
+      - holidays.ics
   /overview:
     get:
       parameters:
