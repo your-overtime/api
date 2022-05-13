@@ -128,6 +128,7 @@ func (a *API) CreateEndpoints() {
 
 	// ical / caldav
 	v1.GET("/activities.ics", a.ICalActivities)
+	v1.GET("/holidays.ics", a.ICalHolidays)
 }
 
 // Init API server
