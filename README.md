@@ -1,5 +1,7 @@
 # Your Overtime - API
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/your-overtime/api)](https://goreportcard.com/report/github.com/your-overtime/api)
+
 Swagger documentation can be found on https://your-overtime.de/api/v1/swagger/index.html.
 
 ```yml

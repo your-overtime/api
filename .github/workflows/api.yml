@@ -53,4 +53,8 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ env.TAG }}
             ghcr.io/${{ github.repository }}:${{ env.TAG1 }}
             ghcr.io/${{ github.repository }}:${{ env.TAG2 }}
+      
+      - name: Go report card
+        uses: creekorful/goreportcard-action@v1.0
+
 
