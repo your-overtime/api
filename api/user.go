@@ -13,7 +13,7 @@ import (
 // @Summary creates a user
 // @Produce json
 // @Consume json
-// @Param bottles body pkg.InputUser true "Input user"
+// @Param user body pkg.InputUser true "Input user"
 // @Success 201 {object} pkg.User
 // @Router /user [post]
 // @Security AdminAuth

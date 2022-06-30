@@ -113,8 +113,8 @@ func (a *API) CreateEndpoints() {
 	v1.DELETE("/token/:id", a.DeleteToken)
 
 	// account
-	v1.GET("account", a.GetAccount)
-	v1.PATCH("account", a.UpdateAccount)
+	v1.GET("/account", a.GetAccount)
+	v1.PATCH("/account", a.UpdateAccount)
 
 	// webhook
 	v1.POST("/webhook", a.CreateWebhook)
