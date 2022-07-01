@@ -29,6 +29,11 @@ func setUp(t *testing.T) (*api.API, *service.Service, *pkg.User) {
 		t.Fatal("expect no error but got ", err)
 	}
 	s := service.Init(db)
+	eDB, err := db.GetUserByLogin(e.Login)
+	if err != nil {
+		t.Fatal("expect no error but got ", err)
+	}
+	e = eDB.User
 	ots := s.GetOrCreateInstanceForUser(&e)
 
 	actualService, ok := ots.(*service.Service)

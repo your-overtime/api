@@ -121,6 +121,9 @@ func (s *Service) UpdateAccount(fields map[string]interface{}, user pkg.User) (*
 		return nil, err
 	}
 
+	// perform changes in cached service instance
+	s.user = dbE
+
 	return dbE, nil
 }
 
