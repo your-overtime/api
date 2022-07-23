@@ -15,8 +15,8 @@ import (
 // @Summary Starts a activity
 // @Produce json
 // @Success 201 {object} pkg.Activity
-// @Query desc path string false "Activity description"
-// @Router /activity [post]
+// @Query desc query string false "Activity description"
+// @Router /activity/start [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StartActivity(c *gin.Context) {
@@ -28,6 +28,19 @@ func (a *API) StartActivity(c *gin.Context) {
 	}
 
 	desc := c.Request.FormValue("desc")
+	if len(desc) == 0 {
+		data := map[string]string{}
+		err = c.BindJSON(&data)
+		if err != nil {
+			log.Debug(err)
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		if _, exist := data["desc"]; exist {
+			desc = data["desc"]
+		}
+	}
+
 	ac, err := os.StartActivity(desc)
 	if err == pkg.ErrActivityIsRunning {
 		c.JSON(http.StatusConflict, err.Error())
@@ -46,7 +59,7 @@ func (a *API) StartActivity(c *gin.Context) {
 // @Summary Stops a activity
 // @Produce json
 // @Success 200 {object} pkg.Activity
-// @Router /activity [delete]
+// @Router /activity/stop [delete]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StopActivity(c *gin.Context) {

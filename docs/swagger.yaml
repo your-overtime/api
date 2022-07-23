@@ -269,20 +269,6 @@ paths:
       tags:
       - activities.ics
   /activity:
-    delete:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Activity'
-      security:
-      - BasicAuth: []
-      - ApiKeyAuth: []
-      summary: Stops a activity
-      tags:
-      - activity
     get:
       parameters:
       - description: Start date
@@ -398,6 +384,36 @@ paths:
       summary: Updates a activity
       tags:
       - activity
+  /activity/start:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Starts a activity
+      tags:
+      - activity
+  /activity/stop:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Stops a activity
+      tags:
+      - activity
   /holiday:
     get:
       parameters:
@@ -437,8 +453,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/Holiday'
       security:
@@ -717,8 +733,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/WorkDay'
       security:

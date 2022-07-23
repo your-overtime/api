@@ -210,7 +210,36 @@ var doc = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/activity/start": {
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "Starts a activity",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Activity"
+                        }
+                    }
+                }
+            }
+        },
+        "/activity/stop": {
             "delete": {
                 "security": [
                     {
@@ -423,8 +452,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Holiday"
                         }
@@ -899,8 +928,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/WorkDay"
                         }
