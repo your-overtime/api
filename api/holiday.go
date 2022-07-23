@@ -18,7 +18,7 @@ import (
 // @Produce json
 // @Consume json
 // @Param holiday body pkg.InputHoliday true "Input holiday"
-// @Success 200 {object} pkg.Holiday
+// @Success 201 {object} pkg.Holiday
 // @Router /holiday [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -51,7 +51,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, h)
+		c.JSON(http.StatusCreated, h)
 	}
 }
 

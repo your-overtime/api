@@ -261,7 +261,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: activities
+            type: file
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -321,35 +321,14 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
       summary: Creates a activity
-      tags:
-      - activity
-  /activity/{desc}:
-    post:
-      parameters:
-      - description: Activity description
-        in: path
-        name: desc
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Activity'
-      security:
-      - BasicAuth: []
-      - ApiKeyAuth: []
-      summary: Starts a activity
       tags:
       - activity
   /activity/{id}:
@@ -414,7 +393,6 @@ paths:
           schema:
             $ref: '#/definitions/Activity'
       security:
-      - BasicAuth ApiKeyAuth: []
       - BasicAuth: []
       - ApiKeyAuth: []
       summary: Updates a activity
@@ -555,7 +533,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: holidays
+            type: file
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -646,7 +624,7 @@ paths:
       parameters:
       - description: Input user
         in: body
-        name: bottles
+        name: user
         required: true
         schema:
           $ref: '#/definitions/InputUser'

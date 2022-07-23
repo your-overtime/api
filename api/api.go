@@ -88,7 +88,7 @@ func (a *API) CreateEndpoints() {
 	v1.GET("/overview", a.GetOverview)
 
 	// activity
-	v1.POST("/activity/:desc", a.StartActivity)
+	v1.POST("/activity", a.StartActivity)
 	v1.DELETE("/activity", a.StopActivity)
 	v1.POST("/activity", a.CreateActivity)
 	v1.PUT("/activity/:id", a.UpdateActivity)

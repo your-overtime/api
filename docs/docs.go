@@ -124,7 +124,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "activities"
+                            "type": "file"
                         }
                     }
                 }
@@ -203,8 +203,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Activity"
                         }
@@ -227,42 +227,6 @@ var doc = `{
                     "activity"
                 ],
                 "summary": "Stops a activity",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Activity"
-                        }
-                    }
-                }
-            }
-        },
-        "/activity/{desc}": {
-            "post": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    },
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "activity"
-                ],
-                "summary": "Starts a activity",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Activity description",
-                        "name": "desc",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -310,9 +274,6 @@ var doc = `{
             },
             "put": {
                 "security": [
-                    {
-                        "BasicAuth ApiKeyAuth": []
-                    },
                     {
                         "BasicAuth": []
                     },
@@ -621,7 +582,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "holidays"
+                            "type": "file"
                         }
                     }
                 }
@@ -781,7 +742,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Input user",
-                        "name": "bottles",
+                        "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {

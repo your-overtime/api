@@ -14,9 +14,9 @@ import (
 // @Tags activity
 // @Summary Starts a activity
 // @Produce json
-// @Success 200 {object} pkg.Activity
-// @Param desc path string true "Activity description"
-// @Router /activity/{desc} [post]
+// @Success 201 {object} pkg.Activity
+// @Query desc path string false "Activity description"
+// @Router /activity [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StartActivity(c *gin.Context) {
@@ -27,7 +27,7 @@ func (a *API) StartActivity(c *gin.Context) {
 		return
 	}
 
-	desc := c.Param("desc")
+	desc := c.Request.FormValue("desc")
 	ac, err := os.StartActivity(desc)
 	if err == pkg.ErrActivityIsRunning {
 		c.JSON(http.StatusConflict, err.Error())
@@ -37,7 +37,7 @@ func (a *API) StartActivity(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, ac)
+		c.JSON(http.StatusCreated, ac)
 	}
 }
 
@@ -73,7 +73,7 @@ func (a *API) StopActivity(c *gin.Context) {
 // @Produce json
 // @Consume json
 // @Param activity body pkg.InputActivity true "input activity"
-// @Success 200 {object} pkg.Activity
+// @Success 201 {object} pkg.Activity
 // @Router /activity [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -107,13 +107,12 @@ func (a *API) CreateActivity(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, ac)
+		c.JSON(http.StatusCreated, ac)
 	}
 }
 
 // UpdateActivity godoc
 // @Tags activity
-// @Security BasicAuth ApiKeyAuth
 // @Summary Updates a activity
 // @Produce json
 // @Consume json
