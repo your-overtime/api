@@ -79,7 +79,7 @@ func (c *client) CalcOverview(d time.Time) (*Overview, error) {
 }
 
 func (c *client) StartActivity(desc string) (*Activity, error) {
-	resp, err := c.doRequest("POST", "activity/"+desc, nil)
+	resp, err := c.doRequest("POST", "activity/start?desc="+desc, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (c *client) UpdateActivity(activity Activity) (*Activity, error) {
 }
 
 func (c *client) StopRunningActivity() (*Activity, error) {
-	resp, err := c.doRequest("DELETE", "activity", nil)
+	resp, err := c.doRequest("DELETE", "activity/stop", nil)
 	if err != nil {
 		return nil, err
 	}
