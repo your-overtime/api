@@ -80,54 +80,54 @@ func (a *API) getOvertimeServiceForUserFromRequest(c *gin.Context) (pkg.Overtime
 func (a *API) CreateEndpoints() {
 	api := a.Router.Group("/api")
 
-	v1 := api.Group("/v1")
+	v2 := api.Group("/v2")
 
-	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v2.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Overview
-	v1.GET("/overview", a.GetOverview)
+	v2.GET("/overview", a.GetOverview)
 
 	// activity
-	v1.PATCH("/activity/stop", a.StopActivity)
-	v1.POST("/activity", a.CreateActivity)
-	v1.PUT("/activity/:id", a.UpdateActivity)
-	v1.GET("/activity/:id", a.GetActivity)
-	v1.GET("/activity", a.GetActivities)
-	v1.DELETE("/activity/:id", a.DeleteActivity)
+	v2.PATCH("/activity/stop", a.StopActivity)
+	v2.POST("/activity", a.CreateActivity)
+	v2.PUT("/activity/:id", a.UpdateActivity)
+	v2.GET("/activity/:id", a.GetActivity)
+	v2.GET("/activity", a.GetActivities)
+	v2.DELETE("/activity/:id", a.DeleteActivity)
 
 	// holiday
-	v1.POST("/holiday", a.CreateHoliday)
-	v1.PUT("/holiday/:id", a.UpdateHoliday)
-	v1.GET("/holiday/:id", a.GetHoliday)
-	v1.GET("/holiday", a.GetHolidays)
-	v1.DELETE("/holiday/:id", a.DeleteHoliday)
+	v2.POST("/holiday", a.CreateHoliday)
+	v2.PUT("/holiday/:id", a.UpdateHoliday)
+	v2.GET("/holiday/:id", a.GetHoliday)
+	v2.GET("/holiday", a.GetHolidays)
+	v2.DELETE("/holiday/:id", a.DeleteHoliday)
 
 	// workday
-	v1.GET("/workday", a.GetWorkDays)
-	v1.POST("/workday", a.CreateWorkDay)
+	v2.GET("/workday", a.GetWorkDays)
+	v2.POST("/workday", a.CreateWorkDay)
 
 	// token
-	v1.GET("/token", a.GetTokens)
-	v1.POST("/token", a.CreateToken)
-	v1.DELETE("/token/:id", a.DeleteToken)
+	v2.GET("/token", a.GetTokens)
+	v2.POST("/token", a.CreateToken)
+	v2.DELETE("/token/:id", a.DeleteToken)
 
 	// account
-	v1.GET("/account", a.GetAccount)
-	v1.PATCH("/account", a.UpdateAccount)
+	v2.GET("/account", a.GetAccount)
+	v2.PATCH("/account", a.UpdateAccount)
 
 	// webhook
-	v1.POST("/webhook", a.CreateWebhook)
-	v1.GET("/webhook", a.GetWebhooks)
+	v2.POST("/webhook", a.CreateWebhook)
+	v2.GET("/webhook", a.GetWebhooks)
 
 	// user
-	authorizedV1 := v1.Group("/", a.adminAuth())
+	authorizedV2 := v2.Group("/", a.adminAuth())
 	{
-		authorizedV1.POST("/user", a.CreateUser)
+		authorizedV2.POST("/user", a.CreateUser)
 	}
 
 	// ical / caldav
-	v1.GET("/activities.ics", a.ICalActivities)
-	v1.GET("/holidays.ics", a.ICalHolidays)
+	v2.GET("/activities.ics", a.ICalActivities)
+	v2.GET("/holidays.ics", a.ICalHolidays)
 }
 
 // Init API server
