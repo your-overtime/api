@@ -32,7 +32,7 @@ func TestUpdateAccount(t *testing.T) {
 		t.Fatal("expect no error but got: ", err)
 	}
 
-	req, err := http.NewRequest(http.MethodPatch, "/api/v1/account", bytes.NewBuffer(dataBytes.Bytes()))
+	req, err := http.NewRequest(http.MethodPatch, "/api/v2/account", bytes.NewBuffer(dataBytes.Bytes()))
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
@@ -45,7 +45,7 @@ func TestUpdateAccount(t *testing.T) {
 		t.Error("expect status 200 but got: ", w.Result().StatusCode)
 	}
 
-	req, err = http.NewRequest(http.MethodGet, "/api/v1/account", nil)
+	req, err = http.NewRequest(http.MethodGet, "/api/v2/account", nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}

@@ -52,7 +52,7 @@ func TestGetHoliday(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	req, err := http.NewRequest("Get", "/api/v1/holiday/1", nil)
+	req, err := http.NewRequest("Get", "/api/v2/holiday/1", nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
@@ -84,7 +84,7 @@ func TestGetHoliday(t *testing.T) {
 		t.Fatal("expect no error but got: ", err)
 	}
 
-	req, err = http.NewRequest("Get", fmt.Sprintf("/api/v1/holiday/%d?token=%s", h.ID, token.Token), nil)
+	req, err = http.NewRequest("Get", fmt.Sprintf("/api/v2/holiday/%d?token=%s", h.ID, token.Token), nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
@@ -95,7 +95,7 @@ func TestGetHoliday(t *testing.T) {
 		t.Error("expect status 404 but got: ", w.Result().StatusCode)
 	}
 
-	req, err = http.NewRequest("Get", fmt.Sprintf("/api/v1/holiday?token=%s", token.Token), nil)
+	req, err = http.NewRequest("Get", fmt.Sprintf("/api/v2/holiday?token=%s", token.Token), nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}

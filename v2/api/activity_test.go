@@ -25,7 +25,7 @@ func TestStartActivity(t *testing.T) {
 	payload, _ := json.Marshal(map[string]string{
 		"Description": "Test2",
 	})
-	req, err := http.NewRequest("POST", "/api/v1/activity?token="+token.Token, bytes.NewBuffer(payload))
+	req, err := http.NewRequest("POST", "/api/v2/activity?token="+token.Token, bytes.NewBuffer(payload))
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
@@ -51,7 +51,7 @@ func TestStartActivity(t *testing.T) {
 
 	w = httptest.NewRecorder()
 	payload, _ = json.Marshal(map[string]string{})
-	req, err = http.NewRequest("POST", "/api/v1/activity?token="+token.Token, bytes.NewBuffer(payload))
+	req, err = http.NewRequest("POST", "/api/v2/activity?token="+token.Token, bytes.NewBuffer(payload))
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
