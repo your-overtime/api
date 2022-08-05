@@ -1,0 +1,9 @@
+FROM golang:alpine as build
+RUN apk --no-cache add tzdata git ca-certificates
+
+FROM scratch as final
+COPY overtime overtime
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+USER 7000
+ENTRYPOINT ["/overtime"]

@@ -14,9 +14,9 @@ import (
 // @Tags activities.ics
 // @Summary Get a activities by start and end
 // @Produce text/calendar
-// @Param start query string true "Start date" format date-time deafault 01.01 of the current year
+// @Param start query string true "Start date" format date-time default 01.01 of the current year
 // @Param end query string true "End date" format date-time default now
-// @Success 200 activities as ical
+// @Success 200 file activities as ical
 // @Router /activities.ics [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -86,7 +86,7 @@ func (a *API) ICalActivities(c *gin.Context) {
 // @Produce text/calendar
 // @Param start query string true "Start date" format date-time deafault 01.01 of the current year
 // @Param end query string true "End date" format date-time default now
-// @Success 200 holidays as ical
+// @Success 200 file holidays as ical
 // @Router /holidays.ics [get]
 // @Security BasicAuth
 // @Security ApiKeyAuth

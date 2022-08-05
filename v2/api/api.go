@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -88,8 +88,7 @@ func (a *API) CreateEndpoints() {
 	v1.GET("/overview", a.GetOverview)
 
 	// activity
-	v1.POST("/activity/:desc", a.StartActivity)
-	v1.DELETE("/activity", a.StopActivity)
+	v1.PATCH("/activity/stop", a.StopActivity)
 	v1.POST("/activity", a.CreateActivity)
 	v1.PUT("/activity/:id", a.UpdateActivity)
 	v1.GET("/activity/:id", a.GetActivity)

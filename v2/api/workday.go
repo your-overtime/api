@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 )
 
 // GetWorkDays godoc
@@ -53,7 +53,7 @@ func (a *API) GetWorkDays(c *gin.Context) {
 // @Produce json
 // @Consume json
 // @Param workday body pkg.InputWorkDay true "Input workday"
-// @Success 200 {object} pkg.WorkDay
+// @Success 201 {object} pkg.WorkDay
 // @Router /workday [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -85,6 +85,6 @@ func (a *API) CreateWorkDay(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, h)
+		c.JSON(http.StatusCreated, h)
 	}
 }

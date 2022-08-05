@@ -261,7 +261,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: activities
+            type: file
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -269,20 +269,6 @@ paths:
       tags:
       - activities.ics
   /activity:
-    delete:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Activity'
-      security:
-      - BasicAuth: []
-      - ApiKeyAuth: []
-      summary: Stops a activity
-      tags:
-      - activity
     get:
       parameters:
       - description: Start date
@@ -321,35 +307,14 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/Activity'
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
       summary: Creates a activity
-      tags:
-      - activity
-  /activity/{desc}:
-    post:
-      parameters:
-      - description: Activity description
-        in: path
-        name: desc
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Activity'
-      security:
-      - BasicAuth: []
-      - ApiKeyAuth: []
-      summary: Starts a activity
       tags:
       - activity
   /activity/{id}:
@@ -414,10 +379,39 @@ paths:
           schema:
             $ref: '#/definitions/Activity'
       security:
-      - BasicAuth ApiKeyAuth: []
       - BasicAuth: []
       - ApiKeyAuth: []
       summary: Updates a activity
+      tags:
+      - activity
+  /activity/start:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Starts a activity
+      tags:
+      - activity
+  /activity/stop:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Stops a activity
       tags:
       - activity
   /holiday:
@@ -459,8 +453,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/Holiday'
       security:
@@ -555,7 +549,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: holidays
+            type: file
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
@@ -646,7 +640,7 @@ paths:
       parameters:
       - description: Input user
         in: body
-        name: bottles
+        name: user
         required: true
         schema:
           $ref: '#/definitions/InputUser'
@@ -739,8 +733,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/WorkDay'
       security:

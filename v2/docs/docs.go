@@ -124,7 +124,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "activities"
+                            "type": "file"
                         }
                     }
                 }
@@ -203,33 +203,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Activity"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    },
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "activity"
-                ],
-                "summary": "Stops a activity",
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Activity"
                         }
@@ -237,7 +212,7 @@ var doc = `{
                 }
             }
         },
-        "/activity/{desc}": {
+        "/activity/start": {
             "post": {
                 "security": [
                     {
@@ -254,15 +229,33 @@ var doc = `{
                     "activity"
                 ],
                 "summary": "Starts a activity",
-                "parameters": [
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Activity"
+                        }
+                    }
+                }
+            }
+        },
+        "/activity/stop": {
+            "delete": {
+                "security": [
                     {
-                        "type": "string",
-                        "description": "Activity description",
-                        "name": "desc",
-                        "in": "path",
-                        "required": true
+                        "BasicAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
                     }
                 ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "Stops a activity",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -310,9 +303,6 @@ var doc = `{
             },
             "put": {
                 "security": [
-                    {
-                        "BasicAuth ApiKeyAuth": []
-                    },
                     {
                         "BasicAuth": []
                     },
@@ -462,8 +452,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Holiday"
                         }
@@ -621,7 +611,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "holidays"
+                            "type": "file"
                         }
                     }
                 }
@@ -781,7 +771,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Input user",
-                        "name": "bottles",
+                        "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -938,8 +928,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/WorkDay"
                         }

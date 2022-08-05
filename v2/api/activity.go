@@ -7,46 +7,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/your-overtime/api/pkg"
+	"github.com/your-overtime/api/v2/pkg"
 )
-
-// StartActivity godoc
-// @Tags activity
-// @Summary Starts a activity
-// @Produce json
-// @Success 200 {object} pkg.Activity
-// @Param desc path string true "Activity description"
-// @Router /activity/{desc} [post]
-// @Security BasicAuth
-// @Security ApiKeyAuth
-func (a *API) StartActivity(c *gin.Context) {
-	os, err := a.getOvertimeServiceForUserFromRequest(c)
-	if err != nil {
-		log.Debug(err)
-		c.JSON(http.StatusUnauthorized, err)
-		return
-	}
-
-	desc := c.Param("desc")
-	ac, err := os.StartActivity(desc)
-	if err == pkg.ErrActivityIsRunning {
-		c.JSON(http.StatusConflict, err.Error())
-	} else if err == pkg.ErrEmptyDescriptionNotAllowed {
-		c.JSON(http.StatusBadRequest, err.Error())
-	} else if err != nil {
-		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
-	} else {
-		c.JSON(http.StatusOK, ac)
-	}
-}
 
 // StopActivity godoc
 // @Tags activity
 // @Summary Stops a activity
 // @Produce json
 // @Success 200 {object} pkg.Activity
-// @Router /activity [delete]
+// @Router /activity/stop [delete]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StopActivity(c *gin.Context) {
@@ -73,11 +42,16 @@ func (a *API) StopActivity(c *gin.Context) {
 // @Produce json
 // @Consume json
 // @Param activity body pkg.InputActivity true "input activity"
-// @Success 200 {object} pkg.Activity
+// @Success 201 {object} pkg.Activity
 // @Router /activity [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) CreateActivity(c *gin.Context) {
+	var (
+		ac  *pkg.Activity
+		err error
+	)
+
 	os, err := a.getOvertimeServiceForUserFromRequest(c)
 	if err != nil {
 		log.Debug(err)
@@ -85,35 +59,39 @@ func (a *API) CreateActivity(c *gin.Context) {
 		return
 	}
 	var ia pkg.InputActivity
-	err = c.Bind(&ia)
+	err = c.BindJSON(&ia)
 	if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	user, _ := os.GetAccount()
-	act := pkg.Activity{
-		UserID: user.ID,
-		InputActivity: pkg.InputActivity{
-			Start:       ia.Start,
-			End:         ia.End,
-			Description: ia.Description,
-		},
+
+	if ia.Start == nil {
+		ac, err = os.StartActivity(ia.Description)
+	} else {
+		user, _ := os.GetAccount()
+		act := pkg.Activity{
+			UserID: user.ID,
+			InputActivity: pkg.InputActivity{
+				Start:       ia.Start,
+				End:         ia.End,
+				Description: ia.Description,
+			},
+		}
+		ac, err = os.AddActivity(act)
 	}
-	ac, err := os.AddActivity(act)
 	if err == pkg.ErrEmptyDescriptionNotAllowed {
 		c.JSON(http.StatusBadRequest, err.Error())
 	} else if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, ac)
+		c.JSON(http.StatusCreated, ac)
 	}
 }
 
 // UpdateActivity godoc
 // @Tags activity
-// @Security BasicAuth ApiKeyAuth
 // @Summary Updates a activity
 // @Produce json
 // @Consume json

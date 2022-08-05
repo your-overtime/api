@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/your-overtime/api/pkg"
-	"github.com/your-overtime/api/pkg/utils"
+	"github.com/your-overtime/api/v2/pkg"
+	"github.com/your-overtime/api/v2/pkg/utils"
 )
 
 // CreateHoliday godoc
@@ -18,7 +18,7 @@ import (
 // @Produce json
 // @Consume json
 // @Param holiday body pkg.InputHoliday true "Input holiday"
-// @Success 200 {object} pkg.Holiday
+// @Success 201 {object} pkg.Holiday
 // @Router /holiday [post]
 // @Security BasicAuth
 // @Security ApiKeyAuth
@@ -51,7 +51,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, h)
+		c.JSON(http.StatusCreated, h)
 	}
 }
 
