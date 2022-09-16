@@ -5,7 +5,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "basePath": "/api/v1",
+    "basePath": "/api/v2",
     "paths": {
         "/account": {
             "get": {
@@ -186,33 +186,6 @@
                         }
                     }
                 ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/Activity"
-                        }
-                    }
-                }
-            }
-        },
-        "/activity/start": {
-            "post": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    },
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "activity"
-                ],
-                "summary": "Starts a activity",
                 "responses": {
                     "201": {
                         "description": "Created",

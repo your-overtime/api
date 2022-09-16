@@ -1,4 +1,4 @@
-basePath: /api/v1
+basePath: /api/v2
 definitions:
   Activity:
     properties:
@@ -382,21 +382,6 @@ paths:
       - BasicAuth: []
       - ApiKeyAuth: []
       summary: Updates a activity
-      tags:
-      - activity
-  /activity/start:
-    post:
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/Activity'
-      security:
-      - BasicAuth: []
-      - ApiKeyAuth: []
-      summary: Starts a activity
       tags:
       - activity
   /activity/stop:

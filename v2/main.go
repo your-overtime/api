@@ -19,7 +19,7 @@ var version = "2.0.0"
 
 // @title Your Overtime API
 // @version 1.0
-// @BasePath /api/v1
+// @BasePath /api/v2
 // @securityDefinitions.basic BasicAuth
 //
 // @securityDefinitions.apikey ApiKeyAuth
