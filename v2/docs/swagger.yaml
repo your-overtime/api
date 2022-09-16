@@ -1,0 +1,757 @@
+basePath: /api/v1
+definitions:
+  Activity:
+    properties:
+      ActualDurationInMinutes:
+        type: integer
+      Description:
+        type: string
+      End:
+        format: date-time
+        type: string
+        x-nullable: true
+      EventualDurationInMinutes:
+        type: integer
+      ID:
+        type: integer
+      Start:
+        format: date-time
+        type: string
+        x-nullable: true
+      UserID:
+        type: integer
+    type: object
+  Holiday:
+    properties:
+      Description:
+        type: string
+      End:
+        format: date-time
+        type: string
+      ID:
+        type: integer
+      Start:
+        format: date-time
+        type: string
+      Type:
+        type: string
+      UserID:
+        type: integer
+    type: object
+  InputActivity:
+    properties:
+      Description:
+        type: string
+      End:
+        format: date-time
+        type: string
+        x-nullable: true
+      Start:
+        format: date-time
+        type: string
+        x-nullable: true
+    type: object
+  InputHoliday:
+    properties:
+      Description:
+        type: string
+      End:
+        format: date-time
+        type: string
+      Start:
+        format: date-time
+        type: string
+      Type:
+        type: string
+    type: object
+  InputToken:
+    properties:
+      Name:
+        type: string
+      Readonly:
+        type: boolean
+    type: object
+  InputUser:
+    properties:
+      Login:
+        type: string
+      Name:
+        type: string
+      NumHolidays:
+        type: integer
+      NumWorkingDays:
+        type: integer
+      Password:
+        type: string
+      Surname:
+        type: string
+      WeekWorkingTimeInMinutes:
+        type: integer
+      WorkingDays:
+        type: string
+    type: object
+  InputWorkDay:
+    properties:
+      ActiveTime:
+        type: integer
+      Day:
+        format: date-time
+        type: string
+      Overtime:
+        type: integer
+      UserID:
+        type: integer
+    type: object
+  Overtime:
+    properties:
+      ActiveActivity:
+        $ref: '#/definitions/Activity'
+        x-nullable: true
+      ActiveTimeThisDayInMinutes:
+        type: integer
+      ActiveTimeThisMonthInMinutes:
+        type: integer
+      ActiveTimeThisWeekInMinutes:
+        type: integer
+      ActiveTimeThisYearInMinutes:
+        type: integer
+      Date:
+        format: date-time
+        type: string
+      HolidaysStillAvailable:
+        type: integer
+      OvertimeThisDayInMinutes:
+        type: integer
+      OvertimeThisMonthInMinutes:
+        type: integer
+      OvertimeThisWeekInMinutes:
+        type: integer
+      OvertimeThisYearInMinutes:
+        type: integer
+      UsedHolidays:
+        type: integer
+      WeekNumber:
+        type: integer
+    type: object
+  Token:
+    properties:
+      ID:
+        type: integer
+      Name:
+        type: string
+      Readonly:
+        type: boolean
+      Token:
+        type: string
+      UserID:
+        type: integer
+    type: object
+  User:
+    properties:
+      ID:
+        type: integer
+      Login:
+        type: string
+      Name:
+        type: string
+      NumHolidays:
+        type: integer
+      NumWorkingDays:
+        type: integer
+      Surname:
+        type: string
+      Tokens:
+        items:
+          $ref: '#/definitions/Token'
+        type: array
+      WeekWorkingTimeInMinutes:
+        type: integer
+      WorkingDays:
+        type: string
+    type: object
+  Webhook:
+    properties:
+      HeaderKey:
+        type: string
+      HeaderValue:
+        type: string
+      ID:
+        type: integer
+      ReadOnly:
+        type: boolean
+      TargetURL:
+        type: string
+      UserID:
+        type: integer
+    type: object
+  WorkDay:
+    properties:
+      ActiveTime:
+        type: integer
+      Day:
+        format: date-time
+        type: string
+      ID:
+        type: integer
+      IsHoliday:
+        type: boolean
+      Overtime:
+        type: integer
+      UserID:
+        type: integer
+    type: object
+info:
+  contact: {}
+  title: Your Overtime API
+  version: "1.0"
+paths:
+  /account:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves account information
+      tags:
+      - account
+    patch:
+      parameters:
+      - description: input account fields
+        in: body
+        name: account
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: updates a account
+      tags:
+      - account
+  /activities.ics:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - text/calendar
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activities by start and end
+      tags:
+      - activities.ics
+  /activity:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/Activity'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activities by start and end
+      tags:
+      - activity
+    post:
+      parameters:
+      - description: input activity
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/InputActivity'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Creates a activity
+      tags:
+      - activity
+  /activity/{id}:
+    delete:
+      parameters:
+      - description: Activity id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Delete a activity
+      tags:
+      - activity
+    get:
+      parameters:
+      - description: Activity id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activity by id
+      tags:
+      - activity
+    put:
+      parameters:
+      - description: input activity
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/InputActivity'
+      - description: Activity id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Updates a activity
+      tags:
+      - activity
+  /activity/start:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Starts a activity
+      tags:
+      - activity
+  /activity/stop:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Activity'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Stops a activity
+      tags:
+      - activity
+  /holiday:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/Holiday'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a activities by start and end
+      tags:
+      - holiday
+    post:
+      parameters:
+      - description: Input holiday
+        in: body
+        name: holiday
+        required: true
+        schema:
+          $ref: '#/definitions/InputHoliday'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Creates a holiday
+      tags:
+      - holiday
+  /holiday/{id}:
+    delete:
+      parameters:
+      - description: Holiday id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Delete a holiday
+      tags:
+      - holiday
+    get:
+      parameters:
+      - description: Holiday id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a holiday by id
+      tags:
+      - holiday
+    put:
+      parameters:
+      - description: Input holiday
+        in: body
+        name: holiday
+        required: true
+        schema:
+          $ref: '#/definitions/InputHoliday'
+      - description: Holiday id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Holiday'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Updates a holiday
+      tags:
+      - holiday
+  /holidays.ics:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - text/calendar
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Get a holidays by start and end
+      tags:
+      - holidays.ics
+  /overview:
+    get:
+      parameters:
+      - description: Calculation date
+        in: query
+        name: date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Overtime'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves overview of your overtime
+      tags:
+      - overview
+  /token:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/Token'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves tokens
+      tags:
+      - token
+    post:
+      parameters:
+      - description: Input token
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/InputToken'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Token'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: creates a token
+      tags:
+      - token
+  /token/{id}:
+    delete:
+      parameters:
+      - description: Token id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Token'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Delete a token
+      tags:
+      - token
+  /user:
+    post:
+      parameters:
+      - description: Input user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/InputUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/User'
+      security:
+      - AdminAuth: []
+      summary: creates a user
+      tags:
+      - user
+  /webhook:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/Webhook'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Receives users registered webhooks
+      tags:
+      - webhook
+    post:
+      parameters:
+      - description: Webhook
+        in: body
+        name: webhook
+        required: true
+        schema:
+          $ref: '#/definitions/Webhook'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Webhook'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: create a webhook
+      tags:
+      - webhook
+  /workday:
+    get:
+      parameters:
+      - description: Start date
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End date
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/WorkDay'
+            type: array
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: Retrieves workdays
+      tags:
+      - workday
+    post:
+      parameters:
+      - description: Input workday
+        in: body
+        name: workday
+        required: true
+        schema:
+          $ref: '#/definitions/InputWorkDay'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/WorkDay'
+      security:
+      - BasicAuth: []
+      - ApiKeyAuth: []
+      summary: creates a workdays
+      tags:
+      - workday
+securityDefinitions:
+  AdminAuth:
+    in: query
+    name: adminToken
+    type: apiKey
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"
