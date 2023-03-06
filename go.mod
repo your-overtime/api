@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/emersion/go-ical v0.0.0-20220406103352-1c2d2bd7962b
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/joho/godotenv v1.3.0
