@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/your-overtime/api/v2/pkg"
 )
 
@@ -15,8 +16,9 @@ func (d *Db) SaveHoliday(a *HolidayDB) error {
 func (d *Db) GetHoliday(id uint) (*HolidayDB, error) {
 	h := HolidayDB{}
 	tx := d.Conn.First(&h, id)
-	if tx.Error != nil {
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 	return &h, nil
 }

@@ -66,6 +66,7 @@ type MainOvertimeService interface {
 
 var (
 	ErrUserNotFound               = errors.New("User not found")
+	ErrNotFound                   = errors.New("not found")
 	ErrInvalidCredentials         = errors.New("Login or password are wrong")
 	ErrBadRequest                 = errors.New("Bad request")
 	ErrPermissionDenied           = errors.New("Permission denied")

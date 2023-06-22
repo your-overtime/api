@@ -4,14 +4,17 @@ import (
 	"time"
 
 	"database/sql"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (d *Db) GetWorkDay(day time.Time, userID uint) (*WorkDayDB, error) {
 	w := WorkDayDB{}
 	tx := d.Conn.Where("DATE(day) = DATE(?)", day).Where("user_id = ?", userID).First(&w)
 
-	if tx.Error != nil {
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 
 	return &w, nil

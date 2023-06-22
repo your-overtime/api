@@ -136,7 +136,8 @@ func (s *Service) StopRunningActivityWithTime(now time.Time) (*pkg.Activity, err
 
 func (s *Service) GetActivity(id uint) (*pkg.Activity, error) {
 	a, err := s.db.GetActivity(id, s.user.ID)
-	if err != nil {
+	if err = data.HandleErr(err); err != nil {
+		log.Debug(err)
 		return nil, err
 	}
 
@@ -166,7 +167,8 @@ func (s *Service) UpdateActivity(a pkg.Activity) (*pkg.Activity, error) {
 		return nil, pkg.ErrReadOnlyAccess
 	}
 	aDB, err := s.db.GetActivity(a.ID, s.user.ID)
-	if err != nil {
+	if err = data.HandleErr(err); err != nil {
+		log.Debug(err)
 		return nil, err
 	}
 
@@ -194,7 +196,8 @@ func (s *Service) DelActivity(id uint) error {
 		return pkg.ErrReadOnlyAccess
 	}
 	a, err := s.db.GetActivity(id, s.user.ID)
-	if err != nil {
+	if err = data.HandleErr(err); err != nil {
+		log.Debug(err)
 		return err
 	}
 	return s.db.Conn.Delete(a).Error

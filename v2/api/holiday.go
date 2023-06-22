@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -119,7 +120,10 @@ func (a *API) GetHoliday(c *gin.Context) {
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	h, err := os.GetHoliday(uint(id))
-	if err != nil {
+
+	if errors.Is(err, pkg.ErrNotFound) {
+		c.JSON(http.StatusNotFound, err)
+	} else if err != nil {
 		log.Debug(err)
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
