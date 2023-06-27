@@ -11,8 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/your-overtime/api/pkg"
 
+	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 // API struct
@@ -82,7 +82,7 @@ func (a *API) CreateEndpoints() {
 
 	v1 := api.Group("/v1")
 
-	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Overview
 	v1.GET("/overview", a.GetOverview)

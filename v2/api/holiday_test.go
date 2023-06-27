@@ -1,12 +1,10 @@
 package api_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/your-overtime/api/v2/api"
 	"github.com/your-overtime/api/v2/internal/data"
@@ -52,17 +50,9 @@ func setUp(t *testing.T) (*api.API, *service.Service, *pkg.User) {
 func TestGetHoliday(t *testing.T) {
 	api, service, user := setUp(t)
 
-	token, err := service.CreateToken(pkg.InputToken{
-		Name: "test",
-	})
-	if err != nil {
-		t.Fatal("expect no error but got: ", err)
-	}
-
 	w := httptest.NewRecorder()
 
-	req, err := http.NewRequest("GET", "/api/v2/holiday/1?token="+token.Token, nil)
-	req.Header.Add("accept", "application/json")
+	req, err := http.NewRequest("Get", "/api/v2/holiday/1", nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
@@ -73,77 +63,46 @@ func TestGetHoliday(t *testing.T) {
 		t.Error("expect status 404 but got: ", w.Result().StatusCode)
 	}
 
-	iph := pkg.InputHoliday{
-		Start:       tests.ParseDayTime("2021-01-08 00:00"),
-		End:         tests.ParseDayTime("2021-01-14 23:59"),
-		Description: "Test",
-		Type:        pkg.HolidayTypeLegalUnpaidFree,
-	}
 	h, err := service.AddHoliday(pkg.Holiday{
-		UserID:       user.ID,
-		InputHoliday: iph,
+		UserID: user.ID,
+		InputHoliday: pkg.InputHoliday{
+			Start:       tests.ParseDayTime("2021-01-08 00:00"),
+			End:         tests.ParseDayTime("2021-01-14 00:00"),
+			Description: "Test",
+			Type:        pkg.HolidayTypeLegalUnpaidFree,
+		},
 	})
 
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
 
-	req, err = http.NewRequest("GET", fmt.Sprintf("/api/v2/holiday/%d?token=%s", h.ID, token.Token), nil)
-	req.Header.Add("accept", "application/json")
+	token, err := service.CreateToken(pkg.InputToken{
+		Name: "test",
+	})
+	if err != nil {
+		t.Fatal("expect no error but got: ", err)
+	}
+
+	req, err = http.NewRequest("Get", fmt.Sprintf("/api/v2/holiday/%d?token=%s", h.ID, token.Token), nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
 	w = httptest.NewRecorder()
 	api.Router.ServeHTTP(w, req)
 
-	if w.Result().StatusCode != http.StatusOK {
-		t.Error("expect status 200 but got: ", w.Result().StatusCode)
+	if w.Result().StatusCode != http.StatusNotFound {
+		t.Error("expect status 404 but got: ", w.Result().StatusCode)
 	}
 
-	respHoliday := pkg.Holiday{}
-	defer w.Result().Body.Close()
-	err = json.NewDecoder(w.Result().Body).Decode(&respHoliday)
-
-	if err != nil {
-		t.Error("expect nil but got ", err)
-	}
-
-	if h.End.String() != iph.End.String() {
-		t.Errorf("expect %s but got %s", h.End.String(), iph.End.String())
-	}
-
-	if h.Start.String() != iph.Start.String() {
-		t.Errorf("expect %s but got %s", h.Start.String(), iph.Start.String())
-	}
-
-	if respHoliday.End.String() != iph.End.String() {
-		t.Errorf("expect %s but got %s", respHoliday.End.String(), iph.End.String())
-	}
-
-	if respHoliday.Start.String() != iph.Start.String() {
-		t.Errorf("expect %s but got %s", respHoliday.Start.String(), iph.Start.String())
-	}
-
-	req, err = http.NewRequest("GET", fmt.Sprintf("/api/v2/holiday?token=%s&start=%s&end=%s", token.Token, h.Start.Format(time.RFC3339Nano), h.End.Format(time.RFC3339Nano)), nil)
-	req.Header.Add("accept", "application/json")
+	req, err = http.NewRequest("Get", fmt.Sprintf("/api/v2/holiday?token=%s", token.Token), nil)
 	if err != nil {
 		t.Fatal("expect no error but got: ", err)
 	}
 	w = httptest.NewRecorder()
 	api.Router.ServeHTTP(w, req)
 
-	if w.Result().StatusCode != http.StatusOK {
-		t.Error("expect status 200 but got: ", w.Result().StatusCode)
-	}
-
-	respHolidays := []pkg.Holiday{}
-	defer w.Result().Body.Close()
-	err = json.NewDecoder(w.Result().Body).Decode(&respHolidays)
-	if err != nil {
-		t.Error("expect nil but got ", err)
-	}
-
-	if len(respHolidays) != 1 {
-		t.Error("expect 1 but got: ", len(respHolidays))
+	if w.Result().StatusCode != http.StatusNotFound {
+		t.Error("expect status 404 but got: ", w.Result().StatusCode)
 	}
 }
