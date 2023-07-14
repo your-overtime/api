@@ -1,12 +1,14 @@
 package data
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/your-overtime/api/v2/pkg"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -55,4 +57,11 @@ func InitWithDialector(dialector gorm.Dialector) (*Db, error) {
 	(&db).MigrateActivityDuration()
 
 	return &db, err
+}
+
+func HandleErr(err error) error {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return pkg.ErrNotFound
+	}
+	return err
 }

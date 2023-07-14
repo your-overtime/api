@@ -52,7 +52,7 @@ func comparePasswords(hashedPw string, plainPw string) bool {
 
 func (s *MainService) Login(login string, password string) (*pkg.User, error) {
 	e, err := s.db.GetUserByLogin(login)
-	if err != nil {
+	if err = data.HandleErr(err); err != nil {
 		log.Debug(err)
 		return nil, err
 	}
@@ -71,7 +71,8 @@ func (s *Service) SaveUser(user pkg.User, adminToken string) (*pkg.User, error) 
 	)
 	if user.ID != 0 {
 		u, err = s.db.GetUser(user.ID)
-		if err != nil {
+		if err = data.HandleErr(err); err != nil {
+			log.Debug(err)
 			return nil, err
 		}
 		u.User = user
@@ -183,9 +184,9 @@ func (s *Service) DeleteToken(tokenID uint) error {
 	}
 	var t pkg.Token
 	tx := s.db.Conn.First(&t, tokenID)
-	if tx.Error != nil {
-		log.Debug(tx.Error)
-		return tx.Error
+	if err := data.HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return err
 	}
 	if t.UserID == s.user.ID {
 		tx := s.db.Conn.Delete(&t)

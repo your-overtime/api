@@ -79,7 +79,7 @@ func (s *Service) AddHoliday(h pkg.Holiday) (*pkg.Holiday, error) {
 
 func (s *Service) GetHoliday(id uint) (*pkg.Holiday, error) {
 	h, err := s.db.GetHoliday(id)
-	if err != nil {
+	if err = data.HandleErr(err); err != nil {
 		log.Debug(err)
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (s *Service) DelHoliday(id uint) error {
 		return pkg.ErrReadOnlyAccess
 	}
 	h, err := s.GetHoliday(id)
-	if err != nil {
+	if err = data.HandleErr(err); err != nil {
 		log.Debug(err)
 		return err
 	}

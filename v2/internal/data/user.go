@@ -37,9 +37,9 @@ func (d *Db) SaveUser(user *UserDB) error {
 func (d *Db) GetUser(id uint) (*UserDB, error) {
 	e := UserDB{}
 	tx := d.Conn.First(&e, id)
-	if tx.Error != nil {
-		log.Debug(tx.Error)
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 
 	return &e, nil
@@ -59,9 +59,9 @@ func (d *Db) GetTokens(e UserDB) ([]TokenDB, error) {
 func (d *Db) GetTokenByToken(token string) (*TokenDB, error) {
 	var t TokenDB
 	tx := d.Conn.Where("token = ?", token).First(&t)
-	if tx.Error != nil {
-		log.Debug(tx.Error)
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 
 	return &t, nil
@@ -78,15 +78,15 @@ func (d *Db) SaveToken(token *TokenDB) error {
 func (d *Db) GetUserByToken(token string) (*UserDB, error) {
 	t := TokenDB{}
 	tx := d.Conn.Where("token = ?", token).First(&t)
-	if tx.Error != nil {
-		log.Debug(tx.Error)
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 	e := UserDB{}
 	tx = d.Conn.First(&e, t.UserID)
-	if tx.Error != nil {
-		log.Debug(tx.Error)
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 	return &e, nil
 }
@@ -94,9 +94,9 @@ func (d *Db) GetUserByToken(token string) (*UserDB, error) {
 func (d *Db) GetUserByLogin(login string) (*UserDB, error) {
 	e := &UserDB{}
 	tx := d.Conn.Where("login = ?", login).First(e)
-	if tx.Error != nil {
-		log.Debug(tx.Error)
-		return nil, tx.Error
+	if err := HandleErr(tx.Error); err != nil {
+		log.Debug(err)
+		return nil, err
 	}
 
 	if e == nil {

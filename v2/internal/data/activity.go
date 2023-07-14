@@ -36,7 +36,7 @@ func (d *Db) GetRunningActivityByUserID(eID uint) (*ActivityDB, error) {
 func (d *Db) GetActivity(id uint, userID uint) (*ActivityDB, error) {
 	a := ActivityDB{}
 	tx := d.Conn.Where("id =? and user_id = ?", id, userID).First(&a)
-	if tx.Error != nil {
+	if err := HandleErr(tx.Error); err != nil {
 		return nil, tx.Error
 	}
 	return &a, nil
