@@ -119,7 +119,7 @@ func (c *client) UpdateActivity(activity Activity) (*Activity, error) {
 }
 
 func (c *client) StopRunningActivity() (*Activity, error) {
-	resp, err := c.doRequest("DELETE", "activity/stop", nil)
+	resp, err := c.doRequest("PATCH", "activity/stop", nil)
 	if err != nil {
 		return nil, err
 	}
