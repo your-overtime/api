@@ -78,7 +78,9 @@ func (c *client) CalcOverview(d time.Time) (*Overview, error) {
 }
 
 func (c *client) StartActivity(desc string) (*Activity, error) {
-	resp, err := c.doRequest("POST", "activity/start?desc="+desc, nil)
+	resp, err := c.doRequest("POST", "activity", InputActivity{
+		Description: desc,
+	})
 	if err != nil {
 		return nil, err
 	}
