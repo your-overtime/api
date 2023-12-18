@@ -19,7 +19,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.1
 	github.com/teambition/rrule-go v1.8.0 // indirect
-	golang.org/x/crypto v0.10.0
+	golang.org/x/crypto v0.17.0
 	golang.org/x/tools v0.10.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
