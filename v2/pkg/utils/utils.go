@@ -44,7 +44,7 @@ func DayStart(day time.Time) time.Time {
 }
 
 func DayEnd(day time.Time) time.Time {
-	return time.Date(day.Year(), day.Month(), day.Day()+1, 0, 0, 0, 0, day.Location())
+	return time.Date(day.Year(), day.Month(), day.Day(), 23, 59, 59, 999, day.Location())
 }
 
 func DurationInMinutes(dura time.Duration) uint {
