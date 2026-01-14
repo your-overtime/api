@@ -15,7 +15,7 @@ import (
 // @Summary Stops a activity
 // @Produce json
 // @Success 200 {object} pkg.Activity
-// @Router /activity/stop [delete]
+// @Router /activity/stop [patch]
 // @Security BasicAuth
 // @Security ApiKeyAuth
 func (a *API) StopActivity(c *gin.Context) {
