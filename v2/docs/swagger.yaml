@@ -34,7 +34,7 @@ definitions:
         format: date-time
         type: string
       Type:
-        type: string
+        $ref: '#/definitions/pkg.HolidayType'
       UserID:
         type: integer
     type: object
@@ -62,7 +62,7 @@ definitions:
         format: date-time
         type: string
       Type:
-        type: string
+        $ref: '#/definitions/pkg.HolidayType'
     type: object
   InputToken:
     properties:
@@ -93,11 +93,13 @@ definitions:
   InputWorkDay:
     properties:
       ActiveTime:
+        format: int64
         type: integer
       Day:
         format: date-time
         type: string
       Overtime:
+        format: int64
         type: integer
       UserID:
         type: integer
@@ -105,15 +107,20 @@ definitions:
   Overtime:
     properties:
       ActiveActivity:
-        $ref: '#/definitions/Activity'
+        allOf:
+        - $ref: '#/definitions/Activity'
         x-nullable: true
       ActiveTimeThisDayInMinutes:
+        format: int64
         type: integer
       ActiveTimeThisMonthInMinutes:
+        format: int64
         type: integer
       ActiveTimeThisWeekInMinutes:
+        format: int64
         type: integer
       ActiveTimeThisYearInMinutes:
+        format: int64
         type: integer
       Date:
         format: date-time
@@ -121,12 +128,16 @@ definitions:
       HolidaysStillAvailable:
         type: integer
       OvertimeThisDayInMinutes:
+        format: int64
         type: integer
       OvertimeThisMonthInMinutes:
+        format: int64
         type: integer
       OvertimeThisWeekInMinutes:
+        format: int64
         type: integer
       OvertimeThisYearInMinutes:
+        format: int64
         type: integer
       UsedHolidays:
         type: integer
@@ -187,6 +198,7 @@ definitions:
   WorkDay:
     properties:
       ActiveTime:
+        format: int64
         type: integer
       Day:
         format: date-time
@@ -196,10 +208,23 @@ definitions:
       IsHoliday:
         type: boolean
       Overtime:
+        format: int64
         type: integer
       UserID:
         type: integer
     type: object
+  pkg.HolidayType:
+    enum:
+    - free
+    - sick
+    - legal_holiday
+    - unpaid_free
+    type: string
+    x-enum-varnames:
+    - HolidayTypeFree
+    - HolidayTypeSick
+    - HolidayTypeLegalHoliday
+    - HolidayTypeLegalUnpaidFree
 info:
   contact: {}
   title: Your Overtime API
@@ -385,7 +410,7 @@ paths:
       tags:
       - activity
   /activity/stop:
-    delete:
+    patch:
       produces:
       - application/json
       responses:
