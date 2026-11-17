@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -65,9 +64,17 @@ func (s *Service) AddHoliday(h pkg.Holiday) (*pkg.Holiday, error) {
 	if s.readonly {
 		return nil, pkg.ErrReadOnlyAccess
 	}
+	hType, err := pkg.StrToHolidayType(string(h.Type))
+	if err != nil {
+		return nil, err
+	}
+	h.Type = hType
+	// never trust ID and owner from the caller: AddHoliday only creates
+	h.ID = 0
+	h.UserID = s.user.ID
 
 	dH := data.HolidayDB{Holiday: h}
-	err := s.db.SaveHoliday(&dH)
+	err = s.db.SaveHoliday(&dH)
 	if err != nil {
 		log.Debug(err)
 		return nil, err
@@ -91,9 +98,31 @@ func (s *Service) GetHoliday(id uint) (*pkg.Holiday, error) {
 	return &h.Holiday, nil
 }
 
-func (s *Service) UpdateHoliday(activity pkg.Holiday) (*pkg.Holiday, error) {
-	// only needed in client
-	return nil, errors.New("not implemented")
+func (s *Service) UpdateHoliday(h pkg.Holiday) (*pkg.Holiday, error) {
+	if s.readonly {
+		return nil, pkg.ErrReadOnlyAccess
+	}
+	hType, err := pkg.StrToHolidayType(string(h.Type))
+	if err != nil {
+		return nil, err
+	}
+	h.Type = hType
+	hDB, err := s.db.GetHoliday(h.ID)
+	if err != nil {
+		log.Debug(err)
+		return nil, err
+	}
+	if hDB.UserID != s.user.ID {
+		return nil, pkg.ErrPermissionDenied
+	}
+
+	hDB.InputHoliday = h.InputHoliday
+	if err := s.db.SaveHoliday(hDB); err != nil {
+		log.Debug(err)
+		return nil, err
+	}
+
+	return &hDB.Holiday, nil
 }
 
 func (s *Service) GetHolidays(start time.Time, end time.Time) ([]pkg.Holiday, error) {

@@ -50,7 +50,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 	h, err := os.AddHoliday(ho)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusCreated, h)
 	}
@@ -93,10 +93,10 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 		},
 		UserID: user.ID,
 	}
-	h, err := os.AddHoliday(ho)
+	h, err := os.UpdateHoliday(ho)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, h)
 	}
@@ -120,12 +120,9 @@ func (a *API) GetHoliday(c *gin.Context) {
 	}
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	h, err := os.GetHoliday(uint(id))
-
-	if errors.Is(err, pkg.ErrNotFound) {
-		c.JSON(http.StatusNotFound, err)
-	} else if err != nil {
+	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, h)
 	}
@@ -202,8 +199,20 @@ func (a *API) DeleteHoliday(c *gin.Context) {
 	err = os.DelHoliday(uint(id))
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, "holiday deleted")
 	}
+}
+
+func holidayErrStatus(err error) int {
+	switch {
+	case errors.Is(err, pkg.ErrInvalidType):
+		return http.StatusBadRequest
+	case errors.Is(err, pkg.ErrNotFound):
+		return http.StatusNotFound
+	case errors.Is(err, pkg.ErrPermissionDenied), errors.Is(err, pkg.ErrReadOnlyAccess):
+		return http.StatusForbidden
+	}
+	return http.StatusInternalServerError
 }

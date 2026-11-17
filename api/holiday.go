@@ -1,12 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 
 	"github.com/your-overtime/api/pkg"
 	"github.com/your-overtime/api/pkg/utils"
@@ -49,7 +51,7 @@ func (a *API) CreateHoliday(c *gin.Context) {
 	h, err := os.AddHoliday(ho)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, h)
 	}
@@ -92,10 +94,10 @@ func (a *API) UpdateHoliday(c *gin.Context) {
 		},
 		UserID: user.ID,
 	}
-	h, err := os.AddHoliday(ho)
+	h, err := os.UpdateHoliday(ho)
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, h)
 	}
@@ -121,7 +123,7 @@ func (a *API) GetHoliday(c *gin.Context) {
 	h, err := os.GetHoliday(uint(id))
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, h)
 	}
@@ -198,8 +200,20 @@ func (a *API) DeleteHoliday(c *gin.Context) {
 	err = os.DelHoliday(uint(id))
 	if err != nil {
 		log.Debug(err)
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(holidayErrStatus(err), err.Error())
 	} else {
 		c.JSON(http.StatusOK, "holiday deleted")
 	}
+}
+
+func holidayErrStatus(err error) int {
+	switch {
+	case errors.Is(err, pkg.ErrInvalidType):
+		return http.StatusBadRequest
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return http.StatusNotFound
+	case errors.Is(err, pkg.ErrPermissionDenied), errors.Is(err, pkg.ErrReadOnlyAccess):
+		return http.StatusForbidden
+	}
+	return http.StatusInternalServerError
 }
