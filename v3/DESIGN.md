@@ -12,10 +12,12 @@ Status: proposal for discussion. Nothing here is implemented yet.
   and auth methods. v2 and v3 work on the same data, and both report the same
   numbers.
 
+- Activities can be assigned to projects and tags; reports group by them.
+
 ## Non-goals (for v3.0)
 
 - Teams, organisations, roles, billing.
-- Projects, clients and tags (can follow in a v3.x without breaking changes).
+- Clients and billable rates (can follow in a v3.x without breaking changes).
 
 ## Architecture
 
@@ -38,16 +40,17 @@ api repo
   handlers are ported, not rewritten: same routes, same JSON field names
   (PascalCase), same status codes.
 - **Shared database.** v3 adopts the existing v2 tables (`employees`,
-  `tokens`, `activities`, `holidays`, `webhooks`) unchanged and only adds
-  tables. Rolling back to the `:2` image stays possible (see Migration).
+  `tokens`, `activities`, `holidays`, `webhooks`) and only adds tables plus
+  one nullable column (`activities.project_id`), which v2 ignores. Rolling
+  back to the `:2` image stays possible (see Migration).
 - **Versioned SQL migrations** replace GORM `AutoMigrate`. Migration 1
   describes the existing v2 schema and is a no-op on existing databases.
 - MariaDB stays the production database; SQLite for tests and small setups.
 
 ## Data model
 
-Existing (unchanged): users (`employees`), tokens, activities, holidays,
-webhooks.
+Existing: users (`employees`), tokens, activities (new nullable column
+`project_id`), holidays, webhooks.
 
 New:
 
@@ -56,6 +59,9 @@ New:
 | `work_schedules` | Working time per user, valid from a date until the next schedule: week minutes, working days (fixed or dynamic count), holidays per year. Replaces the settings on the user. |
 | `balance_adjustments` | Manual corrections of the overtime balance on a day (e.g. carry-over from a former system), with a note. Replaces writing work days. |
 | `usage_events` | Spans of app or browser tab use uploaded by trackers. Moved from the web UI. |
+| `projects` | Per user: name, color, archived. An activity has at most one project. |
+| `tags` | Per user: name, color. |
+| `activity_tags` | Many-to-many between activities and tags. |
 | `schema_migrations` | Applied migrations. |
 
 `work_days` (the former cache) is no longer used. It stays in the database
@@ -76,6 +82,16 @@ balances once when v3 goes live:
   a full week showed as overtime,
 - activities across midnight were not counted,
 - the first week of a year was estimated instead of calculated.
+
+### Projects and tags
+
+- Names are unique per user (case-insensitive).
+- Projects are archived rather than deleted: archived projects keep their
+  activities and reports but are no longer offered for new entries.
+  Deleting a project or tag is possible and removes it from its activities.
+- Activities created through v2 have no project and no tags; v2 responses
+  do not contain them, and editing an activity through v2 keeps them.
+- Projects and tags do not influence the overtime calculation.
 
 ### Usage events
 
@@ -101,7 +117,8 @@ location  e.g. "Büro", derived by the client; empty = unknown
 
 Conventions
 
-- JSON with camelCase fields, timestamps RFC 3339, dates `YYYY-MM-DD`.
+- JSON with camelCase fields (v2 keeps PascalCase), timestamps RFC 3339,
+  dates `YYYY-MM-DD`.
 - Errors: `{"error": {"code": "invalid_schedule", "message": "..."}}`.
 - Auth: `Authorization: Bearer <token>` (also accepts `Token <token>`).
   No tokens in query parameters, except the iCal feed URLs.
@@ -117,9 +134,12 @@ Endpoints (sketch)
 | PATCH | `/me` | name, login, password |
 | GET | `/overview?date=` | as v2, plus balance since the first day |
 | GET | `/days?from=&to=` | calculated days: active, target, holiday, adjustment, overtime |
-| GET POST PATCH DELETE | `/activities` | `GET` with `from`, `to`, `q` |
+| GET POST PATCH DELETE | `/activities` | with `projectId`, `tagIds`; `GET` filters `from`, `to`, `q`, `projectId`, `tagId` |
 | GET | `/timer` | running activity |
-| POST | `/timer/start`, `/timer/stop` | |
+| POST | `/timer/start`, `/timer/stop` | start takes description, `projectId`, `tagIds` |
+| GET POST PATCH DELETE | `/projects` | `GET` hides archived ones unless `archived=true` |
+| GET POST PATCH DELETE | `/tags` | |
+| GET | `/reports` | `from`, `to`, filters as `/activities`; `groupBy` = `project`, `tag`, `description`, `day`, `week`, `month` (two levels, e.g. `project,week`); also as CSV |
 | GET POST PATCH DELETE | `/holidays` | |
 | GET POST DELETE | `/schedules` | `POST` with the same `validFrom` replaces |
 | GET POST DELETE | `/adjustments` | |
@@ -129,7 +149,8 @@ Endpoints (sketch)
 | GET | `/activities.ics`, `/holidays.ics` | |
 
 Live updates (`GET /stream`, SSE): `activity.changed`, `timer.started`,
-`timer.stopped`, `holiday.changed`, `schedule.changed`, `events.added`.
+`timer.stopped`, `holiday.changed`, `schedule.changed`, `project.changed`,
+`tag.changed`, `events.added`.
 Payload is the affected ID; clients reload what they show. Every client
 (web, desktop, Android) sees a timer started elsewhere at once.
 
@@ -167,15 +188,21 @@ layer, plus golden-file tests for every v2 response.
    layer with the existing v2 tests green.
 2. **Calculation**: schedules, adjustments, comparison tool; v2 overview on
    the new calculation.
-3. **API v3**: endpoints above, token scopes, OpenAPI docs.
+3. **API v3**: endpoints above incl. projects, tags and reports, token
+   scopes, OpenAPI docs.
 4. **Events and live updates**: `/events`, `/stream`, retention; trackers
    and web UI switch.
 
+## Decisions
+
+- v3 uses camelCase field names; v2 keeps PascalCase.
+- Projects and tags are part of v3.0.
+
 ## Open questions
 
-1. camelCase in v3 (consistent with JS clients) or PascalCase like v2?
-2. Keep the global admin token, or admin users with a scope?
-3. Default retention for usage events, and should titles/URLs be optional?
-4. Should the balance carry over between years (today the overview shows
+1. Keep the global admin token, or admin users with a scope?
+2. Default retention for usage events, and should titles/URLs be optional?
+3. Should the balance carry over between years (today the overview shows
    the current year only)?
-5. Projects and tags in v3.0 or later?
+4. Should activity suggestions from usage events propose a project, e.g.
+   via rules like "github.com/your-overtime → project Overtime"?
