@@ -145,8 +145,20 @@ Endpoints (sketch)
 | GET POST DELETE | `/adjustments` | |
 | GET POST | `/events` | `POST` takes the current tracker payload unchanged |
 | GET | `/stream` | Server-Sent Events, see below |
-| GET POST DELETE | `/tokens`, `/webhooks` | |
+| GET POST DELETE | `/tokens` | |
+| GET POST PATCH DELETE | `/webhooks` | see below |
 | GET | `/activities.ics`, `/holidays.ics` | |
+
+Webhooks: v2 can only create and list them, so a webhook stays active
+forever. v3 adds editing and deleting:
+
+- `PATCH /webhooks/{id}` changes `targetUrl`, `headerKey`, `headerValue`,
+  `readOnly` and `enabled` (pause a webhook without losing it).
+- `DELETE /webhooks/{id}` removes it.
+- Both only touch the caller's own webhooks (404 otherwise), like all
+  `{id}` endpoints.
+- `GET` never returns `headerValue` (it is usually a secret), only
+  `hasHeaderValue`; a `PATCH` without `headerValue` keeps the stored one.
 
 Live updates (`GET /stream`, SSE): `activity.changed`, `timer.started`,
 `timer.stopped`, `holiday.changed`, `schedule.changed`, `project.changed`,
@@ -163,6 +175,7 @@ Payload is the affected ID; clients reload what they show. Every client
 | `PATCH /account` with working time fields | creates a schedule valid from today; `GET /account` shows the schedule valid today |
 | `POST /workday` (set a day's overtime) | stored as balance adjustment: requested overtime minus calculated overtime of that day |
 | `POST /user?adminToken=` | unchanged, also creates the first schedule |
+| `/holiday` | with the fix from `fix/holiday-validation-and-ownership` (unknown types rejected, `PUT` only on own holidays, 400/403/404 instead of 500); the compatibility layer keeps this behaviour |
 
 Ensured by tests: the existing v2 API tests run against the compatibility
 layer, plus golden-file tests for every v2 response.
